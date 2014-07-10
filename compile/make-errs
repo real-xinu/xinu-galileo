@@ -1,0 +1,28 @@
+../system/Platform_galileo/initialize.c: In function 'sizmem':
+../system/Platform_galileo/initialize.c:212:30: warning: variable 'stmp' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/evec.c: In function 'trap':
+../system/Platform_galileo/evec.c:105:11: warning: variable 'mask' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/main.c: In function 'main':
+../system/Platform_galileo/main.c:9:9: warning: variable 'retval' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/panic.c: In function 'panic':
+../system/Platform_galileo/panic.c:13:10: warning: variable 'mask' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/pci.c: In function 'check_pcibios':
+../system/Platform_galileo/pci.c:100:19: warning: variable 'minor_revision' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/pci.c:99:19: warning: variable 'major_revision' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/pci.c: In function 'find_pci_device':
+../system/Platform_galileo/pci.c:206:28: warning: variable 'functionNum' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/pci.c:206:17: warning: variable 'deviceNum' set but not used [-Wunused-but-set-variable]
+../system/Platform_galileo/pci.c:206:9: warning: variable 'busNum' set but not used [-Wunused-but-set-variable]
+../device/Platform_galileo/tty/ttyInterrupt.c: In function 'ttyInterrupt':
+../device/Platform_galileo/tty/ttyInterrupt.c:14:7: warning: variable 'lsr' set but not used [-Wunused-but-set-variable]
+../device/Platform_galileo/eth/3c905C_intr.c: In function '_3c905C_rxPackets':
+../device/Platform_galileo/eth/3c905C_intr.c:38:18: warning: unused variable 'rx_error' [-Wunused-variable]
+../net/Platform_galileo/icmp.c: In function 'icmp_in':
+../net/Platform_galileo/icmp.c:35:8: warning: variable 'len' set but not used [-Wunused-but-set-variable]
+../net/Platform_galileo/icmp.c: In function 'icmp_send':
+../net/Platform_galileo/icmp.c:240:18: warning: variable 'ifptr' set but not used [-Wunused-but-set-variable]
+../net/Platform_galileo/icmp.c: In function 'icmp_mkpkt':
+../net/Platform_galileo/icmp.c:282:8: warning: variable 'pktlen' set but not used [-Wunused-but-set-variable]
+../net/Platform_galileo/icmp.c:280:10: warning: variable 'mask' set but not used [-Wunused-but-set-variable]
+../net/Platform_galileo/nat.c: In function 'nat_in_icmp':
+../net/Platform_galileo/nat.c:288:9: warning: variable 'currtime' set but not used [-Wunused-but-set-variable]

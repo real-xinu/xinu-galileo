@@ -1,0 +1,98 @@
+/************************************************************************/
+/*									*/
+/* Configuration - Xinu device configuration specification file		*/
+/*									*/
+/* This file becomes input to the config program, which generates	*/
+/* 		conf.h  and  conf.c					*/
+/*									*/
+/* Entries for a device specify the functions that handle each of the	*/
+/* high-level I/O operations as follows:				*/
+/*									*/
+/*	-i    init	-o    open	-c    close			*/
+/*	-r    read	-w    write	-s    seek			*/
+/*	-g    getc	-p    putc	-n    control			*/
+/*	-intr int_hndlr	-csr  csr	-irq  irq			*/
+/*									*/
+/************************************************************************/
+
+/* Type Declarations for both real- and pseudo- device types */
+
+/* type of a null device */
+null:
+	on nothing
+		-i ionull	-o ionull	-c ionull
+		-r ionull	-g ionull	-p ionull
+		-w ionull	-s ioerr
+
+/* type of a tty device */
+tty:
+	on uart
+		-i ttyInit      -o ionull       -c ionull
+		-r ttyRead      -g ttyGetc      -p ttyPutc
+		-w ttyWrite     -s ioerr        -n ttyControl
+		-intr ttyDispatch
+
+/* type of a ethernet device */
+eth:
+	on e1000e
+		-i ethInit      -o ioerr        -c ioerr
+		-r ethRead      -g ioerr        -p ioerr
+		-w ethWrite     -s ioerr        -n ethControl
+		-intr ethDispatch
+
+/* type of a remote disk system device */
+rds:
+	on udp
+		-i rdsInit	-o rdsOpen	-c rdsClose
+		-r rdsRead	-g ioerr	-p ioerr
+		-w rdsWrite	-s ioerr	-n rdsControl
+		-intr ionull
+
+/* type of ram disk */
+ram:
+	on mem
+		-i ramInit	-o ramOpen	-c ramClose
+		-r ramRead	-g ioerr	-p ioerr
+		-w ramWrite	-s ioerr	-n ioerr
+		-intr ionull
+		
+/* type of namespace device */
+nam:
+	on top
+		-i namInit 	-o namOpen 	-c ioerr
+		-r ioerr 	-g ioerr 	-p ioerr
+		-w ioerr 	-s ioerr 	-n ioerr
+		-intr ioerr
+
+%%
+
+/* Actual device declarations that each give the name of a device that	*/
+/*   will be present in the system					*/
+
+   /* Define the console device to be a tty and specify CSR*/
+   CONSOLE is tty  on uart  csr 0001770 -irq 0052
+
+   /* Define a null device */
+   NULLDEV is null on nothing
+
+   /* Physical Ethernet (raw packet transfer) */
+   ETHER0 is eth   on e1000e csr 0 -irq 0053
+
+   /* Define a namespace device */
+   NAMESPACE is nam on top
+
+   /* Define a remote disk system device */
+   RDISK is rds on udp
+   
+   /* Define a ram disk device */
+   RAM0 is ram on mem
+
+%%
+
+/* Configuration and Size Constants */
+
+#define	NPROC	     100	/* number of user processes		*/
+#define	NSEM	     100	/* number of semaphores			*/
+#define	IRQ_TIMER    IRQ_HW5	/* timer IRQ is wired to hardware 5	*/
+#define	IRQ_ATH_MISC IRQ_HW4	/* Misc. IRQ is wired to hardware 4	*/
+#define CLKFREQ      200000000	/* 200 MHz clock			*/
