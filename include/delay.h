@@ -1,6 +1,4 @@
-/* i386.h - DELAY */
-
-#define	IRQBASE		32	/* base ivec for IRQ0			*/
+/* delay.h - DELAY */
 
 /*
  * Delay units are in microseconds.

@@ -35,7 +35,7 @@
 #include <shell.h>
 #include <date.h>
 #include <prototypes.h>
-#include <i386.h>
+#include <delay.h>
 #include <pci.h>
 #include <3c905C.h>
 #include <e1000e.h>
