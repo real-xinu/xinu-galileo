@@ -8,7 +8,8 @@
 /*------------------------------------------------------------------------
  *  ttyDispatch  -  Dispatch an interrupt to the tty handler function
  *------------------------------------------------------------------------
- */ttyDispatch:
+ */
+ttyDispatch:
 		pushal			/* Save general-purpose regs.	*/
 		pushfl			/* Save the flags register	*/
 		cli			/* Prevent further interrupts	*/
