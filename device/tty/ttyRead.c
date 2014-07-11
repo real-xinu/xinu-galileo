@@ -1,4 +1,4 @@
-~/* ttyRead.c - ttyRead */
+/* ttyRead.c - ttyRead */
 
 #include <xinu.h>
 
