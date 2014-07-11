@@ -56,6 +56,11 @@ int32	main(void)
 	//kprintf("...starting the network\n");
 	netstart();
 
+	while(1) {
+		kprintf("clktime %d\n", clktime);
+		sleep(1);
+	}
+
 	kprintf("\n...creating a shell\n");
 	recvclr();
 	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));

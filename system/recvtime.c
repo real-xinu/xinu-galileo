@@ -27,8 +27,6 @@ umsg32	recvtime(
 			restore(mask);
 			return SYSERR;
 		}
-		sltop = &queuetab[firstid(sleepq)].qkey;
-		slnonempty = TRUE;
 		prptr->prstate = PR_RECTIM;
 		resched();
 	}

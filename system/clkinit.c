@@ -5,10 +5,6 @@
 uint32	clktime;		/* Seconds since boot			*/
 uint32	ctr1000 = 0;		/* Milliseconds since boot		*/
 qid16	sleepq;			/* Queue of sleeping processes		*/
-int32	slnempty;		/* Zero if the sleep queue is empty;	*/
-				/*   non-zero otherwise			*/
-int32	*sltop;			/* Ptr to key in first entry of sleepq	*/
-				/*   if sleepq is not empty		*/
 uint32	preempt;		/* Preemption counter			*/
    
 /*------------------------------------------------------------------------
@@ -33,7 +29,7 @@ void	clkinit(void)
 
 	/* Specify that seepq is initially empty */
 
-	slnonempty = FALSE;
+	//slnonempty = FALSE;
 
 	clktime = 0;		/* Start counting seconds		*/
 

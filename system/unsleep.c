@@ -42,12 +42,6 @@ status	unsleep(
 		queuetab[pidnext].qkey += queuetab[pid].qkey;
 	}
 
-	if ( nonempty(sleepq) ) {
-		sltop = &queuetab[firstid(sleepq)].qkey;
-		slnonempty = TRUE;
-	} else {
-		slnonempty = FALSE;
-	}
 	getitem(pid);			/* Unlink process from queue */
 	restore(mask);
 	return OK;

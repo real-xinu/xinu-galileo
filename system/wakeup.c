@@ -14,10 +14,7 @@ void	wakeup(void)
 	while (nonempty(sleepq) && (firstkey(sleepq) <= 0)) {
 		ready(dequeue(sleepq));
 	}
-	
-	if ( (slnonempty = nonempty(sleepq)) == TRUE ) {
-		sltop = &firstkey(sleepq);
-	}
+
 	resched_cntl(DEFER_STOP);
 	return;
 }

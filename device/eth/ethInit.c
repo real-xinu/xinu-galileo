@@ -28,39 +28,7 @@ devcall	ethInit (
 	ethptr->rxHead = ethptr->rxTail = 0;
 	ethptr->txHead = ethptr->txTail = 0;
 
-	if ((dinfo = find_pci_device(_3COM_3C905C_DEVICE_ID,
-					_3COM_VENDOR_ID, 0))
-			!= SYSERR) {
-		kprintf("Found 3COM 3c905C Ethernet NIC\n");
-
-		ethptr->type = ETH_TYPE_3C905C;
-		ethptr->pcidev = dinfo;
-		
-		/* Initialize function pointers */
-		
-		ethptr->ethInit = _3c905C_init;
-		ethptr->ethOpen = _3c905C_open;
-		ethptr->ethRead = _3c905C_read;
-		ethptr->ethWrite = _3c905C_write;
-		ethptr->ethControl = _3c905C_cntl;
-		ethptr->ethInterrupt = _3c905C_intr;
-	} else if ((dinfo = find_pci_device(INTEL_82567LM_DEVICE_ID,
-					INTEL_VENDOR_ID, 0))
-			!= SYSERR) {
-		kprintf("Found Intel Hub 10D/82567LM Ethernet NIC\n");
-
-		ethptr->type = ETH_TYPE_E1000E;
-		ethptr->pcidev = dinfo;
-
-		/* Initialize function pointers */
-		
-		ethptr->ethInit = e1000e_init;
-		ethptr->ethOpen = e1000e_open;
-		ethptr->ethRead = e1000e_read;
-		ethptr->ethWrite = e1000e_write;
-		ethptr->ethControl = e1000e_cntl;
-		ethptr->ethInterrupt = e1000e_intr;
-	} else if ((dinfo = find_pci_device(INTEL_QUARK_ETH_PCI_DID,
+	if ((dinfo = find_pci_device(INTEL_QUARK_ETH_PCI_DID,
 					INTEL_QUARK_ETH_PCI_VID, 0))
 			!= SYSERR) {
 		kprintf("Found Intel Quark Ethernet NIC\n");
