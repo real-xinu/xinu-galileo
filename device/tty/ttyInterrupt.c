@@ -3,15 +3,15 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyInterrupt - handle an interrupt for a tty (serial) device
+ *  ttyInterrupt  -  Handle an interrupt for a tty (serial) device
  *------------------------------------------------------------------------
  */
 void ttyInterrupt(void) {
-	struct	dentry	*devptr;	/* address of device control blk*/
-	struct	ttycblk	*typtr;		/* pointer to ttytab entry	*/	
-	struct	uart_csreg *csrptr;	/* address of UART's CSR	*/
-	byte	iir = 0;		/* interrupt identification	*/
-	byte	lsr = 0;		/* line status			*/
+	struct	dentry	*devptr;	/* Address of device control blk*/
+	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/	
+	struct	uart_csreg *csrptr;	/* Address of UART's CSR	*/
+	byte	iir = 0;		/* Interrupt identification	*/
+	byte	lsr = 0;		/* Line status			*/
 
 
 	/* Get CSR address of the device (assume console for now) */
@@ -38,7 +38,7 @@ void ttyInterrupt(void) {
 
         /* Decode the interrupt cause */
 
-        iir &= UART_IIR_IDMASK;		/* mask off the interrupt ID */
+        iir &= UART_IIR_IDMASK;		/* Mask off the interrupt ID */
         switch (iir) {
 
 	    /* Receiver line status interrupt (error) */

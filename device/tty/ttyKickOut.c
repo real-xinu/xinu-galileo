@@ -3,13 +3,13 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyKickOut - "kick" the hardware for a tty device, causing it to
- *		generate an output interrupt (interrupts disabled)
+ *  ttyKickOut  -  "kick" the hardware for a tty device, causing it to
+ *		   generate an output interrupt (interrupts disabled)
  *------------------------------------------------------------------------
  */
 void	ttyKickOut(
-	 struct	ttycblk	*typtr,		/* ptr to ttytab entry		*/
-	 struct uart_csreg *csrptr	/* address of UART's CSRs	*/
+	 struct	ttycblk	*typtr,		/* Ptr to ttytab entry		*/
+	 struct uart_csreg *csrptr	/* Address of UART's CSRs	*/
 	)
 {
 	/* Set output interrupts on the UART, which causes */

@@ -3,18 +3,18 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyControl  -  control a tty device by setting modes
+ *  ttyControl  -  Control a tty device by setting modes
  *------------------------------------------------------------------------
  */
 devcall	ttyControl(
-	  struct dentry	*devptr,	/* entry in device switch table	*/
-	  int32	 func,			/* function to perform		*/
-	  int32	 arg1,			/* argument 1 for request	*/
-	  int32	 arg2			/* argument 2 for request	*/
+	  struct dentry	*devptr,	/* Entry in device switch table	*/
+	  int32	 func,			/* Function to perform		*/
+	  int32	 arg1,			/* Argument 1 for request	*/
+	  int32	 arg2			/* Argument 2 for request	*/
 	)
 {
-	struct	ttycblk	*typtr;		/* pointer to tty control block	*/
-	char	ch;			/* character for lookahead	*/
+	struct	ttycblk	*typtr;		/* Pointer to tty control block	*/
+	char	ch;			/* Character for lookahead	*/
 
 	typtr = &ttytab[devptr->dvminor];
 
