@@ -316,7 +316,8 @@ extern	devcall	lpread(struct dentry *, char *, int32);
 extern	devcall	lpwrite(struct dentry *, char *, int32);
 
 /* in file mark.c */
-extern	void	_mkinit(void);
+extern	void	markinit(void);
+extern	status	mark(int32 *);
 
 /* in file memcpy.c */
 extern	void	*memcpy(void *, const void *, int32);
