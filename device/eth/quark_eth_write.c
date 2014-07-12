@@ -20,26 +20,26 @@ devcall quark_eth_write(struct ether *ethptr, void *buf, uint32 len) {
 	}
 
 	/* Length of the packet */
-	descptr->tdes[1] = len;
+	descptr->buf1size = len;
 
 	/* Copy the packet in the descriptor buffer */
 	for(i = 0; i < len; i++) {
-		*((char *)descptr->tdes[2] + i) = *((char *)buf + i);
+		*((char *)descptr->buffer1 + i) = *((char *)buf + i);
 	}
 
 	/* If we are at the end of the ring, indicate end of ring in the desc */
 	if(ethptr->txTail == 0) {
-		descptr->tdes[0] = QUARK_ETH_TDES0_TER;
+		descptr->ctrlstat = QUARK_ETH_TDCS_TER;
 	}
 	else {
-		descptr->tdes[0] = 0;
+		descptr->ctrlstat = 0;
 	}
 
 	/* Initialize the descriptor */
-	descptr->tdes[0] |= (QUARK_ETH_TDES0_OWN | /* Indicate that the desc is owned by DMA	*/
-			     QUARK_ETH_TDES0_IC	 | /* Issue an interrupt after transfer		*/
-			     QUARK_ETH_TDES0_LS	 | /* This desc is the last segment of packet	*/
-			     QUARK_ETH_TDES0_FS);  /* This desc is the first segment of packet	*/
+	descptr->ctrlstat |= (QUARK_ETH_TDCS_OWN | /* Indicate that the desc is owned by DMA	*/
+			      QUARK_ETH_TDCS_IC	 | /* Issue an interrupt after transfer		*/
+			      QUARK_ETH_TDCS_LS	 | /* This desc is the last segment of packet	*/
+			      QUARK_ETH_TDCS_FS);  /* This desc is the first segment of packet	*/
 
 	/* Un-suspend the DMA */
 	csrptr->tpdr = 1;

@@ -94,29 +94,43 @@ struct quark_eth_csreg {
 #define QUARK_ETH_IER_RIE	0x00000040	/* Enable RX Interrupt	*/
 #define QUARK_ETH_IER_TIE	0x00000001	/* Enable TX Interrupt	*/
 
+/* Quark Ethernet Transmit Descriptor */
+
 struct quark_eth_tx_desc {
-	uint32	tdes[4];
+	uint32	ctrlstat;	/* Control and status	*/
+	uint16	buf1size;	/* Size of buffer 1	*/
+	uint16	buf2size;	/* Size of buffer 2	*/
+	uint32	buffer1;	/* Address of buffer 1	*/
+	uint32	buffer2;	/* Address of buffer 2	*/
 };
 
-#define QUARK_ETH_TDES0_OWN	0x80000000	/* Descrip. owned by DMA*/
-#define QUARK_ETH_TDES0_IC	0x40000000	/* Int on Completion	*/
-#define QUARK_ETH_TDES0_LS	0x20000000	/* Last Segment		*/
-#define QUARK_ETH_TDES0_FS	0x10000000	/* First Segment	*/
-#define QUARK_ETH_TDES0_TER	0x00200000	/* Transmit End of Ring	*/
-#define QUARK_ETH_TDES0_ES	0x00008000	/* Error Summary	*/
+#define QUARK_ETH_TDCS_OWN	0x80000000	/* Descrip. owned by DMA*/
+#define QUARK_ETH_TDCS_IC	0x40000000	/* Int on Completion	*/
+#define QUARK_ETH_TDCS_LS	0x20000000	/* Last Segment		*/
+#define QUARK_ETH_TDCS_FS	0x10000000	/* First Segment	*/
+#define QUARK_ETH_TDCS_TER	0x00200000	/* Transmit End of Ring	*/
+#define QUARK_ETH_TDCS_ES	0x00008000	/* Error Summary	*/
+
+/* Quark Ethernet Receive Descriptor */
 
 struct quark_eth_rx_desc {
-	uint32	rdes[4];
+	uint32	status;		/* Desc status word	*/
+	uint16	buf1size;	/* Size of buffer 1	*/
+	uint16	buf2size;	/* Size of buffer 2	*/
+	uint32	buffer1;	/* Address of buffer 1	*/
+	uint32	buffer2;	/* Address of buffer 2	*/
 };
+#define	rdctl1	buf1size	/* Buffer 1 size field has control bits too */
+#define	rdctl2	buf2size	/* Buffer 2 size field has control bits too */
 
-#define QUARK_ETH_RDES0_OWN	0x80000000	/* Descrip. owned by DMA*/
-#define QUARK_ETH_RDES0_ES	0x00008000	/* Error Summary	*/
-#define QUARK_ETH_RDES0_FS	0x00000200	/* First Segment	*/
-#define QUARK_ETH_RDES0_LS	0x00000100	/* Last segment		*/
-#define QUARK_ETH_RDES0_FTETH	0x00000020	/* Frame Type = Ethernet*/
+#define QUARK_ETH_RDST_OWN	0x80000000	/* Descrip. owned by DMA*/
+#define QUARK_ETH_RDST_ES	0x00008000	/* Error Summary	*/
+#define QUARK_ETH_RDST_FS	0x00000200	/* First Segment	*/
+#define QUARK_ETH_RDST_LS	0x00000100	/* Last segment		*/
+#define QUARK_ETH_RDST_FTETH	0x00000020	/* Frame Type = Ethernet*/
 
-#define QUARK_ETH_RDES1_DIC	0x80000000	/* Dis. Int on Complet.	*/
-#define QUARK_ETH_RDES1_RER	0x00008000	/* Recv End of Ring	*/
+#define QUARK_ETH_RDCTL1_DIC	0x8000	/* Dis. Int on Complet.	*/
+#define QUARK_ETH_RDCTL1_RER	0x8000	/* Recv End of Ring	*/
 
 #define QUARK_ETH_RX_RING_SIZE	32
 #define QUARK_ETH_TX_RING_SIZE	16

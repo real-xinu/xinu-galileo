@@ -31,7 +31,7 @@ interrupt quark_eth_intr(struct ether *ethptr) {
 		while(ethptr->txHead != ethptr->txTail) {
 
 			/* If the descriptor is owned by DMA, stop here */
-			if(tdescptr->tdes[0] & QUARK_ETH_TDES0_OWN) {
+			if(tdescptr->ctrlstat & QUARK_ETH_TDCS_OWN) {
 				break;
 			}
 
@@ -73,7 +73,7 @@ interrupt quark_eth_intr(struct ether *ethptr) {
 		while(count <= QUARK_ETH_RX_RING_SIZE) {
 
 			/* If the descriptor is owned by the DMA, stop here */
-			if(rdescptr->rdes[0] & QUARK_ETH_RDES0_OWN) {
+			if(rdescptr->status & QUARK_ETH_RDST_OWN) {
 				break;
 			}
 
