@@ -5,11 +5,11 @@
 #include <process.h>
 #include <queue.h>
 #include <resched.h>
+#include <mark.h>
 #include <semaphore.h>
 #include <memory.h>
 #include <bufpool.h>
 #include <clock.h>
-#include <mark.h>
 #include <ports.h>
 #include <uart.h>
 #include <tty.h>

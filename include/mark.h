@@ -1,14 +1,16 @@
-/* mark.h - unmarked */
+/* mark.h - notmarked */
 
-#ifndef	MM_MAX_MARKS
-#define	MM_MAX_MARKS	20	/* maximum number of marked locations	*/
-#endif
+#define	MAXMARK	20		/* Maximum number of marked locations	*/
 
-extern	uint32	*(marks[]);
-extern	uint32	marked;
+extern	int32	*(marks[]);
+extern	int32	nmarks;
 extern	sid32	mkmutex;
-typedef	uint32	marker[1];	/* Because marker is declared to be an	*/
-				/* array, it it unnecessary to use	*/
-				/* an ampersand to obtain the address	*/
+typedef	int32	memmark[1];	/* Declare a memory mark to be an array	*/
+				/*   so user can reference the name	*/
+				/*   without a leading &		*/
 
-#define	unmarked(L)		(L[0]<0 || L[0]>=marked || marks[L[0]]!=L)
+/*------------------------------------------------------------------------
+ *  notmarked  -  Return nonzero if a location has not been marked
+ *------------------------------------------------------------------------
+ */
+#define	notmarked(L)		(L[0]<0 || L[0]>=nmarks || marks[L[0]]!=L)
