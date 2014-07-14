@@ -5,35 +5,33 @@
 struct	arpentry  arpcache[ARP_SIZ];	/* ARP cache			*/
 
 /*------------------------------------------------------------------------
- * arp_init - initialize ARP cache for an Ethernet interface
+ * arp_init  -  Initialize ARP cache for an Ethernet interface
  *------------------------------------------------------------------------
  */
-void	arp_init(
-	  int32	iface			/* interface to use		*/
-	)
+void	arp_init(void)
 {
 	int32	i;			/* ARP cache index		*/
 
-	for (i=1; i<ARP_SIZ; i++) {	/* initialize cache to empty	*/
+	for (i=1; i<ARP_SIZ; i++) {	/* Initialize cache to empty	*/
 		arpcache[i].arstate = AR_FREE;
 	}
 }
 
 /*------------------------------------------------------------------------
- * arp_resolve - use ARP to resolve an IP address into an Ethernet address
+ * arp_resolve  -  Use ARP to resolve an IP address to an Ethernet address
  *------------------------------------------------------------------------
  */
 status	arp_resolve (
-	 uint32	nxthop,			/* nex-hop address to resolve	*/
-	 byte	mac[ETH_ADDR_LEN]	/* array into which Ethernet	*/
-	)				/*  address should be placed	*/
+	 uint32	nxthop,			/* Next-hop address to resolve	*/
+	 byte	mac[ETH_ADDR_LEN]	/* Array into which Ethernet	*/
+	)				/*   address should be placed	*/
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	arppacket apkt;		/* local packet buffer		*/
-	int32	i;			/* index into arpcache		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	arppacket apkt;		/* Local packet buffer		*/
+	int32	i;			/* Index into arpcache		*/
 	int32	slot;			/* ARP table slot to use	*/
-	struct	arpentry  *arptr;	/* ptr to ARP cache entry	*/
-	int32	msg;			/* message returned by recvtime	*/
+	struct	arpentry  *arptr;	/* Ptr to ARP cache entry	*/
+	int32	msg;			/* Message returned by recvtime	*/
 
 	/* Use MAC broadcast address for IP limited broadcast */
 
@@ -44,7 +42,7 @@ status	arp_resolve (
 
 	/* Use MAC broadcast address for IP network broadcast */
 
-	if (nxthop == NetData.ipbcast) {/* set mac address to b-cast*/
+	if (nxthop == NetData.ipbcast) {/* Set MAC address to b-cast */
 		memcpy(mac, NetData.ethbcast, ETH_ADDR_LEN);
 		return OK;
 	}
@@ -58,7 +56,7 @@ status	arp_resolve (
 		if (arptr->arstate == AR_FREE) {
 			continue;
 		}
-		if (arptr->arpaddr == nxthop) { /* adddress is in cache	*/
+		if (arptr->arpaddr == nxthop) { /* Adddress is in cache	*/
 			break;
 		}
 	}
@@ -152,18 +150,18 @@ status	arp_resolve (
 
 
 /*------------------------------------------------------------------------
- * arp_in - handle an incoming ARP packet
+ * arp_in  -  Handle an incoming ARP packet
  *------------------------------------------------------------------------
  */
 void	arp_in (
-	  struct arppacket *pktptr	/* ptr to incoming packet	*/
+	  struct arppacket *pktptr	/* Ptr to incoming packet	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
+	intmask	mask;			/* Saved interrupt mask		*/
 	struct	arppacket apkt;		/* Local packet buffer		*/
-	int32	slot;			/* slot in cache		*/
-	struct	arpentry  *arptr;	/* ptr to ARP cache entry	*/
-	bool8	found;			/* is the sender's address in	*/
+	int32	slot;			/* Slot in cache		*/
+	struct	arpentry  *arptr;	/* Ptr to ARP cache entry	*/
+	bool8	found;			/* Is the sender's address in	*/
 					/*   the cache?			*/
 
 	/* Convert packet from network order to host order */
@@ -227,8 +225,8 @@ void	arp_in (
 	}
 
 	/* The following is for an ARP request packet: if the local	*/
-	/* machine is not the target or	the local IP address is not	*/
-	/* yet known, ignore the request (i.e., processing is complete)	*/
+	/*  machine is not the target or the local IP address is not	*/
+	/*  yet known, ignore the request (i.e., processing is complete)*/
 
 	if ((!NetData.ipvalid) ||
 			(pktptr->arp_tarpa != NetData.ipucast)) {
@@ -237,12 +235,12 @@ void	arp_in (
 		return;
 	}
 
-	/* Request has been sent to the local machine's address.	*/
-	/*	Add sender's info to cache, if not already present	*/
+	/* Request has been sent to the local machine's address.  So,	*/
+	/*   add sender's info to cache, if not already present		*/
 
 	if (!found) {
 		slot = arp_alloc();
-		if (slot == SYSERR) {	/* cache full */
+		if (slot == SYSERR) {	/* Cache is full */
 			kprintf("ARP cache overflow on interface\n");
 			freebuf((char *)pktptr);
 			restore(mask);
@@ -292,14 +290,14 @@ void	arp_in (
 }
 
 /*------------------------------------------------------------------------
- * arp_alloc - find a free slot or kick out an entry to create one
+ * arp_alloc  -  Find a free slot or kick out an entry to create one
  *------------------------------------------------------------------------
  */
 int32	arp_alloc ()
 {
-	int32	slot;			/* slot in ARP cache		*/
+	int32	slot;			/* Slot in ARP cache		*/
 
-	/* Search for free slot */
+	/* Search for a free slot */
 
 	for (slot=0; slot < ARP_SIZ; slot++) {
 		if (arpcache[slot].arstate == AR_FREE) {
@@ -309,7 +307,7 @@ int32	arp_alloc ()
 		}
 	}
 
-	/* Search for resolved entry */
+	/* Search for a resolved entry */
 
 	for (slot=0; slot < ARP_SIZ; slot++) {
 		if (arpcache[slot].arstate == AR_RESOLVED) {
@@ -319,7 +317,7 @@ int32	arp_alloc ()
 		}
 	}
 
-	/* All slots are pending */
+	/* At this point, all slots are pending */
 
 	kprintf("ARP cache size exceeded\n");
 
@@ -327,7 +325,7 @@ int32	arp_alloc ()
 }
 
 /*------------------------------------------------------------------------
- * arp_ntoh - convert ARP packet fields from net to host byte order
+ * arp_ntoh  -  Convert ARP packet fields from net to host byte order
  *------------------------------------------------------------------------
  */
 void 	arp_ntoh(
@@ -342,7 +340,7 @@ void 	arp_ntoh(
 }
 
 /*------------------------------------------------------------------------
- * arp_hton - convert ARP packet fields from net to host byte order
+ * arp_hton  -  Convert ARP packet fields from net to host byte order
  *------------------------------------------------------------------------
  */
 void 	arp_hton(
