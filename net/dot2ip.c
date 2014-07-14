@@ -3,28 +3,28 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * dot2ip - convert a string of dotted decimal to an unsigned integer
+ * dot2ip  -  Convert a string of dotted decimal to an unsigned integer
  *------------------------------------------------------------------------
  */
 uint32	dot2ip (
 	  char	 *dotted,		/* IP address in dotted decimal	*/
-	  uint32 *result		/* location to which binary IP	*/
+	  uint32 *result		/* Location to which binary IP	*/
 					/*    address will be stored	*/
 					/*    (host byte order)		*/
 	)
 {
-	int32	seg;			/* counts segments		*/
-	int32	nch;			/* counts chars within segment	*/
-	char	ch;			/* next character		*/
+	int32	seg;			/* Counts segments		*/
+	int32	nch;			/* Counts chars within segment	*/
+	char	ch;			/* Next character		*/
 	uint32	ipaddr;			/* IP address in binary		*/
-	int32	val;			/* binary value of one segment	*/
+	int32	val;			/* Binary value of one segment	*/
 
-	/* input must have the form  X.X.X.X, where X is 1 to 3 digits	*/
+	/* Input must have the form  X.X.X.X, where X is 1 to 3 digits	*/
 
 	ipaddr = 0;
-	for (seg=0 ; seg<4 ; seg++) {	/* for each segment */
+	for (seg=0 ; seg<4 ; seg++) {    /* For each segment		*/
 	    val = 0;
-	    for (nch=0 ; nch<4; nch++) { /* up to four chars per segment*/
+	    for (nch=0 ; nch<4; nch++) { /* Up to four chars per segment*/
 		ch = *dotted++;
 		if ( (ch==NULLCH) || (ch == '.') ) {
 			if (nch == 0) {
@@ -34,7 +34,7 @@ uint32	dot2ip (
 			}
 		}
 
-		/* too many digits or non-digit is an error */
+		/* Too many digits or non-digit is an error */
 
 		if ( (nch>=3) || (ch<'0') || (ch>'9') ) {
 			return SYSERR;
@@ -42,7 +42,7 @@ uint32	dot2ip (
 		val = 10*val + (ch-'0');
 	    }
 
-	    if (val > 255) {
+	    if (val > 255) {	/* Out of valid range */
 		return SYSERR;
 	    }
 	    ipaddr = (ipaddr << 8) | val;
