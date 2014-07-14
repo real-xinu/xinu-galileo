@@ -3,11 +3,11 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * arp_dump  -  Display the current ARP cache for an interface
+ * arp_dump  -  Display the contents of an RP cache entry
  *------------------------------------------------------------------------
  */
 void	arp_dump(
-	  struct arpentry *arptr	/* Pointer to an ARP cache entry*/
+	  struct arpentry *arptr	/* Pointer to ARP cache entry	*/
 	)
 {
 	int32	i;			/* Index for a MAC address	*/
