@@ -3,16 +3,16 @@
 
 #include <xinu.h>
 
-struct	udpentry udptab[UDP_SLOTS];		/* table of UDP endpts	*/
+struct	udpentry udptab[UDP_SLOTS];	/* Table of UDP endpoints	*/
 
 /*------------------------------------------------------------------------
- * udp_init - initialize UDP endpoint table
+ * udp_init  -  Initialize all entries in the UDP endpoint table
  *------------------------------------------------------------------------
  */
 void	udp_init(void)
 {
 
-	int32	i;			/* table index */
+	int32	i;			/* Index into the UDP table */
 
 	for(i=0; i<UDP_SLOTS; i++) {
 		udptab[i].udstate = UDP_FREE;
@@ -23,19 +23,19 @@ void	udp_init(void)
 
 
 /*------------------------------------------------------------------------
- * udp_in - handle an incoming UDP packet
+ * udp_in  -  Handle an incoming UDP packet
  *------------------------------------------------------------------------
  */
 void	udp_in(
-	  struct netpacket *pktptr	/* ptr to  current packet	*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	int32	i;			/* index into udptab		*/
-	struct	udpentry *udptr;	/* ptr to udptab entry	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	int32	i;			/* Index into udptab		*/
+	struct	udpentry *udptr;	/* Pointer to a udptab entry	*/
 
 
-	/* Insure only one process can access the UDP table at a time	*/
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -77,22 +77,22 @@ void	udp_in(
 }
 
 /*------------------------------------------------------------------------
- * udp_register - register a remote (IP,port) and local (interface, port)
- *		  to receive incoming UDP messages from the specified
- *		  remote site sent to the specified local port
+ * udp_register  -  Register a remote (IP,port) & local (interface, port)
+ *		     to receive incoming UDP messages from the specified
+ *		     remote site sent to the specified local port
  *------------------------------------------------------------------------
  */
 uid32	udp_register (
-	 uint32	remip,			/* remote IP address or zero	*/
-	 uint16	remport,		/* remote UDP protocol port	*/
-	 uint16	locport			/* local UDP protocol port	*/
+	 uint32	remip,			/* Remote IP address or zero	*/
+	 uint16	remport,		/* Remote UDP protocol port	*/
+	 uint16	locport			/* Local UDP protocol port	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	int32	slot;			/* index into udptab		*/
-	struct	udpentry *udptr;	/* pointer to udptab entry	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	int32	slot;			/* Index into udptab		*/
+	struct	udpentry *udptr;	/* Pointer to udptab entry	*/
 
-	/* Insure only one process can access the UDP table at a time	*/
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -110,7 +110,7 @@ uid32	udp_register (
 		     (locport == udptr->udlocport) &&
 		     (remip   == udptr->udremip  ) ) {
 
-			/* Request already in the table */
+			/* Request is already in the table */
 
 			restore(mask);
 			return SYSERR;
@@ -140,25 +140,25 @@ uid32	udp_register (
 }
 
 /*------------------------------------------------------------------------
- * udp_recv - receive a UDP packet
+ * udp_recv  -  Receive a UDP packet
  *------------------------------------------------------------------------
  */
 int32	udp_recv (
-	 uid32	slot,			/* slot in table to use		*/
-	 char   *buff,			/* buffer to hold UDP data	*/
-	 int32	len,			/* length of buffer		*/
-	 uint32	timeout			/* read timeout in msec		*/
+	 uid32	slot,			/* Slot in table to use		*/
+	 char   *buff,			/* Buffer to hold UDP data	*/
+	 int32	len,			/* Length of buffer		*/
+	 uint32	timeout			/* Read timeout in msec		*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	udpentry *udptr;	/* pointer to udptab entry	*/
-	umsg32	msg;			/* message from recvtime()	*/
-	struct	netpacket *pkt;		/* ptr to packet being read	*/
-	int32	i;			/* counts bytes			*/
-	int32	msglen;			/* length of UDP data in packet	*/
-	char	*udataptr;		/* pointer to UDP data		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	udpentry *udptr;	/* Pointer to udptab entry	*/
+	umsg32	msg;			/* Message from recvtime()	*/
+	struct	netpacket *pkt;		/* Pointer to packet being read	*/
+	int32	i;			/* Counts bytes copied		*/
+	int32	msglen;			/* Length of UDP data in packet	*/
+	char	*udataptr;		/* Pointer to UDP data		*/
 
-	/* Insure only one process can access the UDP table at a time */
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -221,27 +221,27 @@ int32	udp_recv (
 }
 
 /*------------------------------------------------------------------------
- * udp_recvaddr - receive a UDP packet and record the sender's address
+ * udp_recvaddr  -  Receive a UDP packet and record the sender's address
  *------------------------------------------------------------------------
  */
 int32	udp_recvaddr (
-	 uid32	slot,			/* slot in table to use		*/
-	 uint32	*remip,			/* loc for remote IP address	*/
-	 uint16	*remport,		/* loc for remote protocol port	*/
-	 char   *buff,			/* buffer to hold UDP data	*/
-	 int32	len,			/* length of buffer		*/
-	 uint32	timeout			/* read timeout in msec		*/
+	 uid32	slot,			/* Slot in table to use		*/
+	 uint32	*remip,			/* Loc for remote IP address	*/
+	 uint16	*remport,		/* Loc for remote protocol port	*/
+	 char   *buff,			/* Buffer to hold UDP data	*/
+	 int32	len,			/* Length of buffer		*/
+	 uint32	timeout			/* Read timeout in msec		*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	udpentry *udptr;	/* pointer to udptab entry	*/
-	umsg32	msg;			/* message from recvtime()	*/
-	struct	netpacket *pkt;		/* ptr to packet being read	*/
-	int32	msglen;			/* length of UDP data in packet	*/
-	int32	i;			/* counts bytes			*/
-	char	*udataptr;		/* pointer to UDP data		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	udpentry *udptr;	/* Pointer to udptab entry	*/
+	umsg32	msg;			/* Message from recvtime()	*/
+	struct	netpacket *pkt;		/* Pointer to packet being read	*/
+	int32	msglen;			/* Length of UDP data in packet	*/
+	int32	i;			/* Counts bytes copied		*/
+	char	*udataptr;		/* Pointer to UDP data		*/
 
-	/* Insure only one process can access the UDP table at a time */
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -310,28 +310,28 @@ int32	udp_recvaddr (
 }
 
 /*------------------------------------------------------------------------
- * udp_send - send a UDP packet using info in a UDP table entry
+ * udp_send  -  Send a UDP packet using info in a UDP table entry
  *------------------------------------------------------------------------
  */
 status	udp_send (
-	 uid32	slot,			/* table slot to use		*/
-	 char   *buff,			/* buffer of UDP data		*/
-	 int32	len			/* length of data in buffer	*/
+	 uid32	slot,			/* Table slot to use		*/
+	 char   *buff,			/* Buffer of UDP data		*/
+	 int32	len			/* Length of data in buffer	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	netpacket *pkt;		/* ptr to packet buffer		*/
-	int32	pktlen;			/* total packet length		*/
-	static	uint16 ident = 1;	/* datagram IDENT field		*/
-	char	*udataptr;		/* pointer to UDP data		*/
-	uint32	remip;			/* remote IP address to use	*/
-	uint16	remport;		/* remote protocol port to use	*/
-	uint16	locport;		/* local protocol port to use	*/
-	uint32	locip;			/* local IP address taken from	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	netpacket *pkt;		/* Pointer to packet buffer	*/
+	int32	pktlen;			/* Total packet length		*/
+	static	uint16 ident = 1;	/* Datagram IDENT field		*/
+	char	*udataptr;		/* Pointer to UDP data		*/
+	uint32	remip;			/* Remote IP address to use	*/
+	uint16	remport;		/* Remote protocol port to use	*/
+	uint16	locport;		/* Local protocol port to use	*/
+	uint32	locip;			/* Local IP address taken from	*/
 					/*   the interface		*/
-	struct	udpentry *udptr;	/* ptr to table entry		*/
+	struct	udpentry *udptr;	/* Pointer to table entry	*/
 
-	/* Insure only one process can access the UDP table at a time */
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -378,7 +378,7 @@ status	udp_send (
 
 	pktlen = ((char *)&pkt->net_udpdata - (char *)pkt) + len;
 
-	/* Create UDP packet in pkt */
+	/* Create a UDP packet in pkt */
 
 	memcpy((char *)pkt->net_ethsrc,NetData.ethucast,ETH_ADDR_LEN);
 	pkt->net_ethtype = 0x0800;	/* Type is IP */
@@ -411,25 +411,25 @@ status	udp_send (
 
 
 /*------------------------------------------------------------------------
- * udp_sendto - send a UDP packet to a specified destination
+ * udp_sendto  -  Send a UDP packet to a specified destination
  *------------------------------------------------------------------------
  */
 status	udp_sendto (
 	 uid32	slot,			/* UDP table slot to use	*/
-	 uint32	remip,			/* remote IP address to use	*/
-	 uint16	remport,		/* remote protocol port to use	*/
-	 char   *buff,			/* buffer of UDP data		*/
-	 int32	len			/* length of data in buffer	*/
+	 uint32	remip,			/* Remote IP address to use	*/
+	 uint16	remport,		/* Remote protocol port to use	*/
+	 char   *buff,			/* Buffer of UDP data		*/
+	 int32	len			/* Length of data in buffer	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	netpacket *pkt;		/* ptr to packet buffer		*/
-	int32	pktlen;			/* total packet length		*/
-	static	uint16 ident = 1;	/* datagram IDENT field		*/
-	struct	udpentry *udptr;	/* prt to UDP table entry	*/
-	char	*udataptr;		/* pointer to UDP data		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	netpacket *pkt;		/* Pointer to a packet buffer	*/
+	int32	pktlen;			/* Total packet length		*/
+	static	uint16 ident = 1;	/* Datagram IDENT field		*/
+	struct	udpentry *udptr;	/* Pointer to a UDP table entry	*/
+	char	*udataptr;		/* Pointer to UDP data		*/
 
-	/* Insure only one process can access the UDP table at a time */
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -474,14 +474,14 @@ status	udp_sendto (
 	pkt->net_ipid = ident++;	/* datagram gets next IDENT	*/
 	pkt->net_ipfrag = 0x0000;	/* IP flags & fragment offset	*/
 	pkt->net_ipttl = 0xff;		/* IP time-to-live		*/
-	pkt->net_ipproto = IP_UDP;	/* datagram carries UDP		*/
-	pkt->net_ipcksum = 0x0000;	/* initial checksum		*/
+	pkt->net_ipproto = IP_UDP;	/* Datagram carries UDP		*/
+	pkt->net_ipcksum = 0x0000;	/* Initial checksum		*/
 	pkt->net_ipsrc = NetData.ipucast;/* IP source address		*/
 	pkt->net_ipdst = remip;		/* IP destination address	*/
 	pkt->net_udpsport = udptr->udlocport;/* local UDP protocol port	*/
 	pkt->net_udpdport = remport;	/* remote UDP protocol port	*/
 	pkt->net_udplen = (uint16)(UDP_HDR_LEN+len); /* UDP length	*/
-	pkt->net_udpcksum = 0x0000;	/* ignore UDP checksum		*/
+	pkt->net_udpcksum = 0x0000;	/* Ignore UDP checksum		*/
 	udataptr = (char *) pkt->net_udpdata;
 	for (; len>0; len--) {
 		*udataptr++ = *buff++;
@@ -496,18 +496,18 @@ status	udp_sendto (
 
 
 /*------------------------------------------------------------------------
- * udp_release - release a previously-registered UDP slot
+ * udp_release  -  Release a previously-registered UDP slot
  *------------------------------------------------------------------------
  */
 status	udp_release (
-	 uid32	slot			/* table slot to release	*/
+	 uid32	slot			/* Table slot to release	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	udpentry *udptr;	/* pointer to udptab entry	*/
-	struct	netpacket *pkt;		/* ptr to packet being read	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	udpentry *udptr;	/* Pointer to udptab entry	*/
+	struct	netpacket *pkt;		/* pointer to packet being read	*/
 
-	/* Insure only one process can access the UDP table at a time */
+	/* Ensure only one process can access the UDP table at a time	*/
 
 	mask = disable();
 
@@ -529,6 +529,8 @@ status	udp_release (
 		return SYSERR;
 	}
 
+	/* Defer rescheduling to prevent freebuf from switching context	*/
+
 	resched_cntl(DEFER_START);
 	while (udptr->udcount > 0) {
 		pkt = udptr->udqueue[udptr->udhead++];
@@ -545,7 +547,7 @@ status	udp_release (
 }
 
 /*------------------------------------------------------------------------
- * udp_ntoh - convert UDP header fields from net to host byte order
+ * udp_ntoh  -  Convert UDP header fields from net to host byte order
  *------------------------------------------------------------------------
  */
 void 	udp_ntoh(
@@ -559,7 +561,7 @@ void 	udp_ntoh(
 }
 
 /*------------------------------------------------------------------------
- * udp_hton - convert packet header fields from host to net byte order
+ * udp_hton  -  Convert packet header fields from host to net byte order
  *------------------------------------------------------------------------
  */
 void 	udp_hton(
