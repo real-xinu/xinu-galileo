@@ -3,14 +3,14 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * arp_dump - display the current ARP cache for an interface
+ * arp_dump  -  Display the current ARP cache for an interface
  *------------------------------------------------------------------------
  */
 void	arp_dump(
-	  struct arpentry *arptr	/* pointer to entry in cache	*/
+	  struct arpentry *arptr	/* Pointer to an ARP cache entry*/
 	)
 {
-	int32	i;			/* index into the ARP table	*/
+	int32	i;			/* Index for a MAC address	*/
 
 	kprintf("State=%d, PID=%d  IP=%08x, HW=", arptr->arstate,
 		arptr->arpid, arptr->arpaddr);
