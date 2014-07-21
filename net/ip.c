@@ -1,20 +1,20 @@
-/* ip.c - ip_in, ip_send, ip_local, ip_out, ip_route, ipcksum, ip_hton,	*/
-/*		ip_ntoh, ipout, ip_enqueue				*/
+/* ip.c - ip_in, ip_send, ip_local, ip_out, ipcksum, ip_hton, ip_ntoh,	*/
+/*		 ipout, ip_enqueue					*/
 
 #include <xinu.h>
 
-struct	iqentry	ipoqueue;
+struct	iqentry	ipoqueue;		/* Queue of outgoing packets	*/
 
 /*------------------------------------------------------------------------
- * ip_in - handle an IP packet that has arrived over a network
+ * ip_in  -  Handle an IP packet that has arrived over a network
  *------------------------------------------------------------------------
  */
 
 void	ip_in(
-	  struct netpacket *pktptr		/* ptr to a packet	*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
-	int32	icmplen;		/* length of ICMP message	*/
+	int32	icmplen;		/* Length of ICMP message	*/
 
 	/* Verify checksum */
 
@@ -42,7 +42,7 @@ void	ip_in(
 	switch (pktptr->net_ipproto) {
 
 	    case IP_UDP:
-		/* skipping UDP checksum for now */
+		/* Skipping UDP checksum for now */
 		udp_ntoh(pktptr);
 		break;
 
@@ -66,8 +66,8 @@ void	ip_in(
 		return;
 	}
 
-	/* If interface does not yet have a valid address, accept	*/
-	/*	UDP packets (DHCP reply) and drop others		*/
+	/* If we do not yet have a valid address, accept UDP packets	*/
+	/*	(to get DHCP replies) and drop others			*/
 
 	if (!NetData.ipvalid) {
 		if (pktptr->net_ipproto == IP_UDP) {
@@ -79,9 +79,7 @@ void	ip_in(
 		}
 	}
 
-	/* For packets that arrive from an Othernet, send to the local	*/
-	/*	stack if they are destined for the machine's interface	*/
-	/*	and send to NAT otherwise				*/
+	/* If packet is destined for us, accept it; otherwise, drop it	*/
 
 	if ( (pktptr->net_ipdst == NetData.ipucast) ||
 	     (pktptr->net_ipdst == NetData.ipbcast) ||
@@ -98,26 +96,26 @@ void	ip_in(
 
 
 /*------------------------------------------------------------------------
- * ip_send - send an outgoing IP datagram from the local stack
+ * ip_send  -  Send an outgoing IP datagram from the local stack
  *------------------------------------------------------------------------
  */
 
 status	ip_send(
-	  struct netpacket *pktptr	/* ptr to packet		*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	uint32	dest;			/* destination of the datagram	*/
-	int32	retval;			/* return value from functions	*/
-	uint32	nxthop;			/* next-hop address		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	uint32	dest;			/* Destination of the datagram	*/
+	int32	retval;			/* Return value from functions	*/
+	uint32	nxthop;			/* Next-hop address		*/
 
 	mask = disable();
 
-	/* Pick up the packet destination */
+	/* Pick up the IP destination address from the packet */
 
 	dest = pktptr->net_ipdst;
 
-	/* Loop back destination 127.0.0.0/8 */
+	/* Loop back to local stack if destination 127.0.0.0/8 */
 
 	if ((dest&0xff000000) == 0x7f000000) {
 		ip_local(pktptr);
@@ -125,7 +123,7 @@ status	ip_send(
 		return OK;
 	}
 
-	/* Loop back the interface IP unicast address */
+	/* Loop back if the destination matches our IP unicast address	*/
 
 	if (dest == NetData.ipucast) {
 		ip_local(pktptr);
@@ -133,7 +131,7 @@ status	ip_send(
 		return OK;
 	}
 
-	/* Broadcast destination 255.255.255.255 */
+	/* Broadcast if destination is 255.255.255.255 */
 
 	if ( (dest == IP_BCAST) ||
 	     (dest == NetData.ipbcast) ) {
@@ -144,7 +142,8 @@ status	ip_send(
 		return retval;
 	}
 
-	/* See if on local network and resolve the IP address */
+	/* If destin. is on the local network, next hop is the destin.	*/
+	/*    otherwise, next hop is default router address		*/
 
 
 	if ( (dest & NetData.ipmask) == NetData.ipprefix) {
@@ -159,7 +158,7 @@ status	ip_send(
 
 	}
 
-	if (nxthop == 0) {	/* dest invalid or no default route	*/
+	if (nxthop == 0) {	/* Destin invalid or no default route	*/
 		freebuf((char *)pktptr);
 		return SYSERR;
 	}
@@ -172,6 +171,8 @@ status	ip_send(
 		return SYSERR;
 	}
 
+	/* Send the packet */
+
 	retval = ip_out(pktptr);
 	restore(mask);
 	return retval;
@@ -179,13 +180,15 @@ status	ip_send(
 
 
 /*------------------------------------------------------------------------
- * ip_local - deliver an IP datagram to the local stack
+ * ip_local  -  Deliver an IP datagram to the local stack
  *------------------------------------------------------------------------
  */
 void	ip_local(
-	  struct netpacket *pktptr	/* ptr to packet		*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
+	/* Use datagram contents to determine how to process */
+
 	switch (pktptr->net_ipproto) {
 
 	    case IP_UDP:
@@ -204,17 +207,17 @@ void	ip_local(
 
 
 /*------------------------------------------------------------------------
- *  ip_out - transmit an outgoing IP datagram
+ *  ip_out  -  Transmit an outgoing IP datagram
  *------------------------------------------------------------------------
  */
 status	ip_out(
-	  struct netpacket *pktptr	/* ptr to packet		*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
-	uint16	cksum;			/* checksum in host byte order	*/
-	int32	len;			/* length of ICMP message	*/	
-	int32	pktlen;			/* length of entire packet	*/
-	int32	retval;			/* value returned by write	*/
+	uint16	cksum;			/* Checksum in host byte order	*/
+	int32	len;			/* Length of ICMP message	*/	
+	int32	pktlen;			/* Length of entire packet	*/
+	int32	retval;			/* Value returned by write	*/
 
 	/* Compute total packet length */
 
@@ -275,89 +278,37 @@ status	ip_out(
 	}
 }
 
-#if 0
 /*------------------------------------------------------------------------
- * ip_route - choose an interface for a given IP address
- *------------------------------------------------------------------------
- */
-int32	ip_route(
-	  uint32 dest			/* destination IP address	*/
-	)
-{
-	struct	ifentry	*ifptr;		/* ptr to interface entry	*/
-	int32	iface;			/* index into interface table	*/
-
-	/* Verify that at least one interface is up */
-
-	if (ifprime < 0) {
-		return SYSERR;
-	}
-
-	/* For 255.255.255.255 return the prime interface */
-
-	if (dest == IP_BCAST) {
-		return ifprime;
-	}
-
-	/* For 127.0.0.0/8 return the prime interface */
-
-	if ( (dest & 0xff000000) == 0x7f000000) {
-		return ifprime;
-	}
-
-	/* Search interface table to see if dest matched a unicast,	*/
-	/*	network brodcast, or network prefix			*/
-
-	for (iface=0; iface<NIFACES; iface++) {
-		ifptr = &if_tab[iface];
-
-		/* verify that interface is up */
-
-		if (ifptr->if_state != IF_UP) {
-			continue;
-		}
-
-		/* See if dest matches network prefix */
-
-		if ( (dest & ifptr->if_ipmask) == ifptr->if_ipprefix) {
-			return iface;
-		}
-	}
-
-	/* If no default router, report error */
-
-	if (if_tab[ifprime].if_iprouter == 0) {
-		return SYSERR;
-	}
-
-	/* Report prime interface */
-
-	return ifprime;
-}
-#endif
-
-/*------------------------------------------------------------------------
- * ipcksum - compute the IP header checksum for a datagram
+ * ipcksum  -  Compute the IP header checksum for a datagram
  *------------------------------------------------------------------------
  */
 
 uint16	ipcksum(
-	 struct  netpacket *pkt		/* ptr to a packet		*/
+	 struct  netpacket *pkt		/* Pointer to the packet	*/
 	)
 {
-	uint16	*hptr;			/* ptr to 16-bit header values	*/
-	int32	i;			/* counts 16-bit values in hdr	*/
-	uint16	word;			/* one 16-bit word		*/
-	uint32	cksum;			/* computed value of checksum	*/
+	uint16	*hptr;			/* Ptr to 16-bit header values	*/
+	int32	i;			/* Counts 16-bit values in hdr	*/
+	uint16	word;			/* One 16-bit word		*/
+	uint32	cksum;			/* Computed value of checksum	*/
 
 	hptr= (uint16 *) &pkt->net_ipvh;
+
+	/* Sum 16-bit words in the packet */
+
 	cksum = 0;
 	for (i=0; i<10; i++) {
 		word = *hptr++;
 		cksum += (uint32) htons(word);
 	}
+
+	/* Add in carry, and take the ones-complement */
+
 	cksum += (cksum >> 16);
 	cksum = 0xffff & ~cksum;
+
+	/* Use all-1s for zero */
+
 	if (cksum == 0xffff) {
 		cksum = 0;
 	}
@@ -366,7 +317,7 @@ uint16	ipcksum(
 
 
 /*------------------------------------------------------------------------
- * ip_ntoh - convert IP header fields to host byte order
+ * ip_ntoh  -  Convert IP header fields to host byte order
  *------------------------------------------------------------------------
  */
 void 	ip_ntoh(
@@ -381,7 +332,7 @@ void 	ip_ntoh(
 }
 
 /*------------------------------------------------------------------------
- * ip_hton - convert IP header fields to network byte order
+ * ip_hton  -  Convert IP header fields to network byte order
  *------------------------------------------------------------------------
  */
 void 	ip_hton(
@@ -397,17 +348,17 @@ void 	ip_hton(
 
 
 /*------------------------------------------------------------------------
- *  ipout - process that transmits IP packets from the IP output queue
+ *  ipout  -  Process that transmits IP packets from the IP output queue
  *------------------------------------------------------------------------
  */
 
 process	ipout(void)
 {
-	struct	netpacket *pktptr;	/* ptr to next packet		*/
-	struct	iqentry   *ipqptr;	/* ptr to IP output queue	*/
-	uint32	destip;			/* destination IP address	*/
-	uint32	nxthop;			/* next hop IP address		*/
-	int32	retval;			/* value returned by functions	*/
+	struct	netpacket *pktptr;	/* Pointer to next the packet	*/
+	struct	iqentry   *ipqptr;	/* Pointer to IP output queue	*/
+	uint32	destip;			/* Destination IP address	*/
+	uint32	nxthop;			/* Next hop IP address		*/
+	int32	retval;			/* Value returned by functions	*/
 
 	ipqptr = &ipoqueue;
 
@@ -439,7 +390,7 @@ process	ipout(void)
 			continue;
 		}
 
-		/* Check whether destination is the local interface */
+		/* Check whether destination is the local computer */
 
 		if (destip == NetData.ipucast) {
 			ip_local(pktptr);
@@ -460,10 +411,12 @@ process	ipout(void)
 			nxthop = NetData.iprouter;
 		}
 
-		if (nxthop == 0) {  /* dest invalid or no default route */
+		if (nxthop == 0) {  /* Dest. invalid or no default route*/
 			freebuf((char *)pktptr);
 			continue;
 		}
+
+		/* Use ARP to resolve next-hop address */
 
 		retval = arp_resolve(nxthop, pktptr->net_ethdst);
 		if (retval != OK) {
@@ -471,23 +424,25 @@ process	ipout(void)
 			continue;
 		}
 
+		/* Use ipout to Convert byte order and send */
+ 
 		ip_out(pktptr);
 	}
 }
 
 
 /*------------------------------------------------------------------------
- *  ip_enqueue - deposit an outgoing IP datagram on the IP output queue
+ *  ip_enqueue  -  Deposit an outgoing IP datagram on the IP output queue
  *------------------------------------------------------------------------
  */
 status	ip_enqueue(
-	  struct netpacket *pktptr	/* ptr to packet		*/
+	  struct netpacket *pktptr	/* Pointer to the packet	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	iqentry	*iptr;		/* ptr to network output queue	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	iqentry	*iptr;		/* Ptr. to network output queue	*/
 
-	/* Insure only one process accesses output queue at a time */
+	/* Ensure only one process accesses output queue at a time */
 
 	mask = disable();
 

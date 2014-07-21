@@ -105,9 +105,9 @@ static	void	sysinit()
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
 	struct	sentry	*semptr;	/* Prr to semaphore table entry	*/
 
-	/* Remove Isolated Memory Region protections. */
-	
-	remove_irm_protections();
+	/* Platform Specific Initialization */
+
+	platinit();
 
 	/* Initialize the interrupt vectors */
 
@@ -165,15 +165,6 @@ static	void	sysinit()
 
 	readylist = newqueue();
 
-	/* Read the BIOS-provided ACPI data */
-	
-	acpi_scan();
-
-	/* Initialize the PCI bus */
-
-	pci_init();
-	quark_irq_routing();
-	
 	/* Initialize the real time clock */
 
 	clkinit();

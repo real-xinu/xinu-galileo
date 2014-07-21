@@ -76,67 +76,6 @@ extern	intmask	disable(void);
 
 extern	void	enable(void);
 
-/* in file 3c905C_cmd.c */
-
-status 	_3c905C_cmd(struct ether *, uint16, uint16);
-uint8 	_3c905C_win_read8(struct ether *, uint16, uint16);
-uint16 	_3c905C_win_read16(struct ether *, uint16, uint16);
-uint32 	_3c905C_win_read32(struct ether *, uint16, uint16);
-void 	_3c905C_win_write8(struct ether *, uint8, uint16, uint16);
-void 	_3c905C_win_write16(struct ether *, uint16, uint16, uint16);
-void 	_3c905C_win_write32(struct ether *, uint32, uint16, uint16);
-
-/* in file 3c905C_cntl.c */
-
-extern 	devcall _3c905C_cntl(struct ether *, int32, int32, int32);
-
-/* in file 3c905C_init.c */
-
-extern 	void 	_3c905C_init(struct ether *ethptr);
-
-/* in file 3c905C_intr.c */
-
-extern  interrupt 	_3c905C_intr(struct ether *ethptr);
-
-/* in file 3c905C_open.c */
-
-extern 	status 	_3c905C_open(struct ether *ethptr);
-
-/* in file 3c905C_read.c */
-
-extern  devcall _3c905C_read(struct ether *ethptr, void *buf, uint32 len);
-
-/* in file 3c905C_write.c */
-
-extern 	devcall _3c905C_write(struct ether *ethptr, void *buf, uint32 len);
-
-/* in file e1000e_cmd.c */
-
-extern 	void 	e1000e_irq_enable(struct ether 	*ethptr);
-extern 	void 	e1000e_irq_disable(struct ether *ethptr);
-
-/* in file e1000e_cntl.c */
-
-extern 	devcall e1000e_cntl(struct ether *, int32, int32, int32);
-
-/* in file e1000e_init.c */
-extern 	void 	e1000e_init(struct ether *ethptr);
-
-/* in file e1000e_rar_set.c */
-extern 	void 	e1000e_rar_set(struct ether *ethptr, byte*, uint32);
-
-/* in file e1000e_intr.c */
-extern  interrupt 	e1000e_intr(struct ether *ethptr);
-
-/* in file e1000e_open.c */
-extern 	status 	e1000e_open(struct ether *ethptr);
-
-/* in file e1000e_read.c */
-extern  devcall e1000e_read(struct ether *ethptr, void *buf, uint32 len);
-
-/* in file e1000e_write.c */
-extern 	devcall e1000e_write(struct ether *ethptr, void *buf, uint32 len);
-
 /* in file quark_eth_init.c */
 extern 	void	quark_eth_init(struct ether *ethptr);
 
@@ -272,18 +211,6 @@ extern	void	ip_hton(struct netpacket *);
 extern	process	ipout(void);
 extern	status	ip_enqueue(struct netpacket *);
 
-/* in file nat.c */
-
-extern	void	nat_init(void);
-extern	void	nat_in(struct netpacket *);
-extern	void	nat_out(struct netpacket *);
-extern	void	nat_in_udp(struct netpacket *);
-extern	void	nat_out_udp(struct netpacket *);
-extern	uint16	nat_genuport(struct nuentry *);
-extern	void	nat_in_icmp(struct netpacket *);
-extern	void	nat_out_icmp(struct netpacket *);
-extern	uint16	nat_genicmpid(struct nientry *);
-
 /* in file net.c */
 
 extern	void	net_init(void);
@@ -292,10 +219,6 @@ extern	process	netout(void);
 extern	process	rawin(void);
 extern	void	eth_hton(struct netpacket *);
 extern	void	eth_ntoh(struct netpacket *);
-
-/* in file netiface.c */
-
-extern	void	netiface_init(void);
 
 /* in file netstart.c */
 
@@ -393,7 +316,8 @@ extern	devcall	lpread(struct dentry *, char *, int32);
 extern	devcall	lpwrite(struct dentry *, char *, int32);
 
 /* in file mark.c */
-extern	void	_mkinit(void);
+extern	void	markinit(void);
+extern	status	mark(int32 *);
 
 /* in file memcpy.c */
 extern	void	*memcpy(void *, const void *, int32);
@@ -437,6 +361,9 @@ extern	int32	pci_init(void);
 /* in file pdump.c */
 extern	void	pdump(struct netpacket *);
 extern	void	pdumph(struct netpacket *);
+
+/* in file platinit.c */
+extern	void	platinit();
 
 /* in file ptclear.c */
 extern	void	_ptclear(struct ptentry *, uint16, int32 (*)(int32));

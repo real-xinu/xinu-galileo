@@ -3,15 +3,15 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyPutc - write one character to a tty device (interrupts disabled)
+ *  ttyPutc  -  Write one character to a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
 devcall	ttyPutc(
-	struct	dentry	*devptr,	/* entry in device switch table	*/
-	char	ch			/* character to write		*/
+	struct	dentry	*devptr,	/* Entry in device switch table	*/
+	char	ch			/* Character to write		*/
 	)
 {
-	struct	ttycblk	*typtr;		/* pointer to tty control block	*/
+	struct	ttycblk	*typtr;		/* Pointer to tty control block	*/
 
 	typtr = &ttytab[devptr->dvminor];
 
@@ -21,7 +21,7 @@ devcall	ttyPutc(
                 ttyPutc(devptr, TY_RETURN);
 	}
 
-	wait(typtr->tyosem);		/* wait	for space in queue */
+	wait(typtr->tyosem);		/* Wait	for space in queue */
 	*typtr->tyotail++ = ch;
 
 	/* Wrap around to beginning of buffer, if needed */

@@ -3,20 +3,20 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyRead - read character(s) from a tty device (interrupts disabled)
+ *  ttyRead  -  Read character(s) from a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
 devcall	ttyRead(
-	  struct dentry	*devptr,	/* entry in device switch table	*/
-	  char	*buff,			/* buffer of characters		*/
-	  int32	count 			/* count of character to read	*/
+	  struct dentry	*devptr,	/* Entry in device switch table	*/
+	  char	*buff,			/* Buffer of characters		*/
+	  int32	count 			/* Count of character to read	*/
 	)
 {
-	struct	ttycblk	*typtr;		/* pointer to tty control block	*/
-	int32	avail;			/* characters available in buff.*/
-	int32	nread;			/* number of characters read	*/
-	int32	firstch;		/* first input character on line*/
-	char	ch;			/* next input character		*/
+	struct	ttycblk	*typtr;		/* Pointer to tty control block	*/
+	int32	avail;			/* Characters available in buff.*/
+	int32	nread;			/* Number of characters read	*/
+	int32	firstch;		/* First input character on line*/
+	char	ch;			/* Next input character		*/
 
 	if (count < 0) {
 		return SYSERR;
@@ -51,7 +51,7 @@ devcall	ttyRead(
 		return (EOF);
 	}
 
-	/* read up to a line */
+	/* Read up to a line */
 
 	ch = (char) firstch;
 	*buff++ = ch;

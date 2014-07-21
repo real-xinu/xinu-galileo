@@ -18,7 +18,6 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 	int32	slot;			/* UDP slot to use		*/
 	int32	msglen;			/* length of outgoing message	*/
 	uint32	remoteip;		/* remote IP address to use	*/
-	int32	iface;			/* interface for remote IP addr	*/
 	uint32	localip;		/* local IP address to use	*/
 	uint16	echoport= 7;		/* port number for UDP echo	*/
 	uint16	locport	= 52743;	/* local port to use		*/
@@ -51,7 +50,7 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 			args[0]);
 		return 1;
 	}
-
+	/*
 	localip = getlocalip();
 	if (localip == SYSERR) {
 		fprintf(stderr,
@@ -59,19 +58,11 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 			args[0]);
 		return 1;
 	}
-
-	/* Find the interface for the remote address */
-
-	iface = ip_route(remoteip);
-	if (iface == SYSERR) {
-		fprintf(stderr, "%s: cannot route to %s\n",
-						args[0], args[1]);
-		return 1;
-	}
+	*/
 
 	/* register local UDP port */
 
-	slot = udp_register(iface, remoteip, echoport, locport);
+	slot = udp_register(remoteip, echoport, locport);
 	if (slot == SYSERR) {
 		fprintf(stderr, "%s: could not reserve UDP port %d\n",
 				args[0], locport);

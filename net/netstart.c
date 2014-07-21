@@ -1,26 +1,21 @@
 /* netstart.c - netstart */
 
 #include <xinu.h>
-#include <stdio.h>
 
 /*------------------------------------------------------------------------
- * netstart - initialize network and run DHCP to get IP address
+ * netstart  -  Initialize network and run DHCP to get an IP address
  *------------------------------------------------------------------------
  */
 
 void	netstart (void)
 {
-	uint32	ipaddr;			/* IP address on interface 0	*/
+	uint32	ipaddr;			/* IP address			*/
 
-	/* Initialize network interfaces */
+	/* Initialize the network stack */
 
 	kprintf("...initializing network stack\n");
 	net_init();
 
-	/* Delay because Ethernet driver doesn't work without it */
-
-	//sleepms(800);
-	
 	/* Force system to use DHCP to obtain an address */
 
 	kprintf("...using dhcp to obtain an IP address\n");

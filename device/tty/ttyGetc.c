@@ -3,22 +3,22 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyGetc - read one character from a tty device (interrupts disabled)
+ *  ttyGetc  -  Read one character from a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
 devcall	ttyGetc(
-	  struct dentry	*devptr		/* entry in device switch table	*/
+	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
 	char	ch;
-	struct	ttycblk	*typtr;		/* pointer to ttytab entry	*/
+	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/
 
 	typtr = &ttytab[devptr->dvminor];
 
 	/* Wait for a character in the buffer */
 
 	wait(typtr->tyisem);
-	ch = *typtr->tyihead++;		/* extract one character	*/
+	ch = *typtr->tyihead++;		/* Extract one character	*/
 
 	/* Wrap around to beginning of buffer, if needed */
 
