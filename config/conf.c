@@ -59,5 +59,12 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)ramInit, (void *)ramOpen, (void *)ramClose,
 	  (void *)ramRead, (void *)ramWrite, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
-	  (void *)0x0, (void *)ionull, 0 }
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* SDMC is sdmc */
+	{ 6, 0, "SDMC",
+	  (void *)sdmcInit, (void *)sdmcOpen, (void *)sdmcClose,
+	  (void *)sdmcRead, (void *)sdmcWrite, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)0x0, (void *)sdmcDispatch, 0 }
 };

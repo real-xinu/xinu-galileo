@@ -147,6 +147,7 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/device/eth					\
 		-s $(TOPDIR)/device/rds					\
 		-s $(TOPDIR)/device/ram					\
+		-s $(TOPDIR)/device/sdmc				\
 		-s $(TOPDIR)/net  'arp_dump*' 'netiface*' 'nat*'				\
 		-s $(TOPDIR)/shell  'xsh_rdstest*' 'xsh_udpecho*' 'xsh_ipaddr*' 'xsh_bingid*' > .defs
 

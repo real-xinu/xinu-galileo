@@ -53,3 +53,35 @@ struct sdmc_csreg {
 };
 
 /* Individual Bits in Control and Status Registers	*/
+
+/* Normal Interrupt Status Enable */
+
+#define SDMC_CMD_COMP_STAT_EN		0x0001	/* Command Complete Status Enable 	*/
+#define SDMC_TX_COMP_STAT_EN		0x0002	/* Transfer Complete Status Enable	*/
+#define SDMC_BLK_GAP_EVENT_STAT_EN	0x0004	/* Block Gap Event Status Enable	*/
+#define SDMC_DMA_INT_STAT_EN		0x0008	/* DMA Interrupt Status Enable		*/
+#define SDMC_BUF_WR_RDY_STAT_EN		0x0010	/* Buffer Write Ready Status Enable	*/
+#define SDMC_BUF_RD_RDY_STAT_EN		0x0020	/* Buffer Read Ready Status Enable	*/
+#define SDMC_CRD_INS_STAT_EN		0x0040	/* Card Insertion Status Enable		*/
+#define SDMC_CRD_RMV_STAT_EN		0x0080	/* Card Removal Status Enable		*/
+#define SDMC_CRD_INT_STAT_EN		0x0100	/* Card Interrupt Status Enable		*/
+#define SDMC_INT_A_STAT_EN		0x0200	/* INT_A Status Enable			*/
+#define SDMC_INT_B_STAT_EN		0x0400	/* INT_A Status Enable			*/
+#define SDMC_INT_C_STAT_EN		0x0800	/* INT_A Status Enable			*/
+#define SDMC_RE_TUNE_STAT_EN		0x1000	/* Re-Tuning Event Status Enable	*/
+
+/* Normal Interrupt Signal Enable */
+
+#define SDMC_CMD_COMP_SIG_EN		0x0001	/* Command Complete Status Enable 	*/
+#define SDMC_TX_COMP_SIG_EN		0x0002	/* Transfer Complete Status Enable	*/
+#define SDMC_BLK_GAP_EVENT_SIG_EN	0x0004	/* Block Gap Event Status Enable	*/
+#define SDMC_DMA_INT_SIG_EN		0x0008	/* DMA Interrupt Status Enable		*/
+#define SDMC_BUF_WR_RDY_SIG_EN		0x0010	/* Buffer Write Ready Status Enable	*/
+#define SDMC_BUF_RD_RDY_SIG_EN		0x0020	/* Buffer Read Ready Status Enable	*/
+#define SDMC_CRD_INS_SIG_EN		0x0040	/* Card Insertion Status Enable		*/
+#define SDMC_CRD_RMV_SIG_EN		0x0080	/* Card Removal Status Enable		*/
+#define SDMC_CRD_INT_SIG_EN		0x0100	/* Card Interrupt Status Enable		*/
+#define SDMC_INT_A_SIG_EN		0x0200	/* INT_A Status Enable			*/
+#define SDMC_INT_B_SIG_EN		0x0400	/* INT_A Status Enable			*/
+#define SDMC_INT_C_SIG_EN		0x0800	/* INT_A Status Enable			*/
+#define SDMC_RE_TUNE_SIG_EN		0x1000	/* Re-Tuning Event Status Enable	*/
