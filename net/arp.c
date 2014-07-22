@@ -42,7 +42,7 @@ status	arp_resolve (
 
 	/* Use MAC broadcast address for IP network broadcast */
 
-	if (nxthop == NetData.ipbcast) {/* Set MAC address to b-cast */
+	if (nxthop == NetData.ipbcast) {
 		memcpy(mac, NetData.ethbcast, ETH_ADDR_LEN);
 		return OK;
 	}
@@ -50,6 +50,8 @@ status	arp_resolve (
 	/* Insure only one process uses ARP at a time */
 
 	mask = disable();
+
+	/* See if next hop address is already present in ARP cache */
 
 	for (i=0; i<ARP_SIZ; i++) {
 		arptr = &arpcache[i];
@@ -61,7 +63,7 @@ status	arp_resolve (
 		}
 	}
 
-	if (i < ARP_SIZ) {	/* entry was found */
+	if (i < ARP_SIZ) {	/* Entry was found */
 
 		/* If entry is resolved - handle and return */
 
@@ -136,7 +138,7 @@ status	arp_resolve (
 	/* If no response, return TIMEOUT */
 
 	if (msg == TIMEOUT) {
-		arptr->arstate = AR_FREE;   /* invalidate cache entry */
+		arptr->arstate = AR_FREE;   /* Invalidate cache entry */
 		restore(mask);
 		return TIMEOUT;
 	}
@@ -317,7 +319,7 @@ int32	arp_alloc ()
 		}
 	}
 
-	/* At this point, all slots are pending */
+	/* At this point, all slots are pending (should not happen) */
 
 	kprintf("ARP cache size exceeded\n");
 
