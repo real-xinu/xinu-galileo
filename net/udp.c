@@ -77,9 +77,9 @@ void	udp_in(
 }
 
 /*------------------------------------------------------------------------
- * udp_register  -  Register a remote (IP,port) & local (interface, port)
- *		     to receive incoming UDP messages from the specified
- *		     remote site sent to the specified local port
+ * udp_register  -  Register a remote IP, remote port & local port to
+ *		      receive incoming UDP messages from the specified
+ *		      remote site sent to the specified local port
  *------------------------------------------------------------------------
  */
 uid32	udp_register (
@@ -381,22 +381,22 @@ status	udp_send (
 	/* Create a UDP packet in pkt */
 
 	memcpy((char *)pkt->net_ethsrc,NetData.ethucast,ETH_ADDR_LEN);
-	pkt->net_ethtype = 0x0800;	/* Type is IP */
+	pkt->net_ethtype = 0x0800;	/* Type is IP			*/
 	pkt->net_ipvh = 0x45;		/* IP version and hdr length	*/
 	pkt->net_iptos = 0x00;		/* Type of service		*/
-	pkt->net_iplen= pktlen - ETH_HDR_LEN;/* total IP datagram length*/
-	pkt->net_ipid = ident++;	/* datagram gets next IDENT	*/
+	pkt->net_iplen= pktlen - ETH_HDR_LEN;/* Total IP datagram length*/
+	pkt->net_ipid = ident++;	/* Datagram gets next IDENT	*/
 	pkt->net_ipfrag = 0x0000;	/* IP flags & fragment offset	*/
 	pkt->net_ipttl = 0xff;		/* IP time-to-live		*/
-	pkt->net_ipproto = IP_UDP;	/* datagram carries UDP		*/
+	pkt->net_ipproto = IP_UDP;	/* Datagram carries UDP		*/
 	pkt->net_ipcksum = 0x0000;	/* initial checksum		*/
 	pkt->net_ipsrc = locip;		/* IP source address		*/
 	pkt->net_ipdst = remip;		/* IP destination address	*/
 
-	pkt->net_udpsport = locport;	/* local UDP protocol port	*/
-	pkt->net_udpdport = remport;	/* remote UDP protocol port	*/
+	pkt->net_udpsport = locport;	/* Local UDP protocol port	*/
+	pkt->net_udpdport = remport;	/* Remote UDP protocol port	*/
 	pkt->net_udplen = (uint16)(UDP_HDR_LEN+len); /* UDP length	*/
-	pkt->net_udpcksum = 0x0000;	/* ignore UDP checksum		*/
+	pkt->net_udpcksum = 0x0000;	/* Ignore UDP checksum		*/
 	udataptr = (char *) pkt->net_udpdata;
 	for (; len>0; len--) {
 		*udataptr++ = *buff++;
@@ -471,7 +471,7 @@ status	udp_sendto (
 	pkt->net_ipvh = 0x45;		/* IP version and hdr length	*/
 	pkt->net_iptos = 0x00;		/* Type of service		*/
 	pkt->net_iplen= pktlen - ETH_HDR_LEN;/* total IP datagram length*/
-	pkt->net_ipid = ident++;	/* datagram gets next IDENT	*/
+	pkt->net_ipid = ident++;	/* Datagram gets next IDENT	*/
 	pkt->net_ipfrag = 0x0000;	/* IP flags & fragment offset	*/
 	pkt->net_ipttl = 0xff;		/* IP time-to-live		*/
 	pkt->net_ipproto = IP_UDP;	/* Datagram carries UDP		*/
@@ -479,7 +479,7 @@ status	udp_sendto (
 	pkt->net_ipsrc = NetData.ipucast;/* IP source address		*/
 	pkt->net_ipdst = remip;		/* IP destination address	*/
 	pkt->net_udpsport = udptr->udlocport;/* local UDP protocol port	*/
-	pkt->net_udpdport = remport;	/* remote UDP protocol port	*/
+	pkt->net_udpdport = remport;	/* Remote UDP protocol port	*/
 	pkt->net_udplen = (uint16)(UDP_HDR_LEN+len); /* UDP length	*/
 	pkt->net_udpcksum = 0x0000;	/* Ignore UDP checksum		*/
 	udataptr = (char *) pkt->net_udpdata;
