@@ -44,10 +44,10 @@ struct	dhcpmsg	{
 	uint32	dc_gip;			/* DHCP gateway IP address	*/
 	byte	dc_chaddr[16];		/* DHCP client hardware address	*/
 	union {
-		byte	dc_bootp[192];		/* DHCP bootp area (zero)	*/
+		byte	dc_bootp[192];	/* DHCP bootp area (zero)	*/
 		struct {
-			byte   sname[64];       /* TFTP Server Name         */
-			byte   bootfile[128];   /* TFTP File name           */
+			byte   sname[64];	/* TFTP Server Name	*/
+			byte   bootfile[128];	/* TFTP File name	*/
 		};
 	};
 	uint32	dc_cookie;		/* DHCP cookie			*/
@@ -56,9 +56,3 @@ struct	dhcpmsg	{
 					/*  reasonable options		*/
 };
 #pragma pack()
-
-void dump_dhcp_msg(const struct dhcpmsg* dmsg, uint32 dmsg_size);
-int32 build_dhcp_discover(struct dhcpmsg* dmsg);
-int32 build_dhcp_request(struct dhcpmsg* dmsg, const struct dhcpmsg* dmsg_offer, uint32 dsmg_offer_size);
-
-extern	bpid32	netbufpool;		/* ID of net packet buffer pool	*/

@@ -15,9 +15,9 @@ void	clkinit(void)
 {
 	uint16	intv;		/* Clock rate in KHz			*/
 
-	/* Set interrupt vector for clock to invoke clkint */
+	/* Set interrupt vector for clock to invoke clkdisp */
 
-	set_evec(IRQBASE, (uint32)clkint);
+	set_evec(IRQBASE, (uint32)clkdisp);
 
 	/* Clock rate is 1.190 Mhz; this is 1 ms interrupt rate */
 
@@ -28,8 +28,6 @@ void	clkinit(void)
 	preempt = QUANTUM;	/* Initial time quantum			*/
 
 	/* Specify that seepq is initially empty */
-
-	//slnonempty = FALSE;
 
 	clktime = 0;		/* Start counting seconds		*/
 

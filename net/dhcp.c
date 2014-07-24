@@ -9,7 +9,11 @@
  *				specified DHCP options key 
  *------------------------------------------------------------------------
  */
-char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 option_key) 
+char*	get_dhcp_option_value (
+	  const struct dhcpmsg* dmsg,		/* DHCP message		*/
+	  uint32 dmsg_size,			/* Message size		*/
+	  uint8 option_key			/* Option to retrieve	*/
+	)
 {
 	unsigned char* opt_tmp;
 	unsigned char* eom;
@@ -23,7 +27,8 @@ char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 
 
 		if((*opt_tmp) == option_key) {
 	
-			/* Offset past the option value and the size (2 bytes) */
+			/* Offset past the option value and the 2-byte	*/
+			/*	size field				*/
 			return (char*)(opt_tmp+2);  
 		}
 	
@@ -37,57 +42,57 @@ char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 
 }
 
 /*------------------------------------------------------------------------
- * build_dhcp_discover  -  handcraft a DHCP Discover message in dmsg 
+ * build_dhcp_discover  -  Handcraft a DHCP Discover message in dmsg 
  *------------------------------------------------------------------------
  */
 int32 build_dhcp_discover(struct dhcpmsg* dmsg) 
 {
 	uint32  j;
-	uint32	xid;			/* xid used for the exchange	*/
+	uint32	xid;			/* Xid used for the exchange	*/
 		
 	memcpy(&xid, NetData.ethucast, 4); /* Use 4 bytes from MAC as	*/
 					   /*    unique XID		*/
 	memset(dmsg, 0x00, sizeof(struct dhcpmsg));
 	
 	dmsg->dc_bop = 0x01;	     	/* Outgoing request		*/
-	dmsg->dc_htype = 0x01;		/* hardware type is Ethernet	*/
-	dmsg->dc_hlen = 0x06;		/* hardware address length	*/
+	dmsg->dc_htype = 0x01;		/* Hardware type is Ethernet	*/
+	dmsg->dc_hlen = 0x06;		/* Hardware address length	*/
 	dmsg->dc_hops = 0x00;		/* Hop count			*/
-	dmsg->dc_xid = htonl(xid);	/* xid (unique ID)		*/
-	dmsg->dc_secs = 0x0000;		/* seconds			*/
-	dmsg->dc_flags = 0x0000;	/* flags			*/
+	dmsg->dc_xid = htonl(xid);	/* Xid (unique ID)		*/
+	dmsg->dc_secs = 0x0000;		/* Seconds			*/
+	dmsg->dc_flags = 0x0000;	/* Flags			*/
 	dmsg->dc_cip = 0x00000000;	/* Client IP address		*/
 	dmsg->dc_yip = 0x00000000;	/* Your IP address		*/
 	dmsg->dc_sip = 0x00000000;	/* Server IP address		*/
 	dmsg->dc_gip = 0x00000000;	/* Gateway IP address		*/
 	memset(&dmsg->dc_chaddr,'\0',16);/* Client hardware address	*/
 	memcpy(&dmsg->dc_chaddr, NetData.ethucast, ETH_ADDR_LEN);
-	memset(&dmsg->dc_bootp,'\0',192);/* zero the bootp area		*/
+	memset(&dmsg->dc_bootp,'\0',192);/* Zero the bootp area		*/
 	dmsg->dc_cookie = htonl(0x63825363); /* Magic cookie for DHCP	*/
 	
 	j = 0;
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* DHCP Dicover message		*/
 	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
 
 	dmsg->dc_opt[j++] = 0xff & 55;	/* DHCP parameter request list	*/
-	dmsg->dc_opt[j++] = 0xff &  2;	/* option length		*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* request subnet mask 		*/
-	dmsg->dc_opt[j++] = 0xff &  3;	/* request default router addr->*/
+	dmsg->dc_opt[j++] = 0xff &  2;	/* Option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Request subnet mask 		*/
+	dmsg->dc_opt[j++] = 0xff &  3;	/* Request default router addr->*/
 
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }
 
 /*------------------------------------------------------------------------
- * build_dhcp_request - handcraft a DHCP request message in dmsg 
+ * build_dhcp_request - Handcraft a DHCP request message in dmsg 
  *------------------------------------------------------------------------
  */
 int32 build_dhcp_request(struct dhcpmsg* dmsg,
 		const struct dhcpmsg* dmsg_offer, uint32 dsmg_offer_size) 
 {
 	uint32  j;
-	uint32	xid;			/* xid used for the exchange	*/
+	uint32	xid;			/* Xid used for the exchange	*/
 	uint32* server_ip;        	/* Take the DHCP server IP addr	*/
 					/*   from DHCP offer message	*/
 
@@ -96,12 +101,12 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
 	memset(dmsg, 0x00, sizeof(struct dhcpmsg));
 	
 	dmsg->dc_bop = 0x01;	     	/* Outgoing request		*/
-	dmsg->dc_htype = 0x01;		/* hardware type is Ethernet	*/
-	dmsg->dc_hlen = 0x06;		/* hardware address length	*/
+	dmsg->dc_htype = 0x01;		/* Hardware type is Ethernet	*/
+	dmsg->dc_hlen = 0x06;		/* Hardware address length	*/
 	dmsg->dc_hops = 0x00;		/* Hop count			*/
-	dmsg->dc_xid = htonl(xid);	/* xid (unique ID)		*/
-	dmsg->dc_secs = 0x0000;		/* seconds			*/
-	dmsg->dc_flags = 0x0000;	/* flags			*/
+	dmsg->dc_xid = htonl(xid);	/* Xid (unique ID)		*/
+	dmsg->dc_secs = 0x0000;		/* Seconds			*/
+	dmsg->dc_flags = 0x0000;	/* Flags			*/
 	dmsg->dc_cip = 0x00000000; 	/* Client IP address		*/
 	dmsg->dc_yip = 0x00000000;	/* Your IP address		*/
 	dmsg->dc_sip = dmsg_offer->dc_sip; /* Server IP address		*/
@@ -123,6 +128,7 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
 	j += 4;
 	
 	/* Retrieve the DHCP server IP from the DHCP options */
+
 	server_ip = (uint32*)get_dhcp_option_value(dmsg_offer,
 				    dsmg_offer_size, DHCP_SERVER_ID);
 	
@@ -132,7 +138,7 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
 	}
 	
 	dmsg->dc_opt[j++] = 0xff & 54;	/* Server IP			*/
-	dmsg->dc_opt[j++] = 0xff &  4;	/* option length		*/
+	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
 	*((uint32*)&dmsg->dc_opt[j]) = *server_ip;
 	j += 4;
 
@@ -140,7 +146,7 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
 }
 
 /*------------------------------------------------------------------------
- * getlocalip - use DHCP to obtain an IP address
+ * getlocalip  -  Use DHCP to obtain an IP address
  *------------------------------------------------------------------------
  */
 uint32	getlocalip(void)
@@ -149,7 +155,7 @@ uint32	getlocalip(void)
 }
 
 /*------------------------------------------------------------------------
- * getlocalip_boot - use DHCP to obtain an IP address
+ * getlocalip_boot  -  Use DHCP to obtain an IP address
  *------------------------------------------------------------------------
  */
 uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
@@ -167,7 +173,7 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 	uint32	addrmask;		/* Address mask for network	*/
 	uint32	routeraddr;		/* Default router address	*/
 	uint32	tmp;			/* Used for byte conversion	*/
-	uint32* tmp_server_ip;  /* temp DHCP server pointer */
+	uint32* tmp_server_ip;		/* Temp DHCP server pointer	*/
 
 	slot = udp_register(0, UDP_DHCP_SPORT, UDP_DHCP_CPORT);
 	if (slot == SYSERR) {
@@ -230,9 +236,11 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 			}
 
 			if (msgtype == 0x02) {	/* Offer - send request	*/
-				len = build_dhcp_request(&dmsg_snd, &dmsg_rvc, inlen);
+				len = build_dhcp_request(&dmsg_snd,
+						&dmsg_rvc, inlen);
 				if(len == SYSERR) {
-					kprintf("getlocalip: Unable to build DHCP request\n");
+					kprintf("getlocalip: %s\n",
+						"Cannot build DHCP req");
 					return SYSERR;
 				}
 				udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,

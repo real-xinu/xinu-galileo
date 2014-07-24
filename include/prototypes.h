@@ -34,9 +34,9 @@ extern	interrupt clkhandler(void);
 
 extern	void	clkinit(void);
 
-/* in file clkint.S */
+/* in file clkdisp.S */
 
-extern	void	clkint(void);
+extern	void	clkdisp(void);
 
 /* in file close.c */
 
