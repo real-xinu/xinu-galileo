@@ -23,7 +23,6 @@ void	ttyInter_out(
 	/* If output is currently held, simply ignore the call */
 
 	if (typtr->tyoheld) {
-		//inb( (int)&csrptr->lsr ); /* Clear the interrupt */
 		return;
 	}
 
@@ -31,8 +30,6 @@ void	ttyInter_out(
 
 	if ( (typtr->tyehead == typtr->tyetail) &&
 	     (semcount(typtr->tyosem) >= TY_OBUFLEN) ) {
-		//ier = inb((int)&csrptr->ier);
-		//outb((int)&csrptr->ier, ier & ~UART_IER_ETBEI);
 		ier = csrptr->ier;
 		csrptr->ier = ier & ~UART_IER_ETBEI;
 		return;
@@ -46,7 +43,6 @@ void	ttyInter_out(
 	/*   nonempty, xmit chars from the echo queue		*/
   
 	while ( (uspace>0) &&  typtr->tyehead != typtr->tyetail) {
-		//outb( (int)&csrptr->buffer, *typtr->tyehead++);
 		csrptr->buffer = *typtr->tyehead++;
 		if (typtr->tyehead >= &typtr->tyebuff[TY_EBUFLEN]) {
 			typtr->tyehead = typtr->tyebuff;
@@ -60,7 +56,6 @@ void	ttyInter_out(
 	ochars = 0;
 	avail = TY_OBUFLEN - semcount(typtr->tyosem);
 	while ( (uspace>0) &&  (avail > 0) ) {
-		//outb( (int)&csrptr->buffer, *typtr->tyohead++ );
 		csrptr->buffer = *typtr->tyohead++;
 		if (typtr->tyohead >= &typtr->tyobuff[TY_OBUFLEN]) {
 			typtr->tyohead = typtr->tyobuff;

@@ -14,7 +14,6 @@ devcall	ttyInit(
 {
 	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/
 	struct	uart_csreg *uptr;	/* Address of UART's CSRs	*/
-	uint32	pciinfo;		/* PCI info to read config	*/
 
 	typtr = &ttytab[ devptr->dvminor ];
 
@@ -49,23 +48,12 @@ devcall	ttyInit(
 	typtr->tyifullc = TY_FULLCH;		/* Send ^G when buffer	*/
 						/*   is full		*/
 
-	/* Read PCI config space to get memory base address */
-
-	pciinfo = find_pci_device(INTEL_QUARK_UART_PCI_DID,
-					INTEL_QUARK_UART_PCI_VID, 1);
-	if((int)pciinfo == SYSERR) {
-		return SYSERR;
-	}
-
-	pci_read_config_dword(pciinfo, 0x10, (uint32 *)&devptr->dvcsr);
-
 	/* Initialize the UART */
 
 	uptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Set baud rate */
 	uptr->lcr = UART_LCR_DLAB;
-	uptr->dll = 0x00;
 	uptr->dlm = 0x00;
 	uptr->dll = 0x18;
 
