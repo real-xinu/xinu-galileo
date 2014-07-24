@@ -57,14 +57,12 @@ ram:
 		-intr ionull
 
 /* type of SD memory card */
-/* TEMPORARILY REMOVED TO MAKE COMPILE WORK
 sdmc:
 	on sd
 		-i sdmcInit	-o sdmcOpen	-c sdmcClose
 		-r sdmcRead	-g ioerr	-p ioerr
 		-w sdmcWrite	-s ioerr	-n ioerr
 		-intr sdmcDispatch
-END OF TEMPORARY REMOVAL */
 		
 /* type of namespace device */
 nam:
@@ -98,10 +96,7 @@ nam:
    RAM0 is ram on mem
    
    /* Define a SD memory card device */
-
-/* TEMPORARILY REMOVED TO MAKE COMPILE WORK
-   SDMC is sdmc on sd
-END OF TEMPORARY REMOVAL */
+   SDMC is sdmc on sd csr 0 -irq 0051
 
 %%
 

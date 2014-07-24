@@ -54,9 +54,6 @@ extern	pid32	create(void *, uint32, pri16, char *, uint32, ...);
 
 extern	void	ctxsw(void *, void *);
 
-/* in file dhcp_dump.c */
-extern	void    dhcp_dump (const struct dhcpmsg*, uint32);
-
 /* in file dhcp.c */
 
 extern	uint32	getlocalip(void);

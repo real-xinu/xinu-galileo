@@ -1,5 +1,6 @@
 #include <xinu.h>
 
+extern	int32	delay(int n);
 int	quark_eth_phy_reset(volatile struct quark_eth_csreg *);
 uint16	quark_eth_phy_read(volatile struct quark_eth_csreg *, uint32);
 void	quark_eth_phy_write(volatile struct quark_eth_csreg *, uint32, uint16);
@@ -8,17 +9,10 @@ void quark_eth_init(struct ether *ethptr) {
 
 	volatile struct quark_eth_csreg *csrptr; /* Pointer to Ethernet CSRs */
 	uint32	retries; /* No. of retries for reset */
-	byte	intr_pin;		/* Value of interrupt pin	*/
 
 	/* Read the CSR Memory base address from PCI Config space */
 	pci_read_config_dword(ethptr->pcidev, 0x10, (uint32 *)&ethptr->csr);
 	csrptr = (struct quark_eth_csreg *)ethptr->csr;
-	
-	if(pci_read_config_byte(ethptr->pcidev, 0x3D, &intr_pin) == SYSERR) {
-		kprintf("[SDMC] Unable to retrieve interrupt pin\n");
-		return SYSERR;
-	}
-	kprintf("%02X\n", intr_pin);
 
 	/* Enable CSR Memory Space, Enable Bus Master */
 	pci_write_config_word(ethptr->pcidev, 0x4, 0x0006);
@@ -31,7 +25,7 @@ void quark_eth_init(struct ether *ethptr) {
 	while(csrptr->bmr & 0x00000001) {
 		delay(QUARK_ETH_INIT_DELAY);
 		if((++retries) > QUARK_ETH_MAX_RETRIES)
-			return SYSERR;
+			return;
 	}
 
 	/* Fixed burst mode */

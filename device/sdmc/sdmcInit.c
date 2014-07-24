@@ -16,13 +16,11 @@ devcall	sdmcInit (
 	struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
 	struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
 	uint32	pciinfo;		/* PCI info to read config	*/
-	byte	intr_pin;		/* Value of interrupt pin	*/
 	
 	/* Initialize structure pointers */
 	sdmcptr = &sdmctab[devptr->dvminor];
 	
 	/* Search for the SD memory card device on the PCI bus */
-
 	pciinfo = find_pci_device(INTEL_QUARK_SDIO_PCI_DID, INTEL_QUARK_SDIO_PCI_VID, 0);
 	if((int)pciinfo == SYSERR) {
 		kprintf("[SDMC] Device not found\n");
@@ -30,30 +28,21 @@ devcall	sdmcInit (
 	}
 	
 	/* Read PCI config space to get memory base address */
-	
 	if(pci_read_config_dword(pciinfo, 0x10, (uint32 *)&devptr->dvcsr) == SYSERR) {
 		kprintf("[SDMC] Unable to retrieve CSR\n");
-		return SYSERR;
-	}
-	
-	/* Read PCI config space to get the interrupt PIN value */
-	
-	if(pci_read_config_byte(pciinfo, 0x3D, &intr_pin) == SYSERR) {
-		kprintf("[SDMC] Unable to retrieve interrupt pin\n");
 		return SYSERR;
 	}
 	
 	/* Enable CSR Memory Space, Enable Bus Master */
 	pci_write_config_word(pciinfo, 0x4, 0x0006);
 	
-	set_evec(intr_pin + 40, (uint32)sdmcDispatch);
+	/* Set interrupt IRQ */
+	set_evec(devptr->dvirq, (uint32)ethDispatch);
 	
 	/* Initialize the SD CS register */
-
 	csrptr = (struct sdmc_csreg *)devptr->dvcsr;
 	
 	/* Enable and register for card insertion and removal interrupts */
-	
 	csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN | SDMC_CRD_INT_STAT_EN | SDMC_CMD_COMP_STAT_EN | SDMC_TX_COMP_STAT_EN; 
 	csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN | SDMC_CRD_INT_SIG_EN | SDMC_CMD_COMP_SIG_EN | SDMC_TX_COMP_SIG_EN;
 		
