@@ -31,7 +31,6 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define NAMESPACE   3       /* type nam      */
 #define RDISK       4       /* type rds      */
 #define RAM0        5       /* type ram      */
-#define SDMC        6       /* type sdmc     */
 
 /* Control block sizes */
 
@@ -40,11 +39,10 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	Neth	1
 #define	Nrds	1
 #define	Nram	1
-#define	Nsdmc	1
 #define	Nnam	1
 
 #define DEVMAXNAME 24
-#define NDEVS 7
+#define NDEVS 6
 
 
 /* Configuration and Size Constants */

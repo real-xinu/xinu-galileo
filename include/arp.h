@@ -1,9 +1,9 @@
 /* arp.h */
 
-/* items related to ARP - definition of cache and the packet format */
+/* Items related to ARP - definition of cache and the packet format */
 
-#define	ARP_HALEN	6		/* size of Ethernet MAC address	*/
-#define	ARP_PALEN	4		/* size of IP address		*/
+#define	ARP_HALEN	6		/* Size of Ethernet MAC address	*/
+#define	ARP_PALEN	4		/* Size of IP address		*/
 
 #define	ARP_HTYPE	1		/* Ethernet hardware type	*/
 #define ARP_PTYPE	0x0800		/* IP protocol type		*/
@@ -11,17 +11,17 @@
 #define ARP_OP_REQ	1		/* Request op code		*/
 #define ARP_OP_RPLY	2		/* Reply op code		*/
 
-#define	ARP_SIZ		16		/* number of entries in a cache	*/
+#define	ARP_SIZ		16		/* Number of entries in a cache	*/
 
-#define	ARP_RETRY	3		/* num. retries for ARP request	*/
+#define	ARP_RETRY	3		/* Num. retries for ARP request	*/
 
-#define	ARP_TIMEOUT	300		/* retry timer in milliseconds	*/
+#define	ARP_TIMEOUT	300		/* Retry timer in milliseconds	*/
 
 /* state of an ARP cache entry */
 
-#define	AR_FREE		0		/* slot is unused		*/
-#define	AR_PENDING	1		/* resolution in progress	*/
-#define	AR_RESOLVED	2		/* entry is valid		*/
+#define	AR_FREE		0		/* Slot is unused		*/
+#define	AR_PENDING	1		/* Resolution in progress	*/
+#define	AR_RESOLVED	2		/* Entry is valid		*/
 
 #pragma pack(2)
 struct	arppacket {			/* ARP packet for IP & Ethernet	*/
@@ -40,10 +40,10 @@ struct	arppacket {			/* ARP packet for IP & Ethernet	*/
 };
 #pragma pack()
 
-struct	arpentry {			/* entry in the ARP cache	*/
-	int32	arstate;		/* state of the entry		*/
+struct	arpentry {			/* Entry in the ARP cache	*/
+	int32	arstate;		/* State of the entry		*/
 	uint32	arpaddr;		/* IP address of the entry	*/
-	pid32	arpid;			/* waiting process or -1 	*/
+	pid32	arpid;			/* Waiting process or -1 	*/
 	byte	arhaddr[ARP_HALEN];	/* Ethernet address of the entry*/
 };
 

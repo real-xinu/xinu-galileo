@@ -142,8 +142,8 @@ status	ip_send(
 		return retval;
 	}
 
-	/* If destin. is on the local network, next hop is the destin.	*/
-	/*    otherwise, next hop is default router address		*/
+	/* If destination is on the local network, next hop is the	*/
+	/*	destination; otherwise, next hop is default router	*/
 
 
 	if ( (dest & NetData.ipmask) == NetData.ipprefix) {
@@ -158,7 +158,7 @@ status	ip_send(
 
 	}
 
-	if (nxthop == 0) {	/* Destin invalid or no default route	*/
+	if (nxthop == 0) {	/* Dest. invalid or no default route	*/
 		freebuf((char *)pktptr);
 		return SYSERR;
 	}
@@ -337,6 +337,7 @@ void 	ip_ntoh(
  */
 void 	ip_hton(
 	  struct netpacket *pktptr
+
 	)
 {
 	pktptr->net_iplen = htons(pktptr->net_iplen);

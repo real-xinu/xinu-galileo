@@ -72,8 +72,11 @@ process	netin ()
 
 	/* Do forever: read a packet from the network and process */
 
-	pkt = (struct netpacket *)getbuf(netbufpool);
 	while(1) {
+
+		/* Allocate a buffer */
+
+		pkt = (struct netpacket *)getbuf(netbufpool);
 
 		/* Obtain next packet that arrives */
 
@@ -106,8 +109,6 @@ process	netin ()
 			freebuf((char *)pkt);
 			continue;
 		}
-
-		pkt = (struct netpacket *)getbuf(netbufpool);
 	}
 }
 
