@@ -4,7 +4,7 @@
 
 /*------------------------------------------------------------------------
  * dhcp_get_opt_val  -	Retrieve a pointer to the value for a specified 
- *			DHCP options key 
+ *			  DHCP options key 
  *------------------------------------------------------------------------
  */
 char* 	dhcp_get_opt_val(
@@ -15,25 +15,24 @@ char* 	dhcp_get_opt_val(
 {
 	unsigned char* opt_tmp;
 	unsigned char* eom;
-	
+
 	eom = (unsigned char*)dmsg + dmsg_size - 1;
 	opt_tmp = (unsigned char*)dmsg->dc_opt;
-	
+
 	while(opt_tmp < eom) {
-	
+
 		/* If the option value matches return the value */
 
 		if((*opt_tmp) == option_key) {
-	
+
 			/* Offset past the option value and the size 	*/
 
 			return (char*)(opt_tmp+2);  
 		}
-	
 		opt_tmp++;	/* Move to length octet */
 		opt_tmp += *(uint8*)opt_tmp + 1;
 	}
-	
+
 	/* Option value not found */
 
 	return NULL;
@@ -45,26 +44,26 @@ char* 	dhcp_get_opt_val(
  */
 void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
 {
-	uint32	xid;			/* xid used for the exchange	*/
-		
+	uint32	xid;			/* Xid used for the exchange	*/
+
 	memcpy(&xid, NetData.ethucast, 4); /* Use 4 bytes from MAC as	*/
 					   /*    unique XID		*/
 	memset(dmsg, 0x00, sizeof(struct dhcpmsg));
-	
+
 	dmsg->dc_bop = 0x01;	     	/* Outgoing request		*/
-	dmsg->dc_htype = 0x01;		/* hardware type is Ethernet	*/
-	dmsg->dc_hlen = 0x06;		/* hardware address length	*/
+	dmsg->dc_htype = 0x01;		/* Hardware type is Ethernet	*/
+	dmsg->dc_hlen = 0x06;		/* Hardware address length	*/
 	dmsg->dc_hops = 0x00;		/* Hop count			*/
-	dmsg->dc_xid = htonl(xid);	/* xid (unique ID)		*/
-	dmsg->dc_secs = 0x0000;		/* seconds			*/
-	dmsg->dc_flags = 0x0000;	/* flags			*/
+	dmsg->dc_xid = htonl(xid);	/* Xid (unique ID)		*/
+	dmsg->dc_secs = 0x0000;		/* Seconds			*/
+	dmsg->dc_flags = 0x0000;	/* Flags			*/
 	dmsg->dc_cip = 0x00000000;	/* Client IP address		*/
 	dmsg->dc_yip = 0x00000000;	/* Your IP address		*/
 	dmsg->dc_sip = 0x00000000;	/* Server IP address		*/
 	dmsg->dc_gip = 0x00000000;	/* Gateway IP address		*/
 	memset(&dmsg->dc_chaddr,'\0',16);/* Client hardware address	*/
 	memcpy(&dmsg->dc_chaddr, NetData.ethucast, ETH_ADDR_LEN);
-	memset(&dmsg->dc_bootp,'\0',192);/* zero the bootp area		*/
+	memset(&dmsg->dc_bootp,'\0',192);/* Zero the bootp area		*/
 	dmsg->dc_cookie = htonl(0x63825363); /* Magic cookie for DHCP	*/
 }
 
@@ -75,18 +74,18 @@ void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
 int32 	dhcp_bld_disc(struct dhcpmsg* dmsg) 
 {
 	uint32  j = 0;
-	
+
 	dhcp_bld_bootp_msg(dmsg);
-	
+
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* DHCP Dicover message		*/
 	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
 
 	dmsg->dc_opt[j++] = 0xff & 55;	/* DHCP parameter request list	*/
-	dmsg->dc_opt[j++] = 0xff &  2;	/* option length		*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* request subnet mask 		*/
-	dmsg->dc_opt[j++] = 0xff &  3;	/* request default router addr->*/
+	dmsg->dc_opt[j++] = 0xff &  2;	/* Option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Request subnet mask 		*/
+	dmsg->dc_opt[j++] = 0xff &  3;	/* Request default router addr->*/
 
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }
@@ -117,18 +116,18 @@ int32 	dhcp_bld_req(
 	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
 	*((uint32*)&dmsg->dc_opt[j]) = dmsg_offer->dc_yip;
 	j += 4;
-	
+
 	/* Retrieve the DHCP server IP from the DHCP options */
 	server_ip = (uint32*)dhcp_get_opt_val(dmsg_offer,
 				    dsmg_offer_size, DHCP_SERVER_ID);
-	
+
 	if(server_ip == 0) {
 		kprintf("Unable to get server IP add. from DHCP Offer\n");
 		return SYSERR;
 	}
-	
+
 	dmsg->dc_opt[j++] = 0xff & 54;	/* Server IP			*/
-	dmsg->dc_opt[j++] = 0xff &  4;	/* option length		*/
+	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
 	*((uint32*)&dmsg->dc_opt[j]) = *server_ip;
 	j += 4;
 
@@ -154,7 +153,7 @@ uint32	getlocalip(void)
 	uint32	addrmask;		/* Address mask for network	*/
 	uint32	routeraddr;		/* Default router address	*/
 	uint32	tmp;			/* Used for byte conversion	*/
-	uint32* tmp_server_ip;		/* temp DHCP server pointer */
+	uint32* tmp_server_ip;		/* Temporary DHCP server pointer*/
 
 	slot = udp_register(0, UDP_DHCP_SPORT, UDP_DHCP_CPORT);
 	if (slot == SYSERR) {
@@ -194,7 +193,7 @@ uint32	getlocalip(void)
 			eop = (char *)&dmsg_rvc + inlen - 1;
 			optptr = (char *)&dmsg_rvc.dc_opt;
 			msgtype = addrmask = routeraddr = 0;
-			
+
 			while (optptr < eop) {
 
 			    switch (*optptr) {
@@ -217,17 +216,19 @@ uint32	getlocalip(void)
 			}
 
 			if (msgtype == 0x02) {	/* Offer - send request	*/
-				len = dhcp_bld_req(&dmsg_snd, &dmsg_rvc, inlen);
+				len = dhcp_bld_req(&dmsg_snd, &dmsg_rvc,
+								inlen);
 				if(len == SYSERR) {
-					kprintf("getlocalip: Unable to build DHCP request\n");
+					kprintf("getlocalip: %s\n",
+					  "Unable to build DHCP request");
 					return SYSERR;
 				}
 				udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,
-					(char *)&dmsg_snd, len);
+						(char *)&dmsg_snd, len);
 				continue;
-			
+
 			} else if (dmsg_rvc.dc_opt[2] != 0x05) {
-				/* if not an ack skip it */
+				/* If not an ack skip it */
 				continue;
 			}
 			if (addrmask != 0) {
@@ -237,26 +238,29 @@ uint32	getlocalip(void)
 				NetData.iprouter = routeraddr;
 			}
 			NetData.ipucast = ntohl(dmsg_rvc.dc_yip);
-			NetData.ipprefix = NetData.ipucast & NetData.ipmask;
-			NetData.ipbcast = NetData.ipprefix | ~NetData.ipmask;
+			NetData.ipprefix = NetData.ipucast &
+							 NetData.ipmask;
+			NetData.ipbcast = NetData.ipprefix |
+							~NetData.ipmask;
 			NetData.ipvalid = TRUE;
 			udp_release(slot);
 			   
 			/* Retrieve the boot server IP */
-			if(dot2ip((char*)dmsg_rvc.sname, &NetData.bootserver) != OK) {
-				
-				/* Could not retrieve the boot server from the BOOTP fields */
-				/*   Assume the boot server is the DHCP server              */
-				/* Retrieve the DHCP server IP from the DHCP options */
-				tmp_server_ip = (uint32*)dhcp_get_opt_val(&dmsg_rvc, len, DHCP_SERVER_ID);
-				if(tmp_server_ip == 0) {
-					kprintf("Unable to retrieve boot server IP\n");
-					return (uint32)SYSERR;
-				}
-				NetData.bootserver = ntohl(*tmp_server_ip);
+			if(dot2ip((char*)dmsg_rvc.sname,
+					    &NetData.bootserver) != OK) {
+
+			  /* Could not retrieve the boot server from	*/
+			  /*  the  BOOTP fields, so use the DHCP server	*/
+			  /*  address					*/
+			  tmp_server_ip = (uint32*)dhcp_get_opt_val(
+					&dmsg_rvc, len, DHCP_SERVER_ID);
+			  if(tmp_server_ip == 0) {
+			    kprintf("Cannot retrieve boot server addr\n");
+				return (uint32)SYSERR;
+			  }
+			NetData.bootserver = ntohl(*tmp_server_ip);
 			}
 			memcpy(NetData.bootfile, dmsg_rvc.bootfile, sizeof(dmsg_rvc.bootfile));
-			
 			return NetData.ipucast;
 		}
 	}
