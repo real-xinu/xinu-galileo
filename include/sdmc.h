@@ -73,24 +73,24 @@ struct sdmc_cmd {
 };
 
 struct sdmc_capabilities {
-	uint32	slot_type		:2;	/* Slot Type				*/
-	uint32	async_int_support	:1;	/* Asynchronous Interrupt Support	*/
-	uint32	sys_bus_support_64b	:1;	/* 64-bit System Bus Support		*/
-	uint32	rsvd4			:1;	/* RSVD4				*/
-	uint32	volt_support_1p8v	:1;	/* Voltage Support 1.8V			*/
-	uint32	volt_support_3p0v	:1;	/* Voltage Support 3.0V			*/
-	uint32	volt_support_3p3v	:1;	/* Voltage Support 3.3V			*/
-	uint32	suspend_resume_support	:1;	/* Suspend / Resume Support		*/
-	uint32	sdma_support		:1;	/* SDMA Support				*/
-	uint32	high_speed_support	:1;	/* High Speed Support			*/
-	uint32	rsvd5			:1;	/* RSVD5				*/
-	uint32	adma2_support		:1;	/* ADMA2 Support			*/
-	uint32	extended_media_bus_support:1;	/* Extended Media Bus Support		*/
-	uint32	max_block_length	:2;	/* Max Block Length			*/
-	uint32	base_clock_frequency_sd_clk:8;	/* Base Clock Frequency for SD Clock	*/
-	uint32	timeout_clock_unit	:1;	/* Timeout Clock Unit			*/
-	uint32	rsvd6			:1;	/* RSVD6				*/
 	uint32	timeout_clock_frequency	:6;	/* Timeout Clock Frequency		*/
+	uint32	rsvd6			:1;	/* RSVD6				*/
+	uint32	timeout_clock_unit	:1;	/* Timeout Clock Unit			*/
+	uint32	base_clock_frequency_sd_clk:8;	/* Base Clock Frequency for SD Clock	*/
+	uint32	max_block_length	:2;	/* Max Block Length			*/
+	uint32	extended_media_bus_support:1;	/* Extended Media Bus Support		*/
+	uint32	adma2_support		:1;	/* ADMA2 Support			*/
+	uint32	rsvd5			:1;	/* RSVD5				*/
+	uint32	high_speed_support	:1;	/* High Speed Support			*/
+	uint32	sdma_support		:1;	/* SDMA Support				*/
+	uint32	suspend_resume_support	:1;	/* Suspend / Resume Support		*/
+	uint32	volt_support_3p3v	:1;	/* Voltage Support 3.3V			*/
+	uint32	volt_support_3p0v	:1;	/* Voltage Support 3.0V			*/
+	uint32	volt_support_1p8v	:1;	/* Voltage Support 1.8V			*/
+	uint32	rsvd4			:1;	/* RSVD4				*/
+	uint32	sys_bus_support_64b	:1;	/* 64-bit System Bus Support		*/
+	uint32	async_int_support	:1;	/* Asynchronous Interrupt Support	*/
+	uint32	slot_type		:2;	/* Slot Type				*/
 };
 
 /* Individual Bits in Control and Status Registers	*/
@@ -145,6 +145,38 @@ struct sdmc_capabilities {
 #define SDMC_NML_INT_BOOT_CK_RCV	0x2000	/* Boot Acknowledge Received		*/
 #define SDMC_NML_INT_BOOT_TER_INT	0x4000	/* Boot Terminate Interrupt		*/
 #define SDMC_NML_INT_ERR_INT		0x1000	/* Error Interrupt			*/
+
+/* Error Interrupt Status Enable */
+
+#define SDMC_ERR_INT_CMD_TIMEOUT_ERR_STAT_EN	0x0001 	/* Command Timeout Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_CRC_ERR_STAT_EN	0x0002	/* Command CRC Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_END_BIT_ERR_STAT_EN	0x0004	/* Command End Bit Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_IND_ERR_STAT_EN	0x0008	/* Command Index Error Status Enable 	*/
+#define SDMC_ERR_INT_DATA_TIMEOUT_ERR_STAT_EN	0x0010	/* Data Timeout Error Status Enable	*/
+#define SDMC_ERR_INT_DATA_CRC_ERR_STAT_EN	0x0020	/* Data CRC Error Status Enable		*/
+#define SDMC_ERR_INT_DATA_END_BIT_ERR_STAT_EN	0x0040	/* Data End Bit Error Status Enable	*/
+#define SDMC_ERR_INT_CUR_LIMIT_ERR_STAT_EN	0x0080	/* Current Limit Error Status Enable	*/
+#define SDMC_ERR_INT_CMD12_ERR_STAT_EN		0x0100	/* Auto CMD12 Error Status Enable	*/
+#define SDMC_ERR_INT_ADMA_ERR_STAT_EN		0x0200	/* ADMA Error Status Enable		*/
+#define SDMC_ERR_INT_TUNE_ERR_STAT_EN		0x0400	/* Tuning Error Status Enable		*/
+#define SDMC_ERR_INT_TGT_RSP_ERR_EN		0x1000	/* Target Response Error Status Enable	*/
+#define SDMC_ERR_INT_CEATA_ERR_EN		0x2000	/* CEATA Error Status Enable		*/
+
+/* Error Interrupt Signal Enable */
+
+#define SDMC_ERR_INT_CMD_TIMEOUT_ERR_STAT_EN	0x0001 	/* Command Timeout Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_CRC_ERR_STAT_EN	0x0002	/* Command CRC Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_END_BIT_ERR_STAT_EN	0x0004	/* Command End Bit Error Status Enable	*/
+#define SDMC_ERR_INT_CMD_IND_ERR_STAT_EN	0x0008	/* Command Index Error Status Enable 	*/
+#define SDMC_ERR_INT_DATA_TIMEOUT_ERR_STAT_EN	0x0010	/* Data Timeout Error Status Enable	*/
+#define SDMC_ERR_INT_DATA_CRC_ERR_STAT_EN	0x0020	/* Data CRC Error Status Enable		*/
+#define SDMC_ERR_INT_DATA_END_BIT_ERR_STAT_EN	0x0040	/* Data End Bit Error Status Enable	*/
+#define SDMC_ERR_INT_CUR_LIMIT_ERR_STAT_EN	0x0080	/* Current Limit Error Status Enable	*/
+#define SDMC_ERR_INT_CMD12_ERR_STAT_EN		0x0100	/* Auto CMD12 Error Status Enable	*/
+#define SDMC_ERR_INT_ADMA_ERR_STAT_EN		0x0200	/* ADMA Error Status Enable		*/
+#define SDMC_ERR_INT_TUNE_ERR_STAT_EN		0x0400	/* Tuning Error Status Enable		*/
+#define SDMC_ERR_INT_TGT_RSP_ERR_EN		0x1000	/* Target Response Error Status Enable	*/
+#define SDMC_ERR_INT_CEATA_ERR_EN		0x2000	/* CEATA Error Status Enable		*/
 
 /* Present State Status Register */
 

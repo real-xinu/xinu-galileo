@@ -1,15 +1,17 @@
 /* dhcp.c - getlocalip */
 
 #include <xinu.h>
-#include <stdlib.h>
-
 
 /*------------------------------------------------------------------------
- * get_dhcp_option_value  -  Retrieve a pointer to the value for a
- *				specified DHCP options key 
+ * dhcp_get_opt_val  -	Retrieve a pointer to the value for a specified 
+ *			DHCP options key 
  *------------------------------------------------------------------------
  */
-char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 option_key) 
+char* 	dhcp_get_opt_val(
+	  const struct dhcpmsg* dmsg, 	/* DHCP Message			*/
+	  uint32 dmsg_size, 		/* Size of DHCP Message		*/
+	  uint8 option_key		/* Option key to retrieve	*/
+	) 
 {
 	unsigned char* opt_tmp;
 	unsigned char* eom;
@@ -23,7 +25,8 @@ char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 
 
 		if((*opt_tmp) == option_key) {
 	
-			/* Offset past the option value and the size (2 bytes) */
+			/* Offset past the option value and the size 	*/
+
 			return (char*)(opt_tmp+2);  
 		}
 	
@@ -37,12 +40,11 @@ char* get_dhcp_option_value(const struct dhcpmsg* dmsg, uint32 dmsg_size, uint8 
 }
 
 /*------------------------------------------------------------------------
- * build_dhcp_discover  -  handcraft a DHCP Discover message in dmsg 
+ * dhcp_bld_bootp_msg  -  Set the common fields for all DHCP messages 
  *------------------------------------------------------------------------
  */
-int32 build_dhcp_discover(struct dhcpmsg* dmsg) 
+void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
 {
-	uint32  j;
 	uint32	xid;			/* xid used for the exchange	*/
 		
 	memcpy(&xid, NetData.ethucast, 4); /* Use 4 bytes from MAC as	*/
@@ -64,8 +66,18 @@ int32 build_dhcp_discover(struct dhcpmsg* dmsg)
 	memcpy(&dmsg->dc_chaddr, NetData.ethucast, ETH_ADDR_LEN);
 	memset(&dmsg->dc_bootp,'\0',192);/* zero the bootp area		*/
 	dmsg->dc_cookie = htonl(0x63825363); /* Magic cookie for DHCP	*/
+}
+
+/*------------------------------------------------------------------------
+ * dhcp_bld_disc  -  handcraft a DHCP Discover message in dmsg 
+ *------------------------------------------------------------------------
+ */
+int32 	dhcp_bld_disc(struct dhcpmsg* dmsg) 
+{
+	uint32  j = 0;
 	
-	j = 0;
+	dhcp_bld_bootp_msg(dmsg);
+	
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* option length		*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* DHCP Dicover message		*/
@@ -80,38 +92,22 @@ int32 build_dhcp_discover(struct dhcpmsg* dmsg)
 }
 
 /*------------------------------------------------------------------------
- * build_dhcp_request - handcraft a DHCP request message in dmsg 
+ * dhcp_bld_req - handcraft a DHCP request message in dmsg 
  *------------------------------------------------------------------------
  */
-int32 build_dhcp_request(struct dhcpmsg* dmsg,
-		const struct dhcpmsg* dmsg_offer, uint32 dsmg_offer_size) 
+int32 	dhcp_bld_req(
+	  struct dhcpmsg* dmsg,		/* DHCP message to build	*/
+	  const struct dhcpmsg* dmsg_offer, /* DHCP offer message	*/
+	  uint32 dsmg_offer_size	/* Size of DHCP offer message	*/
+	) 
 {
-	uint32  j;
-	uint32	xid;			/* xid used for the exchange	*/
+	uint32  j = 0;
 	uint32* server_ip;        	/* Take the DHCP server IP addr	*/
 					/*   from DHCP offer message	*/
 
-	memcpy(&xid, NetData.ethucast, 4); /* Use 4 bytes from MAC as	*/
-					   /*   a unique XID		*/
-	memset(dmsg, 0x00, sizeof(struct dhcpmsg));
-	
-	dmsg->dc_bop = 0x01;	     	/* Outgoing request		*/
-	dmsg->dc_htype = 0x01;		/* hardware type is Ethernet	*/
-	dmsg->dc_hlen = 0x06;		/* hardware address length	*/
-	dmsg->dc_hops = 0x00;		/* Hop count			*/
-	dmsg->dc_xid = htonl(xid);	/* xid (unique ID)		*/
-	dmsg->dc_secs = 0x0000;		/* seconds			*/
-	dmsg->dc_flags = 0x0000;	/* flags			*/
-	dmsg->dc_cip = 0x00000000; 	/* Client IP address		*/
-	dmsg->dc_yip = 0x00000000;	/* Your IP address		*/
+	dhcp_bld_bootp_msg(dmsg);
 	dmsg->dc_sip = dmsg_offer->dc_sip; /* Server IP address		*/
-	dmsg->dc_gip = 0x00000000;	/* Gateway IP address		*/
-	memset(&dmsg->dc_chaddr,'\0',16);/* Client hardware address	*/
-	memcpy(&dmsg->dc_chaddr, NetData.ethucast, ETH_ADDR_LEN);
-	memset(&dmsg->dc_bootp,'\0',192);/* Zero the bootp area		*/
-	dmsg->dc_cookie = htonl(0x63825363); /* Magic cookie for DHCP	*/
 
-	j = 0;
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  3;	/* DHCP Request message		*/
@@ -123,7 +119,7 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
 	j += 4;
 	
 	/* Retrieve the DHCP server IP from the DHCP options */
-	server_ip = (uint32*)get_dhcp_option_value(dmsg_offer,
+	server_ip = (uint32*)dhcp_get_opt_val(dmsg_offer,
 				    dsmg_offer_size, DHCP_SERVER_ID);
 	
 	if(server_ip == 0) {
@@ -145,15 +141,6 @@ int32 build_dhcp_request(struct dhcpmsg* dmsg,
  */
 uint32	getlocalip(void)
 {
-	return getlocalip_boot(NULL, NULL, NULL);
-}
-
-/*------------------------------------------------------------------------
- * getlocalip_boot - use DHCP to obtain an IP address
- *------------------------------------------------------------------------
- */
-uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
-{
 	int32	slot;			/* UDP slot to use		*/
 	struct	dhcpmsg dmsg_snd;	/* Holds outgoing DHCP messages	*/
 	struct	dhcpmsg dmsg_rvc;	/* Holds incoming DHCP messages	*/
@@ -167,7 +154,7 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 	uint32	addrmask;		/* Address mask for network	*/
 	uint32	routeraddr;		/* Default router address	*/
 	uint32	tmp;			/* Used for byte conversion	*/
-	uint32* tmp_server_ip;  /* temp DHCP server pointer */
+	uint32* tmp_server_ip;		/* temp DHCP server pointer */
 
 	slot = udp_register(0, UDP_DHCP_SPORT, UDP_DHCP_CPORT);
 	if (slot == SYSERR) {
@@ -175,7 +162,7 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 		return SYSERR;
 	}
 
-	len = build_dhcp_discover(&dmsg_snd);
+	len = dhcp_bld_disc(&dmsg_snd);
 	if(len == SYSERR) {
 		kprintf("getlocalip: Unable to build DHCP discover\n");
 		return SYSERR;
@@ -230,7 +217,7 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 			}
 
 			if (msgtype == 0x02) {	/* Offer - send request	*/
-				len = build_dhcp_request(&dmsg_snd, &dmsg_rvc, inlen);
+				len = dhcp_bld_req(&dmsg_snd, &dmsg_rvc, inlen);
 				if(len == SYSERR) {
 					kprintf("getlocalip: Unable to build DHCP request\n");
 					return SYSERR;
@@ -254,27 +241,21 @@ uint32	getlocalip_boot(uint32* boot_server, char* boot_file, uint32* size)
 			NetData.ipbcast = NetData.ipprefix | ~NetData.ipmask;
 			NetData.ipvalid = TRUE;
 			udp_release(slot);
-			
-			if(boot_server != NULL && 
-			   size != NULL && 
-			   boot_file != NULL) {
 			   
-			    /* Retrieve the boot server IP */
-			    if(dot2ip((char*)dmsg_rvc.sname, boot_server) != OK) {
+			/* Retrieve the boot server IP */
+			if(dot2ip((char*)dmsg_rvc.sname, &NetData.bootserver) != OK) {
 				
-					/* Could not retrieve the boot server from the BOOTP fields */
-					/*   Assume the boot server is the DHCP server              */
-					/* Retrieve the DHCP server IP from the DHCP options */
-					tmp_server_ip = (uint32*)get_dhcp_option_value(&dmsg_rvc, len, DHCP_SERVER_ID);
-					if(tmp_server_ip == 0) {
-						kprintf("getlocalip: Unable to retrieve boot server IP\n");
-						return (uint32)SYSERR;
-					}
-					(*boot_server) = ntohl(*tmp_server_ip);
+				/* Could not retrieve the boot server from the BOOTP fields */
+				/*   Assume the boot server is the DHCP server              */
+				/* Retrieve the DHCP server IP from the DHCP options */
+				tmp_server_ip = (uint32*)dhcp_get_opt_val(&dmsg_rvc, len, DHCP_SERVER_ID);
+				if(tmp_server_ip == 0) {
+					kprintf("Unable to retrieve boot server IP\n");
+					return (uint32)SYSERR;
 				}
-				(*size) = (*size) < sizeof(dmsg_rvc.bootfile) ? (*size) : sizeof(dmsg_rvc.bootfile);
-				memcpy(boot_file, dmsg_rvc.bootfile, *size);
+				NetData.bootserver = ntohl(*tmp_server_ip);
 			}
+			memcpy(NetData.bootfile, dmsg_rvc.bootfile, sizeof(dmsg_rvc.bootfile));
 			
 			return NetData.ipucast;
 		}

@@ -18,18 +18,8 @@ struct xboot_header {
 };
 #pragma pack()
 
-uint32 save_eax = 1;
-uint32 save_ebx = 1;
-uint32 save_ecx = 1;
-uint32 save_edx = 1;
-uint32 save_esp = 1;
-uint32 save_ebp = 1;
-uint32 save_esi = 1;
-uint32 save_edi = 1;
-uint32 save_eflags = 1;
-
-extern uint32 bootsign;	           /* Boot signature of the boot loader */
-extern struct multiboot_bootinfo *bootinfo;  /* Base address of the multiboot info */
+extern uint32 bootsign;	           	/* Boot signature of the boot loader 	*/
+extern struct mbootinfo *bootinfo; 	/* Base address of the multiboot info 	*/
 
 extern void xbootjmp(void*);
 
@@ -162,10 +152,6 @@ status validate_xinu_loadaddress(uint32 load_address, uint32 image_size)
  */
 int32 main(void)
 {
-	uint32  boot_server_ip;       /* IP address of boot server */
-	char    boot_file_name[128];  /* Path to the boot file */
-	uint32  boot_file_size = sizeof(boot_file_name);
-	
 	struct  xboot_header boot_hdr; /* Xboot header on the Xinu image */
 	uint32  size;                  /* Size downloaded from TFTP server */
 	char*   tftp_buffers[2];       /* Pointers to buffers used for downloading the Xinu image */
@@ -182,7 +168,7 @@ int32 main(void)
 	
 	/* Force system to use DHCP to obtain an address */
 	kprintf("[XBOOT] using dhcp to obtain an IP address...\n");
-	uint32 ipaddr = getlocalip_boot(&boot_server_ip, boot_file_name, &boot_file_size);
+	uint32 ipaddr = getlocalip();
 	if (ipaddr == SYSERR) {
 		panic("[XBOOT] Error: could not obtain an IP address\n\r");
 	}
@@ -192,7 +178,7 @@ int32 main(void)
 	
 	/* Retrieve the xboot header from the boot server */
 	kprintf("[XBOOT] Retrieving Xinu Boot Header...\n");
-	size = tftpget(boot_server_ip, boot_file_name, (char*)&boot_hdr, sizeof(struct xboot_header), TFTP_NON_VERBOSE);
+	size = tftpget(NetData.bootserver, NetData.bootfile, (char*)&boot_hdr, sizeof(struct xboot_header), TFTP_NON_VERBOSE);
 	if(size == SYSERR) {
 		kprintf("[XBOOT] Unable to load Xinu boot header from boot server\n");
 		return SYSERR;
@@ -217,7 +203,7 @@ int32 main(void)
 	tftp_buffers[1] = (char*)boot_hdr.xboot_load_address;
 	tftp_buffer_sizes[1] = boot_hdr.xboot_file_size;
 	
-	size = tftpget_mb(boot_server_ip, boot_file_name, tftp_buffers, tftp_buffer_sizes, 2, TFTP_VERBOSE);
+	size = tftpget_mb(NetData.bootserver, NetData.bootfile, tftp_buffers, tftp_buffer_sizes, 2, TFTP_VERBOSE);
 	if(size == SYSERR) {
 		kprintf("[XBOOT] Error: unable to load Xinu from boot server\n");
 		return SYSERR;

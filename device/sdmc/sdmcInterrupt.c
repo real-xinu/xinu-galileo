@@ -9,7 +9,7 @@
  */
 void sdmcInterrupt(void) {
 	struct	dentry	*devptr;	/* address of device control blk*/
-	struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
+	volatile struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
 	struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
 
 	/* Get CSR address of the device */
@@ -18,7 +18,7 @@ void sdmcInterrupt(void) {
 	csrptr = (struct sdmc_csreg *) devptr->dvcsr;
 	sdmcptr = &sdmctab[devptr->dvminor];
 	
-	kprintf("SDMC INT: %04X\n", csrptr->nml_int_status);
+	kprintf("SDMC INT: %04X %04X\n", csrptr->nml_int_status, csrptr->err_int_status);
 	
 	/* Check for card insertion interrupt */
 	if(csrptr->nml_int_status & SDMC_NML_INT_CRD_INS) {

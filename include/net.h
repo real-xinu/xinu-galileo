@@ -2,6 +2,7 @@
 
 #define NETSTK		8192 		/* stack size for network setup */
 #define NETPRIO		500    		/* network startup priority 	*/
+#define NETBOOTFILE	128		/* size of the netboot filename	*/
 
 /* Constants used in the networking code */
 
@@ -56,9 +57,11 @@ struct	network	{
 	uint32	ipmask;
 	uint32	ipprefix;
 	uint32	iprouter;
+	uint32	bootserver;
 	bool8	ipvalid;
 	byte	ethucast[ETH_ADDR_LEN];
 	byte	ethbcast[ETH_ADDR_LEN];
+	char	bootfile[NETBOOTFILE];
 };
 
 extern	struct	network NetData;	/* Local Network Interface	*/

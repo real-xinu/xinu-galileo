@@ -57,8 +57,4 @@ struct	dhcpmsg	{
 };
 #pragma pack()
 
-void dump_dhcp_msg(const struct dhcpmsg* dmsg, uint32 dmsg_size);
-int32 build_dhcp_discover(struct dhcpmsg* dmsg);
-int32 build_dhcp_request(struct dhcpmsg* dmsg, const struct dhcpmsg* dmsg_offer, uint32 dsmg_offer_size);
-
 extern	bpid32	netbufpool;		/* ID of net packet buffer pool	*/

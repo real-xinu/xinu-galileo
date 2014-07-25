@@ -57,7 +57,6 @@ extern	void	ctxsw(void *, void *);
 /* in file dhcp.c */
 
 extern	uint32	getlocalip(void);
-extern	uint32	getlocalip_boot(uint32*, char*, uint32*);
 
 /* in file dot2ip.c */
 
