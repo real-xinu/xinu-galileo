@@ -64,8 +64,8 @@ devcall	ttyInit(
 
 	set_evec( devptr->dvirq, (uint32)devptr->dvintr );
 
-	/* Enable interrupts on the device; enable UART FIFOs, clear	*/
-	/*   set the interrupt trigger level				*/
+	/* Enable interrupts on the device: reset the transmit and	*/
+	/*   receive FIFOS, and set the interrupt trigger level		*/
 
 	uptr->fcr = UART_FCR_EFIFO | UART_FCR_RRESET |
 			UART_FCR_TRESET | UART_FCR_TRIG2;
