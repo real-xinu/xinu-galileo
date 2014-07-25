@@ -60,7 +60,7 @@ void	ttyInter_in (
 	if (typtr->tyoflow) {
 		if (ch == typtr->tyostart) {	    /* ^Q starts output	*/
 			typtr->tyoheld = FALSE;
-			ttyKickOut(typtr, csrptr);
+			ttyKickOut(csrptr);
 			return;
 		} else if (ch == typtr->tyostop) {  /* ^S stops	output	*/
 			typtr->tyoheld = TRUE;
@@ -260,6 +260,6 @@ local	void	eputc(
 	if (typtr->tyetail >= &typtr->tyebuff[TY_EBUFLEN]) {
 		typtr->tyetail = typtr->tyebuff;
 	}
-	ttyKickOut(typtr, csrptr);
+	ttyKickOut(csrptr);
 	return;
 }

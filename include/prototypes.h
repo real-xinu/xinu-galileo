@@ -611,7 +611,7 @@ extern	void	ttyInterrupt(void);
 extern	devcall	ttyInit(struct dentry *);
 
 /* in file ttyKickOut.c */
-extern	void	ttyKickOut(struct ttycblk *, struct uart_csreg *);
+extern	void	ttyKickOut(struct uart_csreg *);
 
 /* in file ttyPutc.c */
 extern	devcall	ttyPutc(struct dentry *, char);

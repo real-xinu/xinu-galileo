@@ -72,6 +72,6 @@ devcall	ttyInit(
 
 	/* Start the device */
 
-	ttyKickOut(typtr, uptr);
+	ttyKickOut(uptr);
 	return OK;
 }
