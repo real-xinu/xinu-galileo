@@ -48,7 +48,7 @@ devcall	ttyRead(
 	/* Check for End-Of-File */
 
 	if (firstch == EOF) {
-		return (EOF);
+		return EOF;
 	}
 
 	/* Read up to a line */
