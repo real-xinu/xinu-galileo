@@ -11,7 +11,7 @@ void	clkhandler()
 
 	/* Decrement the ms counter, and see if a second has passed */
 
-	if((--count1000) == 0) {
+	if((--count1000) <= 0) {
 
 		/* One second has passed, so increment seconds count */
 
