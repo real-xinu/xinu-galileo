@@ -11,7 +11,7 @@ void	ttyKickOut(
 	 struct uart_csreg *csrptr	/* Address of UART's CSRs	*/
 	)
 {
-	/* Set the device to force it to generate an interrupt */
+	/* Force the UART hardware generate an output interrupt */
 
 	csrptr->ier = UART_IER_ERBFI | UART_IER_ETBEI;
 
