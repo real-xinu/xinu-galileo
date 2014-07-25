@@ -1,59 +1,59 @@
 /* tty.h */
 
-#define	TY_OBMINSP		20	/* min space in buffer before	*/
-					/* processes awakened to write	*/
-#define	TY_EBUFLEN		20	/* size of echo queue		*/
+#define	TY_OBMINSP	20		/* Min space in buffer before	*/
+					/*   processes awakened to write*/
+#define	TY_EBUFLEN	20		/* Size of echo queue		*/
 
 /* Size constants */
 
 #ifndef	Ntty
-#define	Ntty		1		/* number of serial tty lines	*/
+#define	Ntty		1		/* Number of serial tty lines	*/
 #endif
 #ifndef	TY_IBUFLEN
-#define	TY_IBUFLEN	128		/* num.	chars in input queue	*/
+#define	TY_IBUFLEN	128		/* Num. chars in input queue	*/
 #endif
 #ifndef	TY_OBUFLEN
-#define	TY_OBUFLEN	64		/* num.	chars in output	queue	*/
+#define	TY_OBUFLEN	64		/* Num.	chars in output	queue	*/
 #endif
 
 /* Mode constants for input and output modes */
 
-#define	TY_IMRAW	'R'		/* raw mode => nothing done	*/
-#define	TY_IMCOOKED	'C'		/* cooked mode => line editing	*/
-#define	TY_IMCBREAK	'K'		/* honor echo, etc, no line edit*/
-#define	TY_OMRAW	'R'		/* raw mode => normal processing*/
+#define	TY_IMRAW	'R'		/* Raw input mode => no edits	*/
+#define	TY_IMCOOKED	'C'		/* Cooked mode => line editing	*/
+#define	TY_IMCBREAK	'K'		/* Honor echo, etc, no line edit*/
+#define	TY_OMRAW	'R'		/* Raw output mode => no edits	*/
 
-struct	ttycblk	{			/* tty line control block	*/
-	char	*tyihead;		/* next input char to read	*/
-	char	*tyitail;		/* next slot for arriving char	*/
-	char	tyibuff[TY_IBUFLEN];	/* input buffer (holds one line)*/
-	sid32	tyisem;			/* input semaphore		*/
-	char	*tyohead;		/* next output char to xmit	*/
-	char	*tyotail;		/* next slot for outgoing char	*/
-	char	tyobuff[TY_OBUFLEN];	/* output buffer		*/
-	sid32	tyosem;			/* output semaphore		*/
-	char	*tyehead;		/* next echo char to xmit	*/
-	char	*tyetail;		/* next slot to deposit echo ch	*/
-	char	tyebuff[TY_EBUFLEN];	/* echo buffer			*/
-	char	tyimode;		/* input mode raw/cbreak/cooked	*/
-	bool8	tyiecho;		/* is input echoed?		*/
-	bool8	tyieback;		/* do erasing backspace on echo?*/
-	bool8	tyevis;			/* echo control chars as ^X ?	*/
-	bool8	tyecrlf;		/* echo CR-LF for newline?	*/
-	bool8	tyicrlf;		/* map '\r' to '\n' on input?	*/
-	bool8	tyierase;		/* honor erase character?	*/
-	char	tyierasec;		/* erase character (backspace)	*/
-	bool8	tyeof;			/* honor EOF character?		*/
+struct	ttycblk	{			/* Tty line control block	*/
+	char	*tyihead;		/* Next input char to read	*/
+	char	*tyitail;		/* Next slot for arriving char	*/
+	char	tyibuff[TY_IBUFLEN];	/* Input buffer (holds one line)*/
+	sid32	tyisem;			/* Input semaphore		*/
+	char	*tyohead;		/* Next output char to xmit	*/
+	char	*tyotail;		/* Next slot for outgoing char	*/
+	char	tyobuff[TY_OBUFLEN];	/* Output buffer		*/
+	sid32	tyosem;			/* Output semaphore		*/
+	char	*tyehead;		/* Next echo char to xmit	*/
+	char	*tyetail;		/* Next slot to deposit echo ch	*/
+	char	tyebuff[TY_EBUFLEN];	/* Echo buffer			*/
+	char	tyimode;		/* Input mode raw/cbreak/cooked	*/
+	bool8	tyiecho;		/* Is input echoed?		*/
+	bool8	tyieback;		/* Do erasing backspace on echo?*/
+	bool8	tyevis;			/* Echo control chars as ^X ?	*/
+	bool8	tyecrlf;		/* Echo CR-LF for newline?	*/
+	bool8	tyicrlf;		/* Map '\r' to '\n' on input?	*/
+	bool8	tyierase;		/* Honor erase character?	*/
+	char	tyierasec;		/* Erase character (backspace)	*/
+	bool8	tyeof;			/* Honor EOF character?		*/
 	char	tyeofch;		/* EOF character (usually ^D)	*/
-	bool8	tyikill;		/* honor line kill character?	*/
-	char	tyikillc;		/* line kill character		*/
-	int32	tyicursor;		/* current cursor position	*/
-	bool8	tyoflow;		/* honor ostop/ostart?		*/
-	bool8	tyoheld;		/* output currently being held?	*/
-	char	tyostop;		/* character that stops output	*/
-	char	tyostart;		/* character that starts output	*/
-	bool8	tyocrlf;		/* output CR/LF for LF ?	*/
-	char	tyifullc;		/* char to send when input full	*/
+	bool8	tyikill;		/* Honor line kill character?	*/
+	char	tyikillc;		/* Line kill character		*/
+	int32	tyicursor;		/* Current cursor position	*/
+	bool8	tyoflow;		/* Honor ostop/ostart?		*/
+	bool8	tyoheld;		/* Output currently being held?	*/
+	char	tyostop;		/* Character that stops output	*/
+	char	tyostart;		/* Character that starts output	*/
+	bool8	tyocrlf;		/* Output CR/LF for LF ?	*/
+	char	tyifullc;		/* Char to send when input full	*/
 };
 extern	struct	ttycblk	ttytab[];
 
@@ -69,14 +69,14 @@ extern	struct	ttycblk	ttytab[];
 #define	TY_STRTCH	'\021'		/* Control-Q restarts output	*/
 #define	TY_KILLCH	'\025'		/* Control-U is line kill	*/
 #define	TY_UPARROW	'^'		/* Used for control chars (^X)	*/
-#define	TY_FULLCH	TY_BELL		/* char to echo when buffer full*/
+#define	TY_FULLCH	TY_BELL		/* Char to echo when buffer full*/
 
 /* Tty control function codes */
 
-#define	TC_NEXTC	3		/* look ahead 1 character	*/
-#define	TC_MODER	4		/* set input mode to raw	*/
-#define	TC_MODEC	5		/* set input mode to cooked	*/
-#define	TC_MODEK	6		/* set input mode to cbreak	*/
-#define	TC_ICHARS	8		/* return number of input chars	*/
-#define	TC_ECHO		9		/* turn on echo			*/
-#define	TC_NOECHO	10		/* turn off echo		*/
+#define	TC_NEXTC	3		/* Look ahead 1 character	*/
+#define	TC_MODER	4		/* Set input mode to raw	*/
+#define	TC_MODEC	5		/* Set input mode to cooked	*/
+#define	TC_MODEK	6		/* Set input mode to cbreak	*/
+#define	TC_ICHARS	8		/* Return number of input chars	*/
+#define	TC_ECHO		9		/* Turn on echo			*/
+#define	TC_NOECHO	10		/* Turn off echo		*/
