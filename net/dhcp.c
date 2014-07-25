@@ -260,7 +260,8 @@ uint32	getlocalip(void)
 			  }
 			NetData.bootserver = ntohl(*tmp_server_ip);
 			}
-			memcpy(NetData.bootfile, dmsg_rvc.bootfile, sizeof(dmsg_rvc.bootfile));
+			memcpy(NetData.bootfile, dmsg_rvc.bootfile,
+					     sizeof(dmsg_rvc.bootfile));
 			return NetData.ipucast;
 		}
 	}
