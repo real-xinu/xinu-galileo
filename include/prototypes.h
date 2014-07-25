@@ -34,9 +34,9 @@ extern	interrupt clkhandler(void);
 
 extern	void	clkinit(void);
 
-/* in file clkint.S */
+/* in file clkdisp.S */
 
-extern	void	clkint(void);
+extern	void	clkdisp(void);
 
 /* in file close.c */
 
@@ -610,7 +610,7 @@ extern	void	ttyInterrupt(void);
 extern	devcall	ttyInit(struct dentry *);
 
 /* in file ttyKickOut.c */
-extern	void	ttyKickOut(struct ttycblk *, struct uart_csreg *);
+extern	void	ttyKickOut(struct uart_csreg *);
 
 /* in file ttyPutc.c */
 extern	devcall	ttyPutc(struct dentry *, char);

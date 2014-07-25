@@ -44,7 +44,6 @@ void ttyInterrupt(void) {
 	    /* Receiver line status interrupt (error) */
 
 	    case UART_IIR_RLSI:
-		//lsr = inb( (int)&csrptr->lsr );
 		return;
 
 	    /* Receiver data available or timed out */
@@ -56,7 +55,6 @@ void ttyInterrupt(void) {
 
 		/* While chars avail. in UART buffer, call ttyInter_in	*/
 
-		//while ( (inb( (int)&csrptr->lsr) & UART_LSR_DR) != 0) {
 		while ( (csrptr->lsr & UART_LSR_DR) != 0) {
 			ttyInter_in(typtr, csrptr);
                 }
@@ -68,8 +66,6 @@ void ttyInterrupt(void) {
             /* Transmitter output FIFO is empty (i.e., ready for more)	*/
 
 	    case UART_IIR_THRE:
-		/* Read from LSR to clear interrupt */
-		//lsr = inb( (int)&csrptr->lsr );
 		ttyInter_out(typtr, csrptr);
 		return;
 
