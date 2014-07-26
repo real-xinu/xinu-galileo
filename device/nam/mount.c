@@ -7,47 +7,46 @@
  *------------------------------------------------------------------------
  */
 syscall	mount(
-	  char		*prefix,	/* prefix to add		*/
-	  char		*replace,	/* replacement string		*/
-	  did32		device		/* device ID to use		*/
+	  char		*prefix,	/* Prefix to add		*/
+	  char		*replace,	/* Replacement string		*/
+	  did32		device		/* Device ID to use		*/
 )
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	nmentry	*namptr;	/* pointer to unused table entry*/
-	int32	psiz, rsiz;		/* sizes of prefix & replacement*/
-	int32	i;			/* counter for copy loop	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	nmentry	*namptr;	/* Pointer to unused table entry*/
+	int32	psiz, rsiz;		/* Sizes of prefix & replacement*/
+	int32	i;			/* Counter for copy loop	*/
 
         mask = disable();
 
 	psiz = namlen(prefix, NM_PRELEN);
 	rsiz = namlen(replace, NM_REPLLEN);
-	if ((psiz == SYSERR) || (rsiz == SYSERR) || isbaddev(device)) {
+
+	/* If arguments are invalid or table is full, return error */
+
+	if ( (psiz == SYSERR)   || (rsiz == SYSERR) ||
+	     (isbaddev(device)) || (nnames >= NNAMES) ) {
 		restore(mask);
 		return SYSERR;
 	}
 
-	if (nnames >= NNAMES) {		/* if table full return error */
-		restore(mask);
-		return SYSERR;
-	}
+	/* Allocate a slot in the table */
 
-	/* allocate a slot in the table */
-
-	namptr = &nametab[nnames];	/* next unused entry in table	*/
+	namptr = &nametab[nnames];	/* Next unused entry in table	*/
 
 	/* copy prefix and replacement strings and record device ID */
 	
-	for (i=0; i<psiz; i++) {	/* copy prefix into table entry	*/
+	for (i=0; i<psiz; i++) {	/* Copy prefix into table entry	*/
 		namptr->nprefix[i] = *prefix++;
 	}
 
-	for (i=0; i<rsiz; i++) {	/* copy replacement into entry	*/
+	for (i=0; i<rsiz; i++) {	/* Copy replacement into entry	*/
 		namptr->nreplace[i] = *replace++;
 	}
 
-	namptr->ndevice = device;	/* record the device ID		*/
+	namptr->ndevice = device;	/* Record the device ID		*/
 
-        nnames++;			/* increment number of names	*/
+        nnames++;			/* Increment number of names	*/
 
 	restore(mask);
 	return OK;
@@ -55,22 +54,22 @@ syscall	mount(
 
 
 /*------------------------------------------------------------------------
- *  namlen  -  compute the length of a string stopping at maxlen
+ *  namlen  -  Compute the length of a string stopping at maxlen
  *------------------------------------------------------------------------
  */
 int32	namlen(
-	  char		*name,		/* name to use			*/
-	  int32		maxlen		/* maximum length (including a	*/
-					/*   NULL byte)			*/
+	  char		*name,		/* Name to use			*/
+	  int32		maxlen		/* Maximum length (including a	*/
+					/*   NULLCH)			*/
 )
 {
-	int32	i;			/* counter */
+	int32	i;			/* Count of characters found	*/
 
-	/* search until a null terminator or length reaches max */
+	/* Search until a null terminator or length reaches max */
 
 	for (i=0; i < maxlen; i++) {
 		if (*name++ == NULLCH) {
-			return i+1;
+			return i+1;	/* Include NULLCH in length */
 		}
 	}
 	return SYSERR;

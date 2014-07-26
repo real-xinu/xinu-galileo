@@ -67,7 +67,7 @@ sdmc:
 /* type of namespace device */
 nam:
 	on top
-		-i namInit 	-o namOpen 	-c ioerr
+		-i naminit 	-o namopen 	-c ioerr
 		-r ioerr 	-g ioerr 	-p ioerr
 		-w ioerr 	-s ioerr 	-n ioerr
 		-intr ioerr

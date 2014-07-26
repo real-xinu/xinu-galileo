@@ -32,7 +32,7 @@ devcall	ttyPutc(
 
 	/* Start output in case device is idle */
 
-	ttyKickOut(typtr, (struct uart_csreg *)devptr->dvcsr);
+	ttyKickOut((struct uart_csreg *)devptr->dvcsr);
 
 	return OK;
 }

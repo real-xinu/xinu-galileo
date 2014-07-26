@@ -334,16 +334,16 @@ extern	bpid32	mkbufpool(int32, int32);
 extern	syscall	mount(char *, char *, did32);
 extern	int32	namlen(char *, int32);
 
-/* in file namInit.c */
-extern	status	namInit(void);
+/* in file naminit.c */
+extern	status	naminit(void);
 
 /* in file nammap.c */
 extern	devcall	nammap(char *, char[], did32);
 extern	did32	namrepl(char *, char[]);
 extern	status	namcpy(char *, char *, int32);
 
-/* in file namOpen.c */
-extern	devcall	namOpen(struct dentry *, char *, char *);
+/* in file namopen.c */
+extern	devcall	namopen(struct dentry *, char *, char *);
 
 /* in file newqueue.c */
 extern	qid16	newqueue(void);
