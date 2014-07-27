@@ -26,15 +26,16 @@
 
 /* Messages shell displays for user */
 
-#define SHELL_PROMPT	"xsh $ "		/* Prompt		*/
-#define SHELL_STRTMSG	"Welcome to Xinu!\n"	/* Welcome message	*/
-#define SHELL_EXITMSG	"Shell closed\n"	/* Shell exit message	*/
-#define SHELL_SYNERRMSG	"Syntax error\n"	/* Syntax error message	*/
+#define SHELL_PROMPT	"xsh $ "	/* Command prompt		*/
+#define SHELL_STRTMSG	"Welcome to Xinu!\n"/* Welcome message		*/
+#define SHELL_EXITMSG	"Shell closed\n"/* Shell exit message		*/
+#define SHELL_SYNERRMSG	"Syntax error\n"/* Syntax error message		*/
 #define SHELL_CREATMSG	"Cannot create process\n"/* command error	*/
 #define SHELL_INERRMSG	"Cannot open file %s for input\n" /* Input err	*/
 #define SHELL_OUTERRMSG	"Cannot open file %s for output\n"/* Output err	*/
+					/* Builtin cmd error message	*/
 #define SHELL_BGERRMSG	"Cannot redirect I/O or background a builtin\n"
-						/* Builtin cmd err	*/
+
 /* Constants used for lexical analysis */
 
 #define	SH_NEWLINE	'\n'		/* New line character		*/
