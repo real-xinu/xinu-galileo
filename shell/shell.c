@@ -155,7 +155,7 @@ process	shell (
 
 		outname = inname = NULL;
 		if ( (ntok >=3) && ( (toktyp[ntok-2] == SH_TOK_LESS)
-				   ||(toktyp[ntok-2] == SH_TOK_GREATER))) {
+				   ||(toktyp[ntok-2] == SH_TOK_GREATER))){
 			if (toktyp[ntok-1] != SH_TOK_OTHER) {
 				fprintf(dev,"%s\n", SHELL_SYNERRMSG);
 				continue;
@@ -171,7 +171,7 @@ process	shell (
 
 
 		if ( (ntok >=3) && ( (toktyp[ntok-2] == SH_TOK_LESS)
-				   ||(toktyp[ntok-2] == SH_TOK_GREATER))) {
+				   ||(toktyp[ntok-2] == SH_TOK_GREATER))){
 			if (toktyp[ntok-1] != SH_TOK_OTHER) {
 				fprintf(dev,"%s\n", SHELL_SYNERRMSG);
 				continue;
@@ -237,8 +237,8 @@ process	shell (
 
 		/* Handle built-in command */
 
-		if (cmdtab[j].cbuiltin) { /* No background or redirection */
-			if (inname != NULL || outname != NULL || backgnd) {
+		if (cmdtab[j].cbuiltin) { /* No background or redirect. */
+			if (inname != NULL || outname != NULL || backgnd){
 				fprintf(dev, SHELL_BGERRMSG);
 				continue;
 			} else {
