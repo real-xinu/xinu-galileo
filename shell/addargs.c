@@ -4,34 +4,34 @@
 #include "shprototypes.h"
 
 /*------------------------------------------------------------------------
- *  addargs  -  add local copy of argv-style arguments to the stack of
+ *  addargs  -  Add local copy of argv-style arguments to the stack of
  *		  a command process that has been created by the shell
  *------------------------------------------------------------------------
  */
 status	addargs(
 	  pid32		pid,		/* ID of process to use		*/
-	  int32		ntok,		/* count of arguments		*/
-	  int32		tok[],		/* index of tokens in tokbuf	*/
-	  int32		tlen,		/* length of data in tokbuf	*/
-	  char		*tokbuf,	/* array of null-term. tokens	*/
-	  void 		*dummy		/* dummy argument that was	*/
+	  int32		ntok,		/* Count of arguments		*/
+	  int32		tok[],		/* Index of tokens in tokbuf	*/
+	  int32		tlen,		/* Length of data in tokbuf	*/
+	  char		*tokbuf,	/* Array of null-term. tokens	*/
+	  void 		*dummy		/* Dummy argument that was	*/
 					/*   used at creation and must	*/
 					/*   be replaced by a pointer	*/
 					/*   to an argument vector	*/
 	)
 {
-	intmask	mask;			/* saved interrupt mask		*/
-	struct	procent *prptr;		/* ptr to process' table entry	*/
-	uint32	aloc;			/* argument location in process	*/
+	intmask	mask;			/* Saved interrupt mask		*/
+	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	uint32	aloc;			/* Argument location in process	*/
 					/*   stack as an integer	*/
-	uint32	*argloc;		/* location in process's stack	*/
+	uint32	*argloc;		/* Location in process's stack	*/
 					/*   to place args vector	*/
-	char	*argstr;		/* location in process's stack	*/
+	char	*argstr;		/* Location in process's stack	*/
 					/*   to place arg strings	*/
 	uint32	*search;		/* pointer that searches for	*/
 					/*   dummy argument on stack	*/
-	uint32	*aptr;			/* walks through args array	*/
-	int32	i;			/* index into tok array		*/
+	uint32	*aptr;			/* Walks through args array	*/
+	int32	i;			/* Index into tok array		*/
 
 	mask = disable();
 
