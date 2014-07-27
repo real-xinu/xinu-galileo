@@ -3,32 +3,32 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lexan - ad hoc lexical analyzer to divide command line into tokens
+ * lexan  -  Ad hoc lexical analyzer to divide command line into tokens
  *------------------------------------------------------------------------
  */
 
 int32	lexan (
-	  char		*line,		/* input line terminated with	*/
-					/*  NEWLINE or NULLCH		*/
-	  int32		len,		/* length of the input line,	*/
+	  char		*line,		/* Input line terminated with	*/
+					/*   NEWLINE or NULLCH		*/
+	  int32		len,		/* Length of the input line,	*/
 					/*   including NEWLINE		*/
-	  char		*tokbuf,	/* buffer into which tokens are	*/
+	  char		*tokbuf,	/* Buffer into which tokens are	*/
 					/*   stored with a null		*/
 					/*   following each token	*/
-	  int32		*tlen,		/* place to store number of	*/
+	  int32		*tlen,		/* Place to store number of	*/
 					/*   chars in tokbuf		*/
-	  int32		tok[],		/* array of pointers to the	*/
+	  int32		tok[],		/* Array of pointers to the	*/
 					/*   start of each token	*/
-	  int32		toktyp[]	/* array that gives the type	*/
+	  int32		toktyp[]	/* Array that gives the type	*/
 					/*   of each token		*/
 	)
 {
-	char	quote;			/* character for quoted string  */
-	uint32	ntok;			/* number of tokens found	*/
-	char	*p;			/* pointer that walks along the	*/
+	char	quote;			/* Character for quoted string  */
+	uint32	ntok;			/* Number of tokens found	*/
+	char	*p;			/* Pointer that walks along the	*/
 					/*   input line			*/
-	int32	tbindex;		/* index into tokbuf		*/
-	char	ch;			/* next char from input line	*/
+	int32	tbindex;		/* Index into tokbuf		*/
+	char	ch;			/* Next char from input line	*/
 
 	/* Start at the beginning of the line with no tokens */
 
