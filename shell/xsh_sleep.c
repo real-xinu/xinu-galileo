@@ -5,14 +5,14 @@
 #include <string.h>
 
 /*------------------------------------------------------------------------
- * xsh_sleep - shell command to delay for a specified number of seconds
+ * xsh_sleep  -  Shell command to delay for a specified number of seconds
  *------------------------------------------------------------------------
  */
 shellcmd xsh_sleep(int nargs, char *args[])
 {
-	int32	delay;			/* delay in seconds		*/
-	char	*chptr;			/* walks through argument	*/
-	char	ch;			/* next character of argument	*/
+	int32	delay;			/* Delay in seconds		*/
+	char	*chptr;			/* Walks through argument	*/
+	char	ch;			/* Next character of argument	*/
 
 	/* For argument '--help', emit help about the 'sleep' command	*/
 
