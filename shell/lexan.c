@@ -102,7 +102,7 @@ int32	lexan (
 
 			p++;	/* Move past starting quote */
 
-			while (((ch=*p++) != quote) && (ch != SH_NEWLINE)
+			while ( ((ch=*p++) != quote) && (ch != SH_NEWLINE)
 					&& (ch != NULLCH) ) {
 				tokbuf[tbindex++] = ch;
 			}
