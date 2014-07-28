@@ -144,7 +144,7 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/lib					\
 		-s $(TOPDIR)/device/tty					\
 		-s $(TOPDIR)/device/nam					\
-		-s $(TOPDIR)/device/eth					\
+		-s $(TOPDIR)/device/eth ethInit* ethOpen* ethInterrupt* ethRead* ethWrite* ethControl* quark_eth_open.c					\
 		-s $(TOPDIR)/device/rds					\
 		-s $(TOPDIR)/device/ram					\
 		-s $(TOPDIR)/device/sdmc				\

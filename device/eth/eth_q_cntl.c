@@ -1,18 +1,22 @@
-/* quark_eth_cntl.c - _quark_eth_cntl */
+/* eth_q_cntl.c - _eth_q_cntl */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * _quark_eth_cntl - implement control function for a quark ethernet device
+ * _eth_q_cntl - implement control function for a quark ethernet device
  *------------------------------------------------------------------------
  */
-devcall	quark_eth_cntl(
-	struct 	ether *ethptr, 		/* entry in device switch table */
+devcall	eth_q_cntl(
+	struct 	dentry *devptr, 	/* entry in device switch table */
 	int32	func,			/* control function		*/
 	int32	arg1,			/* argument 1, if needed	*/
 	int32	arg2			/* argument 2, if needed	*/
 	)
 {
+	struct	ether *ethptr;
+
+	ethptr = &ethertab[devptr->dvminor];
+
 	switch (func) {
 
 		/* Get MAC address */
