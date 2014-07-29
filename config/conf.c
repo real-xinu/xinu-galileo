@@ -61,8 +61,57 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
 	  (void *)0x0, (void *)ionull, 0 },
 
+/* LFILESYS is lfs */
+	{ 6, 0, "LFILESYS",
+	  (void *)lfsInit, (void *)lfsOpen, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE0 is lfl */
+	{ 7, 0, "LFILE0",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE1 is lfl */
+	{ 8, 1, "LFILE1",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE2 is lfl */
+	{ 9, 2, "LFILE2",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE3 is lfl */
+	{ 10, 3, "LFILE3",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE4 is lfl */
+	{ 11, 4, "LFILE4",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* LFILE5 is lfl */
+	{ 12, 5, "LFILE5",
+	  (void *)lflInit, (void *)ioerr, (void *)lflClose,
+	  (void *)lflRead, (void *)lflWrite, (void *)lflSeek,
+	  (void *)lflGetc, (void *)lflPutc, (void *)lflControl,
+	  (void *)0x0, (void *)ionull, 0 },
+
 /* SDMC is sdmc */
-	{ 6, 0, "SDMC",
+	{ 13, 0, "SDMC",
 	  (void *)sdmcInit, (void *)sdmcOpen, (void *)sdmcClose,
 	  (void *)sdmcRead, (void *)sdmcWrite, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,

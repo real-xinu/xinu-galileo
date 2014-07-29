@@ -113,19 +113,19 @@ struct sdmc_capabilities {
 
 /* Normal Interrupt Signal Enable */
 
-#define SDMC_CMD_COMP_SIG_EN		0x0001	/* Command Complete Status Enable 	*/
-#define SDMC_TX_COMP_SIG_EN		0x0002	/* Transfer Complete Status Enable	*/
-#define SDMC_BLK_GAP_EVENT_SIG_EN	0x0004	/* Block Gap Event Status Enable	*/
-#define SDMC_DMA_INT_SIG_EN		0x0008	/* DMA Interrupt Status Enable		*/
-#define SDMC_BUF_WR_RDY_SIG_EN		0x0010	/* Buffer Write Ready Status Enable	*/
-#define SDMC_BUF_RD_RDY_SIG_EN		0x0020	/* Buffer Read Ready Status Enable	*/
-#define SDMC_CRD_INS_SIG_EN		0x0040	/* Card Insertion Status Enable		*/
-#define SDMC_CRD_RMV_SIG_EN		0x0080	/* Card Removal Status Enable		*/
-#define SDMC_CRD_INT_SIG_EN		0x0100	/* Card Interrupt Status Enable		*/
-#define SDMC_INT_A_SIG_EN		0x0200	/* INT_A Status Enable			*/
-#define SDMC_INT_B_SIG_EN		0x0400	/* INT_A Status Enable			*/
-#define SDMC_INT_C_SIG_EN		0x0800	/* INT_A Status Enable			*/
-#define SDMC_RE_TUNE_SIG_EN		0x1000	/* Re-Tuning Event Status Enable	*/
+#define SDMC_CMD_COMP_SIG_EN		0x0001	/* Command Complete Signal Enable 	*/
+#define SDMC_TX_COMP_SIG_EN		0x0002	/* Transfer Complete Signal Enable	*/
+#define SDMC_BLK_GAP_EVENT_SIG_EN	0x0004	/* Block Gap Event Signal Enable	*/
+#define SDMC_DMA_INT_SIG_EN		0x0008	/* DMA Interrupt Signal Enable		*/
+#define SDMC_BUF_WR_RDY_SIG_EN		0x0010	/* Buffer Write Ready Signal Enable	*/
+#define SDMC_BUF_RD_RDY_SIG_EN		0x0020	/* Buffer Read Ready Signal Enable	*/
+#define SDMC_CRD_INS_SIG_EN		0x0040	/* Card Insertion Signal Enable		*/
+#define SDMC_CRD_RMV_SIG_EN		0x0080	/* Card Removal Signal Enable		*/
+#define SDMC_CRD_INT_SIG_EN		0x0100	/* Card Interrupt Signal Enable		*/
+#define SDMC_INT_A_SIG_EN		0x0200	/* INT_A Signal Enable			*/
+#define SDMC_INT_B_SIG_EN		0x0400	/* INT_A Signal Enable			*/
+#define SDMC_INT_C_SIG_EN		0x0800	/* INT_A Signal Enable			*/
+#define SDMC_RE_TUNE_SIG_EN		0x1000	/* Re-Tuning Event Signal Enable	*/
 
 /* Normal Interrupt Status Register */
 
@@ -144,7 +144,7 @@ struct sdmc_capabilities {
 #define SDMC_NML_INT_RE_TUNE		0x1000	/* Re-Tuning Event			*/
 #define SDMC_NML_INT_BOOT_CK_RCV	0x2000	/* Boot Acknowledge Received		*/
 #define SDMC_NML_INT_BOOT_TER_INT	0x4000	/* Boot Terminate Interrupt		*/
-#define SDMC_NML_INT_ERR_INT		0x1000	/* Error Interrupt			*/
+#define SDMC_NML_INT_ERR_INT		0x8000	/* Error Interrupt			*/
 
 /* Error Interrupt Status Enable */
 
@@ -164,25 +164,46 @@ struct sdmc_capabilities {
 
 /* Error Interrupt Signal Enable */
 
-#define SDMC_ERR_INT_CMD_TIMEOUT_ERR_STAT_EN	0x0001 	/* Command Timeout Error Status Enable	*/
-#define SDMC_ERR_INT_CMD_CRC_ERR_STAT_EN	0x0002	/* Command CRC Error Status Enable	*/
-#define SDMC_ERR_INT_CMD_END_BIT_ERR_STAT_EN	0x0004	/* Command End Bit Error Status Enable	*/
-#define SDMC_ERR_INT_CMD_IND_ERR_STAT_EN	0x0008	/* Command Index Error Status Enable 	*/
-#define SDMC_ERR_INT_DATA_TIMEOUT_ERR_STAT_EN	0x0010	/* Data Timeout Error Status Enable	*/
-#define SDMC_ERR_INT_DATA_CRC_ERR_STAT_EN	0x0020	/* Data CRC Error Status Enable		*/
-#define SDMC_ERR_INT_DATA_END_BIT_ERR_STAT_EN	0x0040	/* Data End Bit Error Status Enable	*/
-#define SDMC_ERR_INT_CUR_LIMIT_ERR_STAT_EN	0x0080	/* Current Limit Error Status Enable	*/
-#define SDMC_ERR_INT_CMD12_ERR_STAT_EN		0x0100	/* Auto CMD12 Error Status Enable	*/
-#define SDMC_ERR_INT_ADMA_ERR_STAT_EN		0x0200	/* ADMA Error Status Enable		*/
-#define SDMC_ERR_INT_TUNE_ERR_STAT_EN		0x0400	/* Tuning Error Status Enable		*/
-#define SDMC_ERR_INT_TGT_RSP_ERR_EN		0x1000	/* Target Response Error Status Enable	*/
-#define SDMC_ERR_INT_CEATA_ERR_EN		0x2000	/* CEATA Error Status Enable		*/
+#define SDMC_ERR_INT_CMD_TIMEOUT_ERR_SIG_EN	0x0001 	/* Command Timeout Error Signal Enable	*/
+#define SDMC_ERR_INT_CMD_CRC_ERR_SIG_EN		0x0002	/* Command CRC Error Signal Enable	*/
+#define SDMC_ERR_INT_CMD_END_BIT_ERR_SIG_EN	0x0004	/* Command End Bit Error Signal Enable	*/
+#define SDMC_ERR_INT_CMD_IND_ERR_SIG_EN		0x0008	/* Command Index Error Signal Enable 	*/
+#define SDMC_ERR_INT_DATA_TIMEOUT_ERR_SIG_EN	0x0010	/* Data Timeout Error Signal Enable	*/
+#define SDMC_ERR_INT_DATA_CRC_ERR_SIG_EN	0x0020	/* Data CRC Error Signal Enable		*/
+#define SDMC_ERR_INT_DATA_END_BIT_ERR_SIG_EN	0x0040	/* Data End Bit Error Signal Enable	*/
+#define SDMC_ERR_INT_CUR_LIMIT_ERR_SIG_EN	0x0080	/* Current Limit Error Signal Enable	*/
+#define SDMC_ERR_INT_CMD12_ERR_SIG_EN		0x0100	/* Auto CMD12 Error Signal Enable	*/
+#define SDMC_ERR_INT_ADMA_ERR_SIG_EN		0x0200	/* ADMA Error Signal Enable		*/
+#define SDMC_ERR_INT_TUNE_ERR_SIG_EN		0x0400	/* Tuning Error Signal Enable		*/
+#define SDMC_ERR_INT_TGT_RSP_ERR_SIG_EN		0x1000	/* Target Response Error Signal Enable	*/
+#define SDMC_ERR_INT_CEATA_ERR_SIG_EN		0x2000	/* CEATA Error Signal Enable		*/
+
+/* Error Interrupt Status Register */
+#define SDMC_ERR_INT_CMD_TIMEOUT_ERR		0x0001	/* Command Timeout Error		*/
+#define SDMC_ERR_INT_CMD_CRC_ERR		0x0002	/* Command CRC Error			*/
+#define SDMC_ERR_INT_CMD_END_BIT_ERR		0x0004	/* Command End Bit Error		*/
+#define SDMC_ERR_INT_CMD_INDEX_ERR		0x0008	/* Command Index Error			*/
+#define SDMC_ERR_INT_DATA_TIMEOUT_ERR		0x0010	/* Data Timeout Error			*/
+#define SDMC_ERR_INT_DATA_CRC_ERR		0x0020	/* Data CRC Error			*/
+#define SDMC_ERR_INT_DATA_END_BIT_ERR		0x0040	/* Data End Bit Error			*/
+#define SDMC_ERR_INT_CUR_LIMIT_ERR		0x0080	/* Current Limit Error			*/
+#define SDMC_ERR_INT_CMD12_ERR			0x0100	/* Auto CMD Error			*/
+#define SDMC_ERR_INT_ADMA_ERR			0x0200	/* ADMA Error				*/
+#define SDMC_ERR_INT_TUNE_ERR			0x0400	/* Tuning Error				*/
+#define SDMC_ERR_INT_TGT_RSP_ERR		0x1000	/* Target Response Error		*/
+#define SDMC_ERR_INT_CEATA_ERR			0x2000	/* CEATA Error				*/
+
+/* Software Reset Register */
+#define SDMC_SW_RST_ALL			0x01	/* Software Reset For All		*/
+#define SDMC_SW_RST_CMD_LN		0x02	/* Software Reset For CMD Line		*/
+#define SDMC_SW_RST_DAT_LN		0x04	/* Software Reset for DAT Line		*/
 
 /* Present State Status Register */
 
 #define SDMC_PRE_STATE_CMD_INHIBIT_CMD	0x00000001	/* Command Inhibit		*/
 #define SDMC_PRE_STATE_CMD_INHIBIT_DAT	0x00000002	/* Command Inhibit DAT		*/
 #define SDMC_PRE_STATE_CRD_INS		0x00010000	/* Card Inserted		*/
+#define SDMC_PRE_STATE_DATA_LN_SIG_LVL	0x00F00000	/* Line Signal Level		*/
 
 /* Clock Control Register */
 
@@ -192,5 +213,15 @@ struct sdmc_capabilities {
 #define SDMC_CLK_CTL_CLK_GEN_SEL	0x0020	/* Clock Generator Select		*/
 #define SDMC_CLK_CTL_SD_FREQ_HIGH_MASK	0x00FF	/* Mask to set SD clock frequency to max*/
 
+#define SDMC_CMD_CMD0			0x0000	/* CMD0 - Go Idle State			*/
+#define SDMC_CMD_CMD8			0x081A	/* CMD8 - Voltage check			*/
+#define SDMC_CMD_ACMD41			0x2902	/* ACMD41 - Card Initialization/Inquiry	*/
+
+#define SDMC_ARG_CMD8			0x00010001
+#define SDMC_ARG_ACMD41_INQUIRY		0x00000000
 
 #define SDMC_CMD_DELAY			100000		/* Delay in micro secs	*/
+
+#define SDMC_RC_OK			(0)
+#define SDMC_RC_RECOVERABLE_ERR		(-1)
+#define SDMC_RC_NON_RECOVERABLE_ERROR	(-2)

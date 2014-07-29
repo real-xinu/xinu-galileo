@@ -148,6 +148,7 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/device/rds					\
 		-s $(TOPDIR)/device/ram					\
 		-s $(TOPDIR)/device/sdmc				\
+		-s $(TOPDIR)/device/lfs					\
 		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'		\
 		-s $(TOPDIR)/shell  'xsh_rdstest*' > .defs
 

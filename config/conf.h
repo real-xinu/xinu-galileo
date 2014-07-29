@@ -31,7 +31,14 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define NAMESPACE   3       /* type nam      */
 #define RDISK       4       /* type rds      */
 #define RAM0        5       /* type ram      */
-#define SDMC        6       /* type sdmc     */
+#define LFILESYS    6       /* type lfs      */
+#define LFILE0      7       /* type lfl      */
+#define LFILE1      8       /* type lfl      */
+#define LFILE2      9       /* type lfl      */
+#define LFILE3      10       /* type lfl      */
+#define LFILE4      11       /* type lfl      */
+#define LFILE5      12       /* type lfl      */
+#define SDMC        13       /* type sdmc     */
 
 /* Control block sizes */
 
@@ -41,10 +48,12 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	Nrds	1
 #define	Nram	1
 #define	Nsdmc	1
+#define	Nlfs	1
+#define	Nlfl	6
 #define	Nnam	1
 
 #define DEVMAXNAME 24
-#define NDEVS 7
+#define NDEVS 14
 
 
 /* Configuration and Size Constants */
@@ -55,3 +64,5 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	IRQ_TIMER    IRQ_HW5	/* timer IRQ is wired to hardware 5	*/
 #define	IRQ_ATH_MISC IRQ_HW4	/* Misc. IRQ is wired to hardware 4	*/
 #define CLKFREQ      200000000	/* 200 MHz clock			*/
+
+#define	LF_DISK_DEV	RAM0

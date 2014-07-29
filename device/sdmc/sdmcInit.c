@@ -45,6 +45,8 @@ devcall	sdmcInit (
 	/* Enable and register for card insertion and removal interrupts */
 	csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN  | SDMC_CRD_INT_STAT_EN; 
 	csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN  | SDMC_CRD_INT_SIG_EN;
+	csrptr->err_int_stat_en = 0;
+	csrptr->err_int_sig_en = 0;
 	
 	//csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN | SDMC_CMD_COMP_STAT_EN | SDMC_TX_COMP_STAT_EN | SDMC_CRD_INT_STAT_EN; 
 	//csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN | SDMC_CMD_COMP_SIG_EN | SDMC_TX_COMP_SIG_EN | SDMC_CRD_INT_SIG_EN;

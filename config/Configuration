@@ -63,6 +63,22 @@ sdmc:
 		-r sdmcRead	-g ioerr	-p ioerr
 		-w sdmcWrite	-s ioerr	-n ioerr
 		-intr sdmcDispatch
+
+/* type of a local file system master device */
+lfs:
+	on ram
+		-i lfsInit	-o lfsOpen	-c ioerr
+		-r ioerr	-g ioerr	-p ioerr
+		-w ioerr	-s ioerr	-n ioerr
+		-intr ionull
+
+/* type of a local file pseudo-device */
+lfl:
+	on lfs
+		-i lflInit	-o ioerr	-c lflClose
+		-r lflRead	-g lflGetc	-p lflPutc
+		-w lflWrite	-s lflSeek	-n lflControl
+		-intr ionull
 		
 /* type of namespace device */
 nam:
@@ -95,6 +111,19 @@ nam:
    /* Define a ram disk device */
    RAM0 is ram on mem
    
+   /* Define the local file system master device (one per system) */
+
+   LFILESYS is lfs on ram
+
+   /* Define local file pseudo-devices (multiple per system) */
+
+   LFILE0 is lfl on lfs
+   LFILE1 is lfl on lfs
+   LFILE2 is lfl on lfs
+   LFILE3 is lfl on lfs
+   LFILE4 is lfl on lfs
+   LFILE5 is lfl on lfs
+   
    /* Define a SD memory card device */
    SDMC is sdmc on sd csr 0 -irq 0051
 
@@ -108,3 +137,5 @@ nam:
 #define	IRQ_TIMER    IRQ_HW5	/* timer IRQ is wired to hardware 5	*/
 #define	IRQ_ATH_MISC IRQ_HW4	/* Misc. IRQ is wired to hardware 4	*/
 #define CLKFREQ      200000000	/* 200 MHz clock			*/
+
+#define	LF_DISK_DEV	RAM0
