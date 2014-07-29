@@ -104,10 +104,20 @@ int32	eth_q_phy_reset	(
 	if(value & 0x0008) { /* Auto-negotiation capability present */
 
 		/* Wait for the auto-negotiation process to complete */
-		while((eth_q_phy_read(csrptr, 1) & 0x0020) == 0);
+		retries = 0;
+		while((eth_q_phy_read(csrptr, 1) & 0x0020) == 0) {
+			delay(ETH_QUARK_INIT_DELAY);
+			if((++retries) > ETH_QUARK_MAX_RETRIES)
+				return SYSERR;
+		}
 
 		/* Wait for the Link to be Up */
-		while((eth_q_phy_read(csrptr, 1) & 0x0004) == 0);
+		retries = 0;
+		while((eth_q_phy_read(csrptr, 1) & 0x0004) == 0) {
+			delay(ETH_QUARK_INIT_DELAY);
+			if((++retries) > ETH_QUARK_MAX_RETRIES)
+				return SYSERR;
+		}
 	}
 	else { /* Auto-negotiation capability not present */
 		/* TODO Set Link speed = 100Mbps */
