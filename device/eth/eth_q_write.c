@@ -13,11 +13,13 @@ devcall	eth_q_write	(
 			)
 {
 	struct	ether *ethptr;
-	struct	eth_q_csreg *csrptr = (struct eth_q_csreg *)ethptr->csr;
+	struct	eth_q_csreg *csrptr;
 	volatile struct	eth_q_tx_desc *descptr;
 	uint32 i;
 
 	ethptr = &ethertab[devptr->dvminor];
+
+	csrptr = (struct eth_q_csreg *)ethptr->csr;
 
 	/* Wait for an empty slot in the transmit desc ring */
 	wait(ethptr->osem);
