@@ -87,6 +87,10 @@ extern 	devcall eth_q_cntl(struct dentry *, int32, int32, int32);
 /* in file eth_q_dispatch.S */
 extern	void	eth_q_dispatch(void);
 
+/* in file eth_q_mcast.c */
+extern	int32	eth_q_add_mcast(struct ether *, byte[]);
+extern	int32	eth_q_remove_mcast(struct ether *, byte[]);
+
 /* in file eth_q_read.c */
 extern  devcall eth_q_read(struct dentry *, void *buf, uint32 len);
 

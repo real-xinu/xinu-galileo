@@ -79,6 +79,10 @@ struct eth_q_csreg {
 #define ETH_QUARK_GMIIAR_GW	0x00000002	/* GMII Write Enable	*/
 #define ETH_QUARK_GMIIAR_GB	0x00000001	/* GMII Busy		*/
 
+/* Bus Mode Register */
+#define ETH_QUARK_BMR_SWR	0x00000001	/* Software Reset	*/
+
+/* Status Register */
 #define ETH_QUARK_SR_MMCI	0x08000000	/* MAC MMC interrupt	*/
 #define ETH_QUARK_SR_TS_SUSP	0x00600000	/* TX DMA is suspended	*/
 #define ETH_QUARK_SR_NIS	0x00010000	/* Normal Int summary	*/
@@ -86,9 +90,12 @@ struct eth_q_csreg {
 #define ETH_QUARK_SR_RI		0x00000040	/* Receive Interrupt	*/
 #define ETH_QUARK_SR_TI		0x00000001	/* Transmit Interrupt	*/
 
+/* Operation Mode Register */
+#define ETH_QUARK_OMR_TSF	0x00200000	/* Tx store and forward	*/
 #define ETH_QUARK_OMR_ST	0x00002000	/* Start/Stop TX	*/
 #define ETH_QUARK_OMR_SR	0x00000002	/* Start/Stop RX	*/
 
+/* Interrupt Enable Register */
 #define ETH_QUARK_IER_NIE	0x00010000	/* Enable Norm Int Summ.*/
 #define ETH_QUARK_IER_AIE	0x00008000	/* Enable Abnnom "   "	*/
 #define ETH_QUARK_IER_RIE	0x00000040	/* Enable RX Interrupt	*/

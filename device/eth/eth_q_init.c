@@ -144,20 +144,18 @@ int32	eth_q_init	(
 	pci_write_config_word(ethptr->pcidev, 0x4, 0x0006);
 
 	/* Reset the Ethernet MAC */
-	csrptr->bmr |= 0x00000001;
+	csrptr->bmr |= ETH_QUARK_BMR_SWR;
 
 	/* Wait for the MAC Reset process to complete */
 	retries = 0;
-	while(csrptr->bmr & 0x00000001) {
+	while(csrptr->bmr & ETH_QUARK_BMR_SWR) {
 		delay(ETH_QUARK_INIT_DELAY);
 		if((++retries) > ETH_QUARK_MAX_RETRIES)
 			return SYSERR;
 	}
 
-	/* Fixed burst mode */
-	csrptr->bmr |= 0x00010000;
-
-	csrptr->omr |= 0x00200000;
+	/* Transmit Store and Forward */
+	csrptr->omr |= ETH_QUARK_OMR_TSF;
 
 	/* Reset the Ethernet PHY */
 	eth_q_phy_reset(csrptr);
@@ -168,7 +166,6 @@ int32	eth_q_init	(
 	/* Set the MAC Speed = 100Mbps, Full Duplex mode */
 	csrptr->maccr |= (ETH_QUARK_MACCR_RMIISPD100 |
 			  ETH_QUARK_MACCR_DM);
-	csrptr->maccr |= (0x30000000);
 	
 	/* Reset the MMC Counters */
 	csrptr->mmccr |= ETH_QUARK_MMC_CNTFREEZ | ETH_QUARK_MMC_CNTRST;
@@ -185,6 +182,8 @@ int32	eth_q_init	(
 		0xff&ethptr->devAddress[4],
 		0xff&ethptr->devAddress[5]);
 
+	/* Add the MAC address read from SPI flash into the	*/
+	/* macaddr registers for address filtering		*/
 	csrptr->macaddr0l = (uint32)(*((uint32 *)ethptr->devAddress));
 	csrptr->macaddr0h = ((uint32)
 		(*((uint16 *)(ethptr->devAddress + 4))) | 0x80000000);

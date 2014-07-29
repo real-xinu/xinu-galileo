@@ -15,7 +15,7 @@ devcall	eth_q_read	(
 	struct	ether *ethptr;		/* Ethertab entry pointer	*/
 	struct	eth_q_rx_desc *rdescptr;/* Pointer to the descriptor	*/
 	struct	netpacket *pktptr;	/* Pointer to packet		*/
-	uint32	framelen;		/* Length of the incoming frame	*/
+	uint32	framelen = 0;		/* Length of the incoming frame	*/
 	bool8	valid_addr;
 	int32	i;
 

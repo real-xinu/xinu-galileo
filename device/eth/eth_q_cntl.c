@@ -13,7 +13,8 @@ devcall	eth_q_cntl(
 	int32	arg2			/* argument 2, if needed	*/
 	)
 {
-	struct	ether *ethptr;
+	struct	ether *ethptr;	/* Ethertab entry pointer	*/
+	int32	retval = OK;	/* Return value of cntl function*/
 
 	ethptr = &ethertab[devptr->dvminor];
 
@@ -26,9 +27,17 @@ devcall	eth_q_cntl(
 					ETH_ADDR_LEN);
 			break;
 
+		case ETH_CTRL_ADD_MCAST:
+			retval = eth_q_add_mcast(ethptr, (byte *)arg1);
+			break;
+
+		case ETH_CTRL_REMOVE_MCAST:
+			retval = eth_q_remove_mcast(ethptr, (byte *)arg1);
+			break;
+
 		default:
 			return SYSERR;
 	}
 
-	return OK;
+	return retval;
 }
