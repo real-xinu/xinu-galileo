@@ -75,44 +75,27 @@ extern	intmask	disable(void);
 
 extern	void	enable(void);
 
-/* in file quark_eth_init.c */
-extern 	void	quark_eth_init(struct ether *ethptr);
+/* in file eth_q_init.c */
+extern 	int32	eth_q_init(struct dentry *);
 
-/* in file quark_eth_intr.c */
-extern 	interrupt	quark_eth_intr(struct ether *);
+/* in file eth_q_intr.c */
+extern 	interrupt	eth_q_intr();
 
-/* in file quark_eth_cntl.c */
-extern 	devcall quark_eth_cntl(struct ether *, int32, int32, int32);
+/* in file eth_q_cntl.c */
+extern 	devcall eth_q_cntl(struct dentry *, int32, int32, int32);
 
-/* in file quark_eth_open.c */
-extern 	status 	quark_eth_open(struct ether *ethptr);
+/* in file eth_q_dispatch.S */
+extern	void	eth_q_dispatch(void);
 
-/* in file quark_eth_read.c */
-extern  devcall quark_eth_read(struct ether *ethptr, void *buf, uint32 len);
+/* in file eth_q_mcast.c */
+extern	int32	eth_q_add_mcast(struct ether *, byte[]);
+extern	int32	eth_q_remove_mcast(struct ether *, byte[]);
 
-/* in file quark_eth_write.c */
-extern 	devcall quark_eth_write(struct ether *ethptr, void *buf, uint32 len);
+/* in file eth_q_read.c */
+extern  devcall eth_q_read(struct dentry *, void *buf, uint32 len);
 
-/* in file ethControl.c */
-extern	devcall	ethControl(struct dentry *, int32, int32, int32);
-
-/* in file ethDispatch.S */
-extern	interrupt	ethDispatch(void);
-
-/* in file ethInit.c */
-extern	devcall	ethInit(struct dentry *);
-
-/* in file etherInterupt.c */
-extern	interrupt	ethInterrupt(void);
-
-/* in file ethRead.c */
-extern	devcall ethRead(struct dentry *, void *, uint32);
-
-/* in file ethStat.c */
-extern	void	ethStat(uint16);
-
-/* in file ethWrite.c */
-extern	devcall	ethWrite(struct dentry *, void *, uint32);
+/* in file eth_q_write.c */
+extern 	devcall eth_q_write(struct dentry *, void *buf, uint32 len);
 
 /* in file early_imr.c */
 void remove_irm_protections();
@@ -390,6 +373,9 @@ extern	syscall	ptsend(int32, umsg32);
 
 /* in file putc.c */
 extern	syscall	putc(did32, char);
+
+/* in file quark_irq.c */
+extern	int32	quark_irq_routing(void);
 
 /* in file ramClose.c */
 extern	devcall	ramClose(struct dentry *);

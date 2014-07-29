@@ -45,6 +45,8 @@ struct	etherPkt {
 /* Ethernet device control functions */
 
 #define	ETH_CTRL_GET_MAC     	1 	/* Get the MAC for this device	*/
+#define ETH_CTRL_ADD_MCAST	2	/* Add a multicast address	*/
+#define ETH_CTRL_REMOVE_MCAST	3	/* Remove a multicast address	*/
 
 /* Ethernet multicast */
 

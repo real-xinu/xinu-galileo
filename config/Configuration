@@ -34,11 +34,11 @@ tty:
 
 /* type of a ethernet device */
 eth:
-	on e1000e
-		-i ethInit      -o ioerr        -c ioerr
-		-r ethRead      -g ioerr        -p ioerr
-		-w ethWrite     -s ioerr        -n ethControl
-		-intr ethDispatch
+	on quark_eth
+		-i eth_q_init	-o ioerr	-c ioerr
+		-r eth_q_read	-g ioerr	-p ioerr
+		-w eth_q_write	-s ioerr	-n eth_q_cntl
+		-intr eth_q_dispatch
 
 /* type of a remote disk system device */
 rds:
@@ -100,7 +100,7 @@ nam:
    NULLDEV is null on nothing
 
    /* Physical Ethernet (raw packet transfer) */
-   ETHER0 is eth   on e1000e csr 0 -irq 0053
+   ETHER0 is eth   on quark_eth csr 0 -irq 0053
 
    /* Define a namespace device */
    NAMESPACE is nam on top
