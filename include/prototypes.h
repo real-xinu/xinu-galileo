@@ -393,23 +393,23 @@ extern	devcall	ramRead(struct dentry *, char *, int32);
 /* in file ramWrite.c */
 extern	devcall	ramWrite(struct dentry *, char *, int32);
 
-/* in file rdsClose.c */
-extern	devcall	rdsClose(struct dentry *);
+/* in file rdsclose.c */
+extern	devcall	rdsclose(struct dentry *);
 
-/* in file rdsControl.c */
-extern	devcall	rdsControl(struct dentry *, int32, int32, int32);
+/* in file rdscontrol.c */
+extern	devcall	rdscontrol(struct dentry *, int32, int32, int32);
 
-/* in file rdsInit.c */
-extern	devcall	rdsInit(struct dentry *);
+/* in file rdsinit.c */
+extern	devcall	rdsinit(struct dentry *);
 
-/* in file rdsOpen.c */
-extern	devcall	rdsOpen(struct dentry *, char *, char *);
+/* in file rdsopen.c */
+extern	devcall	rdsopen(struct dentry *, char *, char *);
 
-/* in file rdsRead.c */
-extern	devcall	rdsRead(struct dentry *, char *, int32);
+/* in file rdsread.c */
+extern	devcall	rdsread(struct dentry *, char *, int32);
 
-/* in file rdsWrite.c */
-extern	devcall	rdsWrite(struct dentry *, char *, int32);
+/* in file rdswrite.c */
+extern	devcall	rdswrite(struct dentry *, char *, int32);
 
 /* in file rdsbufalloc.c */
 extern	struct	rdbuff * rdsbufalloc(struct rdscblk *);
@@ -574,38 +574,38 @@ extern	int32	insw(int32, int32 ,int32);
 /* in file suspend.c */
 extern	syscall	suspend(pid32);
 
-/* in file ttyControl.c */
-extern	devcall	ttyControl(struct dentry *, int32, int32, int32);
+/* in file ttycontrol.c */
+extern	devcall	ttycontrol(struct dentry *, int32, int32, int32);
 
-/* in file ttyDispatch.c */
-extern	interrupt	ttyDispatch(void);
+/* in file ttydispatch.c */
+extern	interrupt	ttydispatch(void);
 
-/* in file ttyGetc.c */
-extern	devcall	ttyGetc(struct dentry *);
+/* in file ttygetc.c */
+extern	devcall	ttygetc(struct dentry *);
 
-/* in file ttyInter_in.c */
-extern	void	ttyInter_in(struct ttycblk *, struct uart_csreg *);
+/* in file ttyinter_in.c */
+extern	void	ttyinter_in(struct ttycblk *, struct uart_csreg *);
 
-/* in file ttyInter_out.c */
-extern	void	ttyInter_out(struct ttycblk *, struct uart_csreg *);
+/* in file ttyinter_out.c */
+extern	void	ttyinter_out(struct ttycblk *, struct uart_csreg *);
 
-/* in file ttyInterrupt.c */
-extern	void	ttyInterrupt(void);
+/* in file ttyinterrupt.c */
+extern	void	ttyinterrupt(void);
 
-/* in file ttyInit.c */
-extern	devcall	ttyInit(struct dentry *);
+/* in file ttyinit.c */
+extern	devcall	ttyinit(struct dentry *);
 
-/* in file ttyKickOut.c */
-extern	void	ttyKickOut(struct uart_csreg *);
+/* in file ttykickout.c */
+extern	void	ttykickout(struct uart_csreg *);
 
-/* in file ttyPutc.c */
-extern	devcall	ttyPutc(struct dentry *, char);
+/* in file ttyputc.c */
+extern	devcall	ttyputc(struct dentry *, char);
 
-/* in file ttyRead.c */
-extern	devcall	ttyRead(struct dentry *, char *, int32);
+/* in file ttyread.c */
+extern	devcall	ttyread(struct dentry *, char *, int32);
 
-/* in file ttyWrite.c */
-extern	devcall	ttyWrite(struct dentry *, char *, int32);
+/* in file ttywrite.c */
+extern	devcall	ttywrite(struct dentry *, char *, int32);
 
 /* in file udp.c */
 

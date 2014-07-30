@@ -21,10 +21,10 @@ struct	dentry	devtab[NDEVS] =
 
 /* CONSOLE is tty */
 	{ 0, 0, "CONSOLE",
-	  (void *)ttyInit, (void *)ionull, (void *)ionull,
-	  (void *)ttyRead, (void *)ttyWrite, (void *)ioerr,
-	  (void *)ttyGetc, (void *)ttyPutc, (void *)ttyControl,
-	  (void *)0x3f8, (void *)ttyDispatch, 42 },
+	  (void *)ttyinit, (void *)ionull, (void *)ionull,
+	  (void *)ttyread, (void *)ttywrite, (void *)ioerr,
+	  (void *)ttygetc, (void *)ttyputc, (void *)ttycontrol,
+	  (void *)0x3f8, (void *)ttydispatch, 42 },
 
 /* NULLDEV is null */
 	{ 1, 0, "NULLDEV",
@@ -49,9 +49,9 @@ struct	dentry	devtab[NDEVS] =
 
 /* RDISK is rds */
 	{ 4, 0, "RDISK",
-	  (void *)rdsInit, (void *)rdsOpen, (void *)rdsClose,
-	  (void *)rdsRead, (void *)rdsWrite, (void *)ioerr,
-	  (void *)ioerr, (void *)ioerr, (void *)rdsControl,
+	  (void *)rdsinit, (void *)rdsopen, (void *)rdsclose,
+	  (void *)rdsread, (void *)rdswrite, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)rdscontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* RAM0 is ram */

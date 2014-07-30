@@ -1,14 +1,14 @@
-/* rdsInit.c  -  rdsInit */
+/* rdsinit.c  -  rdsinit */
 
 #include <xinu.h>
 
 struct	rdscblk	rdstab[Nrds];
 
 /*------------------------------------------------------------------------
- *  rdsInit - initialize the remote disk system device
+ *  rdsinit - initialize the remote disk system device
  *------------------------------------------------------------------------
  */
-devcall	rdsInit (
+devcall	rdsinit (
 	  struct dentry	*devptr		/* entry in device switch table	*/
 	)
 {

@@ -1,13 +1,13 @@
-/* ttyKickOut.c - ttyKickOut */
+/* ttykickout.c - ttykickout */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyKickOut  -  "Kick" the hardware for a tty device, causing it to
+ *  ttykickout  -  "Kick" the hardware for a tty device, causing it to
  *		     generate an output interrupt (interrupts disabled)
  *------------------------------------------------------------------------
  */
-void	ttyKickOut(
+void	ttykickout(
 	 struct uart_csreg *csrptr	/* Address of UART's CSRs	*/
 	)
 {

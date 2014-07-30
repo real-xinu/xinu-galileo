@@ -1,13 +1,13 @@
-/* rdsOpen.c  -  rdsOpen */
+/* rdsopen.c  -  rdsopen */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsOpen - open a remote disk device and specify an ID to use
+ * rdsopen - open a remote disk device and specify an ID to use
  *------------------------------------------------------------------------
  */
 
-devcall	rdsOpen (
+devcall	rdsopen (
 	 struct	dentry	*devptr,	/* entry in device switch table	*/
 	 char	*diskid,		/* disk ID to use		*/
 	 char	*mode			/* unused for a remote disk	*/

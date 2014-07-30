@@ -1,12 +1,12 @@
-/* ttyPutc.c - ttyPutc */
+/* ttyputc.c - ttyputc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyPutc  -  Write one character to a tty device (interrupts disabled)
+ *  ttyputc  -  Write one character to a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
-devcall	ttyPutc(
+devcall	ttyputc(
 	struct	dentry	*devptr,	/* Entry in device switch table	*/
 	char	ch			/* Character to write		*/
 	)
@@ -18,7 +18,7 @@ devcall	ttyPutc(
 	/* Handle output CRLF by sending CR first */
 
         if ( ch==TY_NEWLINE && typtr->tyocrlf ) {
-                ttyPutc(devptr, TY_RETURN);
+                ttyputc(devptr, TY_RETURN);
 	}
 
 	wait(typtr->tyosem);		/* Wait	for space in queue */
@@ -32,7 +32,7 @@ devcall	ttyPutc(
 
 	/* Start output in case device is idle */
 
-	ttyKickOut((struct uart_csreg *)devptr->dvcsr);
+	ttykickout((struct uart_csreg *)devptr->dvcsr);
 
 	return OK;
 }

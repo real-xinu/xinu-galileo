@@ -1,14 +1,14 @@
-/* ttyInit.c - ttyInit */
+/* ttyinit.c - ttyinit */
 
 #include <xinu.h>
 
 struct	ttycblk	ttytab[Ntty];
 
 /*------------------------------------------------------------------------
- *  ttyInit  -  Initialize buffers and modes for a tty line
+ *  ttyinit  -  Initialize buffers and modes for a tty line
  *------------------------------------------------------------------------
  */
-devcall	ttyInit(
+devcall	ttyinit(
 	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
@@ -72,6 +72,6 @@ devcall	ttyInit(
 
 	/* Start the device */
 
-	ttyKickOut(uptr);
+	ttykickout(uptr);
 	return OK;
 }

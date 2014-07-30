@@ -1,4 +1,4 @@
-/* ttyInter_in.c ttyInter_in, erase1, eputc, echoch */
+/* ttyinter_in.c - ttyinter_in, erase1, eputc, echoch */
 
 #include <xinu.h>
 
@@ -7,10 +7,10 @@ local	void	echoch(char, struct ttycblk *, struct uart_csreg *);
 local	void	eputc(char, struct ttycblk *, struct uart_csreg *);
 
 /*------------------------------------------------------------------------
- *  ttyInter_in  -  Handle one arriving char (interrupts disabled)
+ *  ttyinter_in  -  Handle one arriving char (interrupts disabled)
  *------------------------------------------------------------------------
  */
-void	ttyInter_in (
+void	ttyinter_in (
 	  struct ttycblk *typtr,	/* Pointer to ttytab entry	*/
 	  struct uart_csreg *csrptr	/* Address of UART's CSR	*/
 	)
@@ -60,7 +60,7 @@ void	ttyInter_in (
 	if (typtr->tyoflow) {
 		if (ch == typtr->tyostart) {	    /* ^Q starts output	*/
 			typtr->tyoheld = FALSE;
-			ttyKickOut(csrptr);
+			ttykickout(csrptr);
 			return;
 		} else if (ch == typtr->tyostop) {  /* ^S stops	output	*/
 			typtr->tyoheld = TRUE;
@@ -260,6 +260,6 @@ local	void	eputc(
 	if (typtr->tyetail >= &typtr->tyebuff[TY_EBUFLEN]) {
 		typtr->tyetail = typtr->tyebuff;
 	}
-	ttyKickOut(csrptr);
+	ttykickout(csrptr);
 	return;
 }

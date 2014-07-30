@@ -1,12 +1,12 @@
-/* rdsWrite.c  -  rdsWrite */
+/* rdswrite.c  -  rdswrite */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsWrite - Write a block to a remote disk
+ * rdswrite - Write a block to a remote disk
  *------------------------------------------------------------------------
  */
-devcall	rdsWrite (
+devcall	rdswrite (
 	  struct dentry	*devptr,	/* entry in device switch table	*/
 	  char	*buff,			/* buffer that holds a disk blk	*/
 	  int32	blk			/* block number to write	*/

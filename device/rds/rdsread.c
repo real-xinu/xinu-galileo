@@ -1,12 +1,12 @@
-/* rdsRead.c  -  rdsRead */
+/* rdsread.c  -  rdsread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsRead - Read a block from a remote disk
+ * rdsread - Read a block from a remote disk
  *------------------------------------------------------------------------
  */
-devcall	rdsRead (
+devcall	rdsread (
 	  struct dentry	*devptr,	/* entry in device switch table	*/
 	  char	*buff,			/* buffer to hold disk block	*/
 	  int32	blk			/* block number of block to read*/

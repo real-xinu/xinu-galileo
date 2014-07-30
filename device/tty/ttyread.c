@@ -1,12 +1,12 @@
-/* ttyRead.c - ttyRead */
+/* ttyread.c - ttyread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyRead  -  Read character(s) from a tty device (interrupts disabled)
+ *  ttyread  -  Read character(s) from a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
-devcall	ttyRead(
+devcall	ttyread(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buff,			/* Buffer of characters		*/
 	  int32	count 			/* Count of character to read	*/
@@ -36,14 +36,14 @@ devcall	ttyRead(
 			}
 		}
 		for (nread = 0; nread < count; nread++) {
-			*buff++ = (char) ttyGetc(devptr);
+			*buff++ = (char) ttygetc(devptr);
 		}
 		return nread;
 	}
 
 	/* Block until input arrives */
 
-	firstch = ttyGetc(devptr);
+	firstch = ttygetc(devptr);
 
 	/* Check for End-Of-File */
 
@@ -58,7 +58,7 @@ devcall	ttyRead(
 	nread = 1;
 	while ( (nread < count) && (ch != TY_NEWLINE) &&
 			(ch != TY_RETURN) ) {
-		ch = ttyGetc(devptr);
+		ch = ttygetc(devptr);
 		*buff++ = ch;
 		nread++;
 	}

@@ -1,12 +1,12 @@
-/* ttyControl.c - ttyControl */
+/* ttycontrol.c - ttycontrol */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyControl  -  Control a tty device by setting modes
+ *  ttycontrol  -  Control a tty device by setting modes
  *------------------------------------------------------------------------
  */
-devcall	ttyControl(
+devcall	ttycontrol(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  int32	 func,			/* Function to perform		*/
 	  int32	 arg1,			/* Argument 1 for request	*/

@@ -1,12 +1,12 @@
-/* rdsControl.c  -  rdsControl */
+/* rdscontrol.c  -  rdscontrol */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsControl - Provide control functions for the remote disk
+ * rdscontrol - Provide control functions for the remote disk
  *------------------------------------------------------------------------
  */
-devcall	rdsControl (
+devcall	rdscontrol (
 	 struct dentry	*devptr,	/* entry in device switch table	*/
 	 int32	func,			/* a control function		*/
 	 int32	arg1,			/* argument #1			*/
@@ -107,7 +107,7 @@ devcall	rdsControl (
 
 		/* Close local device */
 
-		return rdsClose(devptr);
+		return rdsclose(devptr);
 
 	default:
 		kprintf("rfsControl: function %d not valid\n\r", func);

@@ -27,10 +27,10 @@ null:
 /* type of a tty device */
 tty:
 	on uart
-		-i ttyInit      -o ionull       -c ionull
-		-r ttyRead      -g ttyGetc      -p ttyPutc
-		-w ttyWrite     -s ioerr        -n ttyControl
-		-intr ttyDispatch
+		-i ttyinit      -o ionull       -c ionull
+		-r ttyread      -g ttygetc      -p ttyputc
+		-w ttywrite     -s ioerr        -n ttycontrol
+		-intr ttydispatch
 
 /* type of a ethernet device */
 eth:
@@ -43,9 +43,9 @@ eth:
 /* type of a remote disk system device */
 rds:
 	on udp
-		-i rdsInit	-o rdsOpen	-c rdsClose
-		-r rdsRead	-g ioerr	-p ioerr
-		-w rdsWrite	-s ioerr	-n rdsControl
+		-i rdsinit	-o rdsopen	-c rdsclose
+		-r rdsread	-g ioerr	-p ioerr
+		-w rdswrite	-s ioerr	-n rdscontrol
 		-intr ionull
 
 /* type of ram disk */

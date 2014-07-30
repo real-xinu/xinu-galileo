@@ -1,12 +1,12 @@
-/* rdsClose.c  -  rdsClose */
+/* rdsclose.c  -  rdsclose */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsClose - Close a remote disk device
+ * rdsclose - Close a remote disk device
  *------------------------------------------------------------------------
  */
-devcall	rdsClose (
+devcall	rdsclose (
 	  struct dentry	*devptr		/* entry in device switch table	*/
 	)
 {

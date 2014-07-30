@@ -1,12 +1,12 @@
-/* ttyGetc.c - ttyGetc */
+/* ttygetc.c - ttygetc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyGetc  -  Read one character from a tty device (interrupts disabled)
+ *  ttygetc  -  Read one character from a tty device (interrupts disabled)
  *------------------------------------------------------------------------
  */
-devcall	ttyGetc(
+devcall	ttygetc(
 	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
