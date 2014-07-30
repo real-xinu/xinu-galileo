@@ -8,8 +8,8 @@
  */
 devcall	eth_q_read	(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
-	  char	*buf,			/* Buffer of characters		*/
-	  int32	len 			/* Count of character to read	*/
+	  char	*buf,			/* Buffer for the packet	*/
+	  int32	len 			/* Size of the buffer		*/
 	)
 {
 	struct	ethcblk *ethptr;	/* Ethertab entry pointer	*/

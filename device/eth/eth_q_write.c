@@ -8,8 +8,8 @@
  */
 devcall	eth_q_write	(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
-	  char	*buf,			/* Buffer of characters		*/
-	  int32	len 			/* Count of character to read	*/
+	  char	*buf,			/* Buffer that hols a packet	*/
+	  int32	len 			/* Length of the packet		*/
 	)
 {
 	struct	ethcblk *ethptr;	/* Pointer to control block	*/
