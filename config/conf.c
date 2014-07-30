@@ -56,8 +56,8 @@ struct	dentry	devtab[NDEVS] =
 
 /* RAM0 is ram */
 	{ 5, 0, "RAM0",
-	  (void *)ramInit, (void *)ramOpen, (void *)ramClose,
-	  (void *)ramRead, (void *)ramWrite, (void *)ioerr,
+	  (void *)raminit, (void *)ramopen, (void *)ramclose,
+	  (void *)ramread, (void *)ramwrite, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
 	  (void *)0x0, (void *)ionull, 0 },
 
