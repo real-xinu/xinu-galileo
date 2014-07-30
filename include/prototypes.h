@@ -88,14 +88,14 @@ extern 	devcall eth_q_cntl(struct dentry *, int32, int32, int32);
 extern	void	eth_q_dispatch(void);
 
 /* in file eth_q_mcast.c */
-extern	int32	eth_q_add_mcast(struct ether *, byte[]);
-extern	int32	eth_q_remove_mcast(struct ether *, byte[]);
+extern	int32	eth_q_add_mcast(struct ethcblk *, byte[]);
+extern	int32	eth_q_remove_mcast(struct ethcblk *, byte[]);
 
 /* in file eth_q_read.c */
-extern  devcall eth_q_read(struct dentry *, void *buf, uint32 len);
+extern  devcall eth_q_read(struct dentry *, char *, int32);
 
 /* in file eth_q_write.c */
-extern 	devcall eth_q_write(struct dentry *, void *buf, uint32 len);
+extern 	devcall eth_q_write(struct dentry *, char *buf, int32);
 
 /* in file early_imr.c */
 void remove_irm_protections();
@@ -240,38 +240,38 @@ extern	int32	lfgetmode(char *);
 /* in file lfiballoc.c */
 extern	ibid32	lfiballoc(void);
 
-/* in file lflClose.c */
-extern	devcall	lflClose(struct dentry *);
+/* in file lflclose.c */
+extern	devcall	lflclose(struct dentry *);
 
-/* in file lflControl.c */
-extern	devcall	lflControl(struct dentry *, int32, int32, int32);
+/* in file lflcontrol.c */
+extern	devcall	lflcontrol(struct dentry *, int32, int32, int32);
 
-/* in file lflGetc.c */
-extern	devcall	lflGetc(struct dentry *);
+/* in file lflgetc.c */
+extern	devcall	lflgetc(struct dentry *);
 
-/* in file lflInit.c */
-extern	devcall	lflInit(struct dentry *);
+/* in file lflinit.c */
+extern	devcall	lflinit(struct dentry *);
 
-/* in file lflPutc.c */
-extern	devcall	lflPutc(struct dentry *, char);
+/* in file lflputc.c */
+extern	devcall	lflputc(struct dentry *, char);
 
-/* in file lflRead.c */
-extern	devcall	lflRead(struct dentry *, char *, int32);
+/* in file lflread.c */
+extern	devcall	lflread(struct dentry *, char *, int32);
 
-/* in file lflSeek.c */
-extern	devcall	lflSeek(struct dentry *, uint32);
+/* in file lflseek.c */
+extern	devcall	lflseek(struct dentry *, uint32);
 
-/* in file lflWrite.c */
-extern	devcall	lflWrite(struct dentry *, char *, int32);
+/* in file lflwrite.c */
+extern	devcall	lflwrite(struct dentry *, char *, int32);
 
 /* in file lfscreate.c */
 extern  status  lfscreate(did32, ibid32, uint32);
 
-/* in file lfsInit.c */
-extern	devcall	lfsInit(struct dentry *);
+/* in file lfsinit.c */
+extern	devcall	lfsinit(struct dentry *);
 
-/* in file lfsOpen.c */
-extern	devcall	lfsOpen(struct dentry *, char *, char *);
+/* in file lfsopen.c */
+extern	devcall	lfsopen(struct dentry *, char *, char *);
 
 /* in file lfsetup.c */
 extern	status	lfsetup(struct lflcblk *);
@@ -377,21 +377,21 @@ extern	syscall	putc(did32, char);
 /* in file quark_irq.c */
 extern	int32	quark_irq_routing(void);
 
-/* in file ramClose.c */
-extern	devcall	ramClose(struct dentry *);
+/* in file ramclose.c */
+extern	devcall	ramclose(struct dentry *);
 
 /* in file ramInit.c */
-extern	devcall	ramInit(struct dentry *);
+extern	devcall	raminit(struct dentry *);
 
-/* in file ramOpen.c */
+/* in file ramopen.c */
 
-extern	devcall	ramOpen(struct dentry *, char *, char *);
+extern	devcall	ramopen(struct dentry *, char *, char *);
 
-/* in file ramRead.c */
-extern	devcall	ramRead(struct dentry *, char *, int32);
+/* in file ramread.c */
+extern	devcall	ramread(struct dentry *, char *, int32);
 
-/* in file ramWrite.c */
-extern	devcall	ramWrite(struct dentry *, char *, int32);
+/* in file ramwrite.c */
+extern	devcall	ramwrite(struct dentry *, char *, int32);
 
 /* in file rdsclose.c */
 extern	devcall	rdsclose(struct dentry *);

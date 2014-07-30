@@ -1,20 +1,20 @@
-/* lflControl.c - lflControl */
+/* lflcontrol.c - lflcontrol */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflControl - Provide control functions for a local file pseudo-device
+ * lflcontrol  -  Provide control functions for a local file pseudo-device
  *------------------------------------------------------------------------
  */
-devcall	lflControl (
-	 struct dentry	*devptr,	/* entry in device switch table	*/
-	 int32	func,			/* a control function		*/
-	 int32	arg1,			/* argument #1			*/
-	 int32	arg2			/* argument #2			*/
+devcall	lflcontrol (
+	 struct dentry	*devptr,	/* Entry in device switch table	*/
+	 int32	func,			/* A control function		*/
+	 int32	arg1,			/* Argument #1			*/
+	 int32	arg2			/* Argument #2			*/
 	)
 {
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
-	int32	retval;			/* return value from func. call	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
+	int32	retval;			/* Return value from func. call	*/
 
 	/* Obtain exclusive use of the file */
 
@@ -40,7 +40,7 @@ devcall	lflControl (
 		return retval;	
 
 	default:
-		kprintf("lfControl: function %d not valid\n\r", func);
+		kprintf("lfcontrol: function %d not valid\n\r", func);
 		signal(lfptr->lfmutex);
 		return SYSERR;
 	}

@@ -1,19 +1,19 @@
-/* lflGetc.c  -  lfGetc */
+/* lflgetc.c  -  lfgetc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflGetc  --  Read the next byte from an open local file
+ * lflgetc  -  Read the next byte from an open local file
  *------------------------------------------------------------------------
  */
-devcall	lflGetc (
-	  struct dentry *devptr		/* entry in device switch table */
+devcall	lflgetc (
+	  struct dentry *devptr		/* Entry in device switch table */
 	)
 {
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
-	struct	ldentry	*ldptr;		/* ptr to file's entry in the	*/
-					/*  in-memory directory		*/
-	int32	onebyte;		/* next data byte in the file	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
+	struct	ldentry	*ldptr;		/* Ptr to file's entry in the	*/
+					/*   in-memory directory	*/
+	int32	onebyte;		/* Next data byte in the file	*/
 
 	/* Obtain exclusive use of the file */
 
@@ -35,8 +35,8 @@ devcall	lflGetc (
 		return EOF;
 	}
 
-	/* If byte pointer is beyond the current data block, */
-	/*	set up a new data block			     */
+	/* If byte pointer is beyond the current data block, set up	*/
+	/*	a new data block					*/
 
 	if (lfptr->lfbyte >= &lfptr->lfdblock[LF_BLKSIZ]) {
 		lfsetup(lfptr);

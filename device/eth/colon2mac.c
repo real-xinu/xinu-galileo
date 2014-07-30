@@ -4,18 +4,20 @@
 #include <ctype.h>
 
 /*------------------------------------------------------------------------
- * colonmac - parse a colon-hex Ethernet address and convert to binary
+ * colonmac  -  Parse a colon-hex Ethernet address and convert to binary
  *------------------------------------------------------------------------
  */
 int32	colon2mac (
-	 char	*src,		/* ptr to Ethernet address in ASCII of	*/
-				/* the form:  xx:xx:xx:xx:xx:xx		*/
-	 byte	*dst		/* loc to put binary form of address	*/
+	  char	*src,		/* Ptr to Ethernet address in ASCII of	*/
+				/*   the form:  xx:xx:xx:xx:xx:xx	*/
+	  byte	*dst		/* Where to put binary form of address	*/
 	)
 {
-	int32	cnt;			/* count output bytes */
-	int32	digit = 0;		/* next digit in binary */
-	int32	ch = 0;			/* next digit in ASCII */
+	int32	cnt;		/* Count of output bytes		*/
+	int32	digit = 0;	/* Next digit in binary			*/
+	int32	ch = 0;		/* Next digit in ASCII			*/
+
+	/* Validate arguments */
 
 	if (src == NULL || dst == NULL) {
 		return SYSERR;

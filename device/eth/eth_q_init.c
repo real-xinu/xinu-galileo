@@ -2,23 +2,25 @@
 
 #include <xinu.h>
 
-struct	ether ethertab[1];
+struct	ethcblk	ethertab[1];
 
 /*------------------------------------------------------------------------
- * eth_q_phy_read - read a PHY register
+ * eth_q_phy_read  -  Read a PHY register
  *------------------------------------------------------------------------
  */
 uint16	eth_q_phy_read	(
-			volatile struct eth_q_csreg *csrptr,
-			uint32	regnum
-			)
+	  volatile	struct eth_q_csreg *csrptr,	/* CSR address	*/
+	  uint32	regnum				/* Register	*/
+	)
 {
-	uint32	retries; /* No. of retries for read */
+	uint32	retries;		/* No. of retries for read	*/
 
 	/* Wait for the MII to be ready */
+
 	while(csrptr->gmiiar & ETH_QUARK_GMIIAR_GB);
 
 	/* Prepare the GMII address register for read transaction */
+
 	csrptr->gmiiar = 
 		(1 << 11)		| /* Physical Layer Address = 1	*/
 		(regnum << 6)		| /* PHY Register Number	*/
@@ -26,6 +28,7 @@ uint16	eth_q_phy_read	(
 		(ETH_QUARK_GMIIAR_GB);	  /* Start the transaction	*/
 
 	/* Wait for the transaction to complete */
+
 	retries = 0;
 	while(csrptr->gmiiar & ETH_QUARK_GMIIAR_GB) {
 		delay(ETH_QUARK_INIT_DELAY);
@@ -33,31 +36,33 @@ uint16	eth_q_phy_read	(
 			return 0;
 	}
 
-	/* Transaction is complete, read the PHY	*/
-	/* register value from GMII data register 	*/
+	/* Transaction is complete, read the PHY register value from	*/
+	/*   the GMII data register 					*/
 	return (uint16)csrptr->gmiidr;
 }
 
 /*------------------------------------------------------------------------
- * eth_q_phy_write - write a PHY register
+ * eth_q_phy_write  -  Write a PHY register
  *------------------------------------------------------------------------
  */
 void	eth_q_phy_write	(
-			volatile struct eth_q_csreg *csrptr,
-			uint32	regnum,
-			uint16	value
-			)
+	  volatile	struct eth_q_csreg *csrptr, /* CSR address	*/
+	  uint32	regnum,			    /* Register		*/
+			uint16	value		    /* Value to write	*/
+	)
 {
 	uint32	retries; /* No. of retries for write */
 
 	/* Wait for the MII to be ready */
+
 	while(csrptr->gmiiar & ETH_QUARK_GMIIAR_GB);
 
-	/* Write the value to be written in PHY	*/
-	/* register in GMII data register	*/
+	/* Write the value to GMII data register */
+
 	csrptr->gmiidr = (uint32)value;
 
 	/* Prepare the GMII address register for write transaction */
+
 	csrptr->gmiiar = 
 		(1 << 11)		| /* Physical Layer Address = 1	*/
 		(regnum << 6)		| /* PHY Register Number	*/
@@ -66,6 +71,7 @@ void	eth_q_phy_write	(
 		(ETH_QUARK_GMIIAR_GB);	  /* Start the transaction	*/
 
 	/* Wait till the transaction is complete */
+
 	retries = 0;
 	while(csrptr->gmiiar & ETH_QUARK_GMIIAR_GB) {
 		delay(ETH_QUARK_INIT_DELAY);
@@ -75,23 +81,26 @@ void	eth_q_phy_write	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_phy_reset - reset Ethernet PHY
+ * eth_q_phy_reset  -  Reset an Ethernet PHY
  *------------------------------------------------------------------------
  */
 int32	eth_q_phy_reset	(
-			volatile struct eth_q_csreg *csrptr
-			)
+	  volatile struct eth_q_csreg *csrptr	/* CSR address		*/
+	)
 {
-	uint16 	value; 	/* Variable to read in PHY registers 	*/
-	uint32	retries;/* No.  of retries for reset 		*/
+	uint16 	value;		/* Variable to read in PHY registers 	*/
+	uint32	retries;	/* No.  of retries for reset 		*/
 
 	/* Read the PHY control register (register 0) */
+
 	value = eth_q_phy_read(csrptr, 0);
 
 	/* Set bit 15 in control register to reset the PHY */
+
 	eth_q_phy_write(csrptr, 0, (value | 0x8000));
 
 	/* Wait for PHY reset process to complete */
+
 	retries = 0;
 	while(eth_q_phy_read(csrptr, 0) & 0x8000) {
 		delay(ETH_QUARK_INIT_DELAY);
@@ -99,11 +108,13 @@ int32	eth_q_phy_reset	(
 			return SYSERR;
 	}
 
-	/* Check if the PHY has auto-negotiation capability */
-	value = eth_q_phy_read(csrptr, 1); /* PHY Status register */
-	if(value & 0x0008) { /* Auto-negotiation capability present */
+	/* See if the PHY has auto-negotiation capability */
+
+	value = eth_q_phy_read(csrptr, 1);	/* PHY Status register	*/
+	if(value & 0x0008) { /* Auto-negotiation capable */
 
 		/* Wait for the auto-negotiation process to complete */
+
 		retries = 0;
 		while((eth_q_phy_read(csrptr, 1) & 0x0020) == 0) {
 			delay(ETH_QUARK_INIT_DELAY);
@@ -112,15 +123,15 @@ int32	eth_q_phy_reset	(
 		}
 
 		/* Wait for the Link to be Up */
+
 		retries = 0;
 		while((eth_q_phy_read(csrptr, 1) & 0x0004) == 0) {
 			delay(ETH_QUARK_INIT_DELAY);
 			if((++retries) > ETH_QUARK_MAX_RETRIES)
 				return SYSERR;
 		}
-	}
-	else { /* Auto-negotiation capability not present */
-		/* TODO Set Link speed = 100Mbps */
+	} else { /* No auto-negotiation capability */
+		/* Note: we should set link speed to 100 Mbps */
 	}
 
 	kprintf("Ethernet Link is Up\n");
@@ -129,20 +140,20 @@ int32	eth_q_phy_reset	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_init - initialize the Intel Quark Ethernet device
+ * eth_q_init  -  Initialize the Intel Quark Ethernet device
  *------------------------------------------------------------------------
  */
-int32	eth_q_init	(
-			struct	dentry *devptr
-			)
+int32	eth_q_init (
+	  struct dentry *devptr		/* Entry in device switch table	*/
+	)
 {
-	struct	ether *ethptr;	/* Ethertab entry pointer	*/
-	volatile struct eth_q_csreg *csrptr;/* Pointer to Ethernet CSRs */
+	struct	ethcblk	*ethptr;		/* Ptr to control block	*/
+	volatile struct eth_q_csreg *csrptr;	/* Ptr to CSR		*/
 	struct	eth_q_tx_desc *tx_descs;	/* Array of tx descs	*/
 	struct	eth_q_rx_desc *rx_descs;	/* Array of rx descs	*/
-	struct	netpacket *pktptr;		/* Pointer to packet	*/
+	struct	netpacket *pktptr;		/* Pointer to a packet	*/
 	void	*temptr;			/* Temp. pointer	*/
-	uint32	retries; 	/* No. of retries for reset 	*/
+	uint32	retries;		 	/* Retry count for reset*/
 	int32	i;
 
 	ethptr = &ethertab[devptr->dvminor];

@@ -1,15 +1,15 @@
-/* lfsInit.c  -  lfsInit */
+/* lfsinit.c  -  lfsinit */
 
 #include <xinu.h>
 
 struct	lfdata	Lf_data;
 
 /*------------------------------------------------------------------------
- * lfsInit  --  initialize the local file system master device
+ * lfsinit  -  Initialize the local file system master device
  *------------------------------------------------------------------------
  */
-devcall	lfsInit (
-	  struct dentry *devptr		/* entry in device switch table */
+devcall	lfsinit (
+	  struct dentry *devptr		/* Entry in device switch table */
 	)
 {
 	/* Assign ID of disk device that will be used */

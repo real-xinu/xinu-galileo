@@ -51,9 +51,9 @@ rds:
 /* type of ram disk */
 ram:
 	on mem
-		-i ramInit	-o ramOpen	-c ramClose
-		-r ramRead	-g ioerr	-p ioerr
-		-w ramWrite	-s ioerr	-n ioerr
+		-i raminit	-o ramopen	-c ramclose
+		-r ramread	-g ioerr	-p ioerr
+		-w ramwrite	-s ioerr	-n ioerr
 		-intr ionull
 
 /* type of SD memory card */
@@ -67,7 +67,7 @@ sdmc:
 /* type of a local file system master device */
 lfs:
 	on ram
-		-i lfsInit	-o lfsOpen	-c ioerr
+		-i lfsinit	-o lfsopen	-c ioerr
 		-r ioerr	-g ioerr	-p ioerr
 		-w ioerr	-s ioerr	-n ioerr
 		-intr ionull
@@ -75,9 +75,9 @@ lfs:
 /* type of a local file pseudo-device */
 lfl:
 	on lfs
-		-i lflInit	-o ioerr	-c lflClose
-		-r lflRead	-g lflGetc	-p lflPutc
-		-w lflWrite	-s lflSeek	-n lflControl
+		-i lflinit	-o ioerr	-c lflclose
+		-r lflread	-g lflgetc	-p lflputc
+		-w lflwrite	-s lflseek	-n lflcontrol
 		-intr ionull
 		
 /* type of namespace device */

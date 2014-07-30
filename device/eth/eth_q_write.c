@@ -3,61 +3,67 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * eth_q_write - enqueue a packet for transmission on Intel Quark Ethernet
+ * eth_q_write  -  enqueue packet for transmission on Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
 devcall	eth_q_write	(
-			struct	dentry *devptr,
-			void	*buf,
-			uint32	len
-			)
+	  struct dentry	*devptr,	/* Entry in device switch table	*/
+	  char	*buf,			/* Buffer that hols a packet	*/
+	  int32	len 			/* Length of the packet		*/
+	)
 {
-	struct	ether *ethptr;
-	struct	eth_q_csreg *csrptr;
-	volatile struct	eth_q_tx_desc *descptr;
-	uint32 i;
+	struct	ethcblk *ethptr;	/* Pointer to control block	*/
+	struct	eth_q_csreg *csrptr;	/* Address of device CSRs	*/
+	volatile struct	eth_q_tx_desc *descptr; /* Ptr to descriptor	*/
+	uint32 i;			/* Counts bytes during copy	*/
 
 	ethptr = &ethertab[devptr->dvminor];
 
 	csrptr = (struct eth_q_csreg *)ethptr->csr;
 
-	/* Wait for an empty slot in the transmit desc ring */
+	/* Wait for an empty slot in the transmit descriptor ring */
+
 	wait(ethptr->osem);
 
-	/* Pointer to the tail of the desc ring */
+	/* Point to the tail of the descriptor ring */
+
 	descptr = (struct eth_q_tx_desc *)ethptr->txRing + ethptr->txTail;
 
-	/* Increment the tail index */
+	/* Increment the tail index and wrap, if needed */
+
 	ethptr->txTail += 1;
 	if(ethptr->txTail >= ethptr->txRingSize) {
 		ethptr->txTail = 0;
 	}
 
-	/* Length of the packet */
+	/* Add packet length to the descriptor */
+
 	descptr->buf1size = len;
 
-	/* Copy the packet in the descriptor buffer */
+	/* Copy packet into the buffer associated with the descriptor	*/
+
 	for(i = 0; i < len; i++) {
 		*((char *)descptr->buffer1 + i) = *((char *)buf + i);
 	}
 
-	/* If we are at the end of the ring,	*/
-	/* indicate end of ring in the desc 	*/
+	/* Mark the descriptor if we are at the end of the ring */
+
 	if(ethptr->txTail == 0) {
 		descptr->ctrlstat = ETH_QUARK_TDCS_TER;
-	}
-	else {
+	} else {
 		descptr->ctrlstat = 0;
 	}
 
 	/* Initialize the descriptor */
-	descptr->ctrlstat |= 
-		(ETH_QUARK_TDCS_OWN | /* the desc is owned by DMA	*/
-		 ETH_QUARK_TDCS_IC  | /* interrupt after transfer	*/
-		 ETH_QUARK_TDCS_LS  | /* last segment of packet		*/
-		 ETH_QUARK_TDCS_FS);  /* first segment of packet	*/
 
-	/* Un-suspend the DMA */
+	descptr->ctrlstat |= 
+		(ETH_QUARK_TDCS_OWN | /* The desc is owned by DMA	*/
+		 ETH_QUARK_TDCS_IC  | /* Interrupt after transfer	*/
+		 ETH_QUARK_TDCS_LS  | /* Last segment of packet		*/
+		 ETH_QUARK_TDCS_FS);  /* First segment of packet	*/
+
+	/* Un-suspend DMA on the device */
+
 	csrptr->tpdr = 1;
 
 	return OK;

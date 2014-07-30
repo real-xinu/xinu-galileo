@@ -13,8 +13,8 @@ devcall	eth_q_cntl(
 	int32	arg2			/* argument 2, if needed	*/
 	)
 {
-	struct	ether *ethptr;	/* Ethertab entry pointer	*/
-	int32	retval = OK;	/* Return value of cntl function*/
+	struct	ethcblk *ethptr;	/* Ethertab entry pointer	*/
+	int32	retval = OK;		/* Return value of cntl function*/
 
 	ethptr = &ethertab[devptr->dvminor];
 
