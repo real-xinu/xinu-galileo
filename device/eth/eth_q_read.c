@@ -33,14 +33,20 @@ devcall	eth_q_read	(
 							ethptr->rxHead;
 		pktptr = (struct netpacket*)rdescptr->buffer1;
 
-		/* See if destination address is a unicast address */
+		/* See if destination address is our unicast address */
 
 		if(!memcmp(pktptr->net_ethdst, ethptr->devAddress, 6)) {
 			valid_addr = TRUE;
+
+		/* See if destination address is the broadcast address */
+
 		} else if(!memcmp(pktptr->net_ethdst,
                                     NetData.ethbcast,6)) {
             		valid_addr = TRUE;
-    		} else { /* Multicast address; see if we should accept	*/
+
+		/* For multicast addresses, see if we should accept */
+
+    		} else {
 			valid_addr = FALSE;
 			for(i = 0; i < (ethptr->ed_mcc); i++) {
 				if(memcmp(pktptr->net_ethdst,
@@ -75,11 +81,11 @@ devcall	eth_q_read	(
 			ethptr->rxHead = 0;
 		}
 
-		/* Initialize the descriptor to max possible frame len	*/
+		/* Reset the descriptor to max possible frame len */
 
 		rdescptr->buf1size = sizeof(struct netpacket);
 
-		/* Mark descriptor if we reaches the end of the ring */
+		/* If we reach the end of the ring, mark the descriptor	*/
 
 		if(ethptr->rxHead == 0) {
 			rdescptr->rdctl1 |= (ETH_QUARK_RDCTL1_RER);
