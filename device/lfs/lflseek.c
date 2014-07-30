@@ -1,17 +1,17 @@
-/* lflSeek.c  -  lfSeek */
+/* lflseek.c  -  lflseek */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfseek  -  seek to a specified position in a file
+ * lflseek  -  Seek to a specified position in a file
  *------------------------------------------------------------------------
  */
-devcall	lflSeek (
-	  struct dentry *devptr,	/* entry in device switch table */
-	  uint32	offset		/* byte position in the file	*/
+devcall	lflseek (
+	  struct dentry *devptr,	/* Entry in device switch table */
+	  uint32	offset		/* Byte position in the file	*/
 	)
 {
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
 
 	/* If file is not open, return an error */
 
@@ -29,9 +29,9 @@ devcall	lflSeek (
 		return SYSERR;
 	}
 
-	/* Record new offset and invalidate byte pointer (i.e.,	*/
-	/*   force the index and data blocks to be replaced if	*/
-	/*   an attempt is made to read or write)		*/
+	/* Record new offset and invalidate byte pointer (i.e., force	*/
+	/*   the index and data blocks to be replaced if a successive	*/
+	/*   call is made to read or write)				*/
 
 	lfptr->lfpos = offset;
 	lfptr->lfbyte = &lfptr->lfdblock[LF_BLKSIZ];

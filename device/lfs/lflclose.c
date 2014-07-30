@@ -1,16 +1,16 @@
-/* lflClose.c  -  lflClose.c */
+/* lflclose.c  -  lflclose.c */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflClose  --  close a file by flushing output and freeing device entry
+ * lflclose  -  Close a file by flushing output and freeing device entry
  *------------------------------------------------------------------------
  */
-devcall	lflClose (
-	  struct dentry *devptr		/* entry in device switch table */
+devcall	lflclose (
+	  struct dentry *devptr		/* Entry in device switch table */
 	)
 {
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
 
 	/* Obtain exclusive use of the file */
 

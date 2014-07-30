@@ -1,26 +1,28 @@
-/* lflRead.c  -  lfRead */
+/* lflread.c  -  lflread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflRead  --  read from a previously opened local file
+ * lflread  --  read from a previously opened local file
  *------------------------------------------------------------------------
  */
-devcall	lflRead (
-	  struct dentry *devptr,	/* entry in device switch table */
-	  char	*buff,			/* buffer to hold bytes		*/
-	  int32	count			/* max bytes to read		*/
+devcall	lflread (
+	  struct dentry *devptr,	/* Entry in device switch table */
+	  char	*buff,			/* Buffer to hold bytes		*/
+	  int32	count			/* Max bytes to read		*/
 	)
 {
-	uint32	numread;		/* number of bytes read		*/
-	int32	nxtbyte;		/* character or SYSERR/EOF	*/
+	uint32	numread;		/* Number of bytes read		*/
+	int32	nxtbyte;		/* Character or SYSERR/EOF	*/
 
 	if (count < 0) {
 		return SYSERR;
 	}
 
+	/* Iterate and use lflgetc to read indivdiual bytes */
+
 	for (numread=0 ; numread < count ; numread++) {
-		nxtbyte = lflGetc(devptr);
+		nxtbyte = lflgetc(devptr);
 		if (nxtbyte == SYSERR) {
 			return SYSERR;
 		} else if (nxtbyte == EOF) {	/* EOF before finished */

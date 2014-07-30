@@ -1,28 +1,28 @@
-/* lfsOpen.c  -  lfsOpen */
+/* lfsopen.c  -  lfsopen */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfsOpen - open a file and allocate a local file pseudo-device
+ * lfsopen - Open a file and allocate a local file pseudo-device
  *------------------------------------------------------------------------
  */
-devcall	lfsOpen (
-	 struct	dentry	*devptr,	/* entry in device switch table	*/
-	 char	*name,			/* name of file to open		*/
-	 char	*mode			/* mode chars: 'r' 'w' 'o' 'n'	*/
+devcall	lfsopen (
+	 struct	dentry	*devptr,	/* Entry in device switch table	*/
+	 char	*name,			/* Name of file to open		*/
+	 char	*mode			/* Mode chars: 'r' 'w' 'o' 'n'	*/
 	)
 {
-	struct	lfdir	*dirptr;	/* ptr to in-memory directory	*/
-	char		*from, *to;	/* ptrs used during copy	*/
-	char		*nam, *cmp;	/* ptrs used during comparison	*/
-	int32		i;		/* general loop index		*/
-	did32		lfnext;		/* minor number of an unused	*/
+	struct	lfdir	*dirptr;	/* Ptr to in-memory directory	*/
+	char		*from, *to;	/* Ptrs used during copy	*/
+	char		*nam, *cmp;	/* Ptrs used during comparison	*/
+	int32		i;		/* General loop index		*/
+	did32		lfnext;		/* Minor number of an unused	*/
 					/*    file pseudo-device	*/
-	struct	ldentry	*ldptr;		/* ptr to an entry in directory	*/
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
-	bool8		found;		/* was the name found?		*/
-	int32	retval;			/* value returned from function	*/
-	int32	mbits;			/* mode bits			*/
+	struct	ldentry	*ldptr;		/* Ptr to an entry in directory	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
+	bool8		found;		/* Was the name found?		*/
+	int32	retval;			/* Value returned from function	*/
+	int32	mbits;			/* Mode bits			*/
 
 	/* Check length of name file (leaving space for NULLCH */
 
@@ -32,7 +32,7 @@ devcall	lfsOpen (
 			break;
 		}
 	}
-	if (i >= LF_NAME_LEN) {		/* name is too long */
+	if (i >= LF_NAME_LEN) {		/* Name is too long */
 		return SYSERR;
 	}
 
@@ -46,11 +46,11 @@ devcall	lfsOpen (
 	/* If named file is already open, return SYSERR */
 
 	lfnext = SYSERR;
-	for (i=0; i<Nlfl; i++) {	/* search file pseudo-devices	*/
+	for (i=0; i<Nlfl; i++) {	/* Search file pseudo-devices	*/
 		lfptr = &lfltab[i];
 		if (lfptr->lfstate == LF_FREE) {
 			if (lfnext == SYSERR) {
-				lfnext = i; /* record index */
+				lfnext = i; /* Record index */
 			}
 			continue;
 		}
@@ -73,7 +73,7 @@ devcall	lfsOpen (
 			return SYSERR;
 		}
 	}
-	if (lfnext == SYSERR) {	/* no slave file devices are available	*/
+	if (lfnext == SYSERR) {	/* No slave file devices are available	*/
 		return SYSERR;
 	}
 
@@ -104,7 +104,7 @@ devcall	lfsOpen (
 			nam++;
 			cmp++;
 		}
-		if ( (*nam==NULLCH) && (*cmp==NULLCH) ) { /* name found	*/
+		if ( (*nam==NULLCH) && (*cmp==NULLCH) ) { /* Name found	*/
 			found = TRUE;
 			break;
 		}
@@ -113,7 +113,7 @@ devcall	lfsOpen (
 	/* Case #1 - file is not in directory (i.e., does not exist)	*/
 
 	if (! found) {
-		if (mbits & LF_MODE_O) {	/* file *must* exist	*/
+		if (mbits & LF_MODE_O) {	/* File *must* exist	*/
 			signal(Lf_data.lf_mutex);
 			return SYSERR;
 		}
@@ -140,7 +140,7 @@ devcall	lfsOpen (
 
 	/* Case #2 - file is in directory (i.e., already exists)	*/
 
-	} else if (mbits & LF_MODE_N) {		/* file must not exist	*/
+	} else if (mbits & LF_MODE_N) {		/* File must not exist	*/
 			signal(Lf_data.lf_mutex);
 			return SYSERR;
 	}
@@ -149,7 +149,7 @@ devcall	lfsOpen (
 
 	lfptr = &lfltab[lfnext];
 	lfptr->lfstate = LF_USED;
-	lfptr->lfdirptr = ldptr;	/* point to directory entry	*/
+	lfptr->lfdirptr = ldptr;	/* Point to directory entry	*/
 	lfptr->lfmode = mbits & LF_MODE_RW;
 
 	/* File starts at position 0 */

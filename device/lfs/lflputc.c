@@ -1,18 +1,18 @@
-/* lflPutc.c  -  lfPutc */
+/* lflputc.c  -  lfputc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflPutc  -  write a single byte to an open local file
+ * lflputc  -  Write a single byte to an open local file
  *------------------------------------------------------------------------
  */
-devcall	lflPutc (
-	  struct dentry *devptr,	/* entry in device switch table */
+devcall	lflputc (
+	  struct dentry *devptr,	/* Entry in device switch table */
 	  char		ch		/* character (byte) to write	*/
 	)
 {
-	struct	lflcblk	*lfptr;		/* ptr to open file table entry	*/
-	struct	ldentry	*ldptr;		/* ptr to file's entry in the	*/
+	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/
+	struct	ldentry	*ldptr;		/* Ptr to file's entry in the	*/
 					/*  in-memory directory		*/
 
 	/* Obtain exclusive use of the file */
@@ -27,8 +27,8 @@ devcall	lflPutc (
 		return SYSERR;
 	}
 
-	/* Return SYSERR for an attempt to skip bytes beyond the */
-	/* 	current end of the file				 */
+	/* Return SYSERR for an attempt to skip bytes beyond the byte	*/
+	/* 	that is currently the end of the file		 	*/
 
 	ldptr = lfptr->lfdirptr;
 	if (lfptr->lfpos > ldptr->ld_size) {
@@ -41,11 +41,12 @@ devcall	lflPutc (
 	if (lfptr->lfbyte >= &lfptr->lfdblock[LF_BLKSIZ]) {
 
 		/* Set up block for current file position */
+
 		lfsetup(lfptr);
 	}
 
 	/* If appending a byte to the file, increment the file size.	*/
-	/* Note: comparison might be equal, but should not be greater.	*/
+	/*   Note: comparison might be equal, but should not be greater.*/
 
 	if (lfptr->lfpos >= ldptr->ld_size) {
 		ldptr->ld_size++;
