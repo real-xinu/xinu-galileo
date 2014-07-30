@@ -1,4 +1,4 @@
-/* ramInit.c  -  ramInit */
+/* raminit.c  -  raminit */
 
 #include <xinu.h>
 #include <ramdisk.h>
@@ -6,11 +6,11 @@
 struct	ramdisk	Ram;
 
 /*------------------------------------------------------------------------
- *  ramInit - initialize the remote disk system device
+ *  raminit  -  Initialize the remote disk system device
  *------------------------------------------------------------------------
  */
-devcall	ramInit (
-	  struct dentry	*devptr		/* entry in device switch table	*/
+devcall	raminit (
+	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
 	memcpy(Ram.disk, "hopeless", 8);

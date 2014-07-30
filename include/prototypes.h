@@ -377,21 +377,21 @@ extern	syscall	putc(did32, char);
 /* in file quark_irq.c */
 extern	int32	quark_irq_routing(void);
 
-/* in file ramClose.c */
-extern	devcall	ramClose(struct dentry *);
+/* in file ramclose.c */
+extern	devcall	ramclose(struct dentry *);
 
 /* in file ramInit.c */
-extern	devcall	ramInit(struct dentry *);
+extern	devcall	raminit(struct dentry *);
 
-/* in file ramOpen.c */
+/* in file ramopen.c */
 
-extern	devcall	ramOpen(struct dentry *, char *, char *);
+extern	devcall	ramopen(struct dentry *, char *, char *);
 
-/* in file ramRead.c */
-extern	devcall	ramRead(struct dentry *, char *, int32);
+/* in file ramread.c */
+extern	devcall	ramread(struct dentry *, char *, int32);
 
-/* in file ramWrite.c */
-extern	devcall	ramWrite(struct dentry *, char *, int32);
+/* in file ramwrite.c */
+extern	devcall	ramwrite(struct dentry *, char *, int32);
 
 /* in file rdsClose.c */
 extern	devcall	rdsClose(struct dentry *);

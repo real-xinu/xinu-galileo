@@ -1,13 +1,13 @@
-/* ramClose.c  -  ramClose */
+/* ramclose.c  -  ramclose */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * ramClose - Close a ram disk
+ * Ramclose  -  Close a ram disk
  *------------------------------------------------------------------------
  */
-devcall	ramClose (
-	  struct dentry	*devptr		/* entry in device switch table	*/
+devcall	ramclose (
+	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
 	return OK;
