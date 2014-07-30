@@ -144,11 +144,12 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/lib					\
 		-s $(TOPDIR)/device/tty					\
 		-s $(TOPDIR)/device/nam					\
-		-s $(TOPDIR)/device/eth ethInit* ethOpen* ethInterrupt* ethRead* ethWrite* ethControl* quark_eth_open.c					\
+		-s $(TOPDIR)/device/eth					\
 		-s $(TOPDIR)/device/rds					\
 		-s $(TOPDIR)/device/ram					\
 		-s $(TOPDIR)/device/sdmc				\
 		-s $(TOPDIR)/device/lfs					\
+		-s $(TOPDIR)/device/rfs					\
 		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'		\
 		-s $(TOPDIR)/shell  'xsh_rdstest*' > .defs
 

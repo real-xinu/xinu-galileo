@@ -34,6 +34,7 @@ struct	rfdata	{
 	uint32	rf_ser_ip;		/* server IP address		*/
 	uint16	rf_ser_port;		/* server UDP port		*/
 	uint16	rf_loc_port;		/* local (client) UPD port	*/
+	int32	rf_udp_slot;		/* UDP slot to use		*/
 	sid32	rf_mutex;		/* mutual exclusion for access	*/
 	bool8	rf_registered;		/* has UDP port been registered?*/
 };

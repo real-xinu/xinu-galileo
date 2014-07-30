@@ -467,38 +467,38 @@ extern	pri16	resume(pid32);
 /* in file rfsgetmode.c */
 extern	int32	rfsgetmode(char * );
 
-/* in file rflClose.c */
-extern	devcall	rflClose(struct dentry *);
+/* in file rflclose.c */
+extern	devcall	rflclose(struct dentry *);
 
-/* in file rfsControl.c */
-extern	devcall	rfsControl(struct dentry *, int32, int32, int32);
+/* in file rfscontrol.c */
+extern	devcall	rfscontrol(struct dentry *, int32, int32, int32);
 
-/* in file rflGetc.c */
-extern	devcall	rflGetc(struct dentry *);
+/* in file rflgetc.c */
+extern	devcall	rflgetc(struct dentry *);
 
-/* in file rflInit.c */
-extern	devcall	rflInit(struct dentry *);
+/* in file rflinit.c */
+extern	devcall	rflinit(struct dentry *);
 
-/* in file rflPutc.c */
-extern	devcall	rflPutc(struct dentry *, char );
+/* in file rflputc.c */
+extern	devcall	rflputc(struct dentry *, char );
 
-/* in file rflRead.c */
+/* in file rflread.c */
 extern	devcall	rflRead(struct dentry *, char *, int32 );
 
-/* in file rflSeek.c */
-extern	devcall	rflSeek(struct dentry *, uint32 );
+/* in file rflseek.c */
+extern	devcall	rflseek(struct dentry *, uint32 );
 
-/* in file rflWrite.c */
-extern	devcall	rflWrite(struct dentry *, char *, int32 );
+/* in file rflwrite.c */
+extern	devcall	rflwrite(struct dentry *, char *, int32 );
 
 /* in file rfsndmsg.c */
 extern	status	rfsndmsg(uint16, char *);
 
-/* in file rfsInit.c */
-extern	devcall	rfsInit(struct dentry *);
+/* in file rfsinit.c */
+extern	devcall	rfsinit(struct dentry *);
 
-/* in file rfsOpen.c */
-extern	devcall	rfsOpen(struct dentry  *devptr, char *, char *);
+/* in file rfsopen.c */
+extern	devcall	rfsopen(struct dentry  *devptr, char *, char *);
 
 /* in file rfscomm.c */
 extern	int32	rfscomm(struct rf_msg_hdr *, int32, struct rf_msg_hdr *, int32);
