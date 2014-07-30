@@ -51,9 +51,9 @@ rds:
 /* type of ram disk */
 ram:
 	on mem
-		-i ramInit	-o ramOpen	-c ramClose
-		-r ramRead	-g ioerr	-p ioerr
-		-w ramWrite	-s ioerr	-n ioerr
+		-i raminit	-o ramopen	-c ramclose
+		-r ramread	-g ioerr	-p ioerr
+		-w ramwrite	-s ioerr	-n ioerr
 		-intr ionull
 
 /* type of SD memory card */
