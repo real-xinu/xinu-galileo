@@ -25,7 +25,7 @@ void	platinit()
 	/* Find the UART device */
 	pcidev = find_pci_device(INTEL_QUARK_UART_PCI_DID,
 					INTEL_QUARK_UART_PCI_VID, 1);
-	if(pcidev == SYSERR) {
+	if(pcidev != SYSERR) {
 		/* Read the base address for UART CSRs */
 		pci_read_config_dword(pcidev, 0x10,
 				(uint32 *)&devtab[CONSOLE].dvcsr);
