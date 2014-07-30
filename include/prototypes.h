@@ -88,14 +88,14 @@ extern 	devcall eth_q_cntl(struct dentry *, int32, int32, int32);
 extern	void	eth_q_dispatch(void);
 
 /* in file eth_q_mcast.c */
-extern	int32	eth_q_add_mcast(struct ether *, byte[]);
-extern	int32	eth_q_remove_mcast(struct ether *, byte[]);
+extern	int32	eth_q_add_mcast(struct ethcblk *, byte[]);
+extern	int32	eth_q_remove_mcast(struct ethcblk *, byte[]);
 
 /* in file eth_q_read.c */
-extern  devcall eth_q_read(struct dentry *, void *buf, uint32 len);
+extern  devcall eth_q_read(struct dentry *, char *, int32);
 
 /* in file eth_q_write.c */
-extern 	devcall eth_q_write(struct dentry *, void *buf, uint32 len);
+extern 	devcall eth_q_write(struct dentry *, char *buf, int32);
 
 /* in file early_imr.c */
 void remove_irm_protections();

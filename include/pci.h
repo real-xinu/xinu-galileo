@@ -53,9 +53,8 @@ struct __attribute__ ((__packed__)) pci_config_header {
 
 extern int pci_init(void);
 extern int find_pci_device(int32, int32, int32);
-extern struct ether     dev_eth;
-extern struct eth_pd*   eth_txring;
-extern struct eth_pd*   eth_rxring;
+extern struct eth_pd*	eth_txring;
+extern struct eth_pd*	eth_rxring;
 
 extern    int pci_read_config_byte(uint32, int, unsigned char *);
 extern    int pci_read_config_word(uint32, int, uint16 *);
