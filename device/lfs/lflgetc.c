@@ -1,4 +1,4 @@
-/* lflgetc.c  -  lfgetc */
+/* lflgetc.c - lfgetc */
 
 #include <xinu.h>
 

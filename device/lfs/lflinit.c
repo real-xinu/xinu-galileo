@@ -1,4 +1,4 @@
-/* lflinit.c  -  lflinit */
+/* lflinit.c - lflinit */
 
 #include <xinu.h>
 

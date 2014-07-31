@@ -1,4 +1,4 @@
-/* lflclose.c  -  lflclose.c */
+/* lflclose.c - lflclose.c */
 
 #include <xinu.h>
 

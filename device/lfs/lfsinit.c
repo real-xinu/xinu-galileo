@@ -1,4 +1,4 @@
-/* lfsinit.c  -  lfsinit */
+/* lfsinit.c - lfsinit */
 
 #include <xinu.h>
 

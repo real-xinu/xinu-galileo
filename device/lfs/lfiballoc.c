@@ -1,21 +1,21 @@
-/* lfiballoc.c  -  lfiballoc */
+/* lfiballoc.c - lfiballoc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfiballoc  -  allocate a new index block from free list on disk
+ * lfiballoc  -  Allocate a new index block from free list on disk
  *			(assumes directory mutex held)
  *------------------------------------------------------------------------
  */
 ibid32	lfiballoc (void)
 {
 	ibid32	ibnum;		/* ID of next block on the free list	*/
-	struct	lfiblk	iblock;	/* buffer to hold index block		*/
+	struct	lfiblk	iblock;	/* Buffer to hold an index block	*/
 
 	/* Get ID of first index block on free list */
 
 	ibnum = Lf_data.lf_dir.lfd_ifree;
-	if (ibnum == LF_INULL) {	/* ran out of free index blocks */
+	if (ibnum == LF_INULL) {	/* Ran out of free index blocks */
 		panic("out of index blocks");
 	}
 	lfibget(Lf_data.lf_dskdev, ibnum, &iblock);

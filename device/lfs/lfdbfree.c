@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  lfdbfree  --  free a data block given its block number (assumes
+ *  lfdbfree  -  Free a data block given its block number (assumes
  *			directory mutex is held)
  *------------------------------------------------------------------------
  */
@@ -12,8 +12,8 @@ status	lfdbfree(
 	  dbid32	dnum		/* ID of data block to free	*/
 	)
 {
-	struct	lfdir	*dirptr;	/* pointer to directory		*/
-	struct	lfdbfree buf;		/* buffer to hold data block	*/
+	struct	lfdir	*dirptr;	/* Pointer to directory		*/
+	struct	lfdbfree buf;		/* Buffer to hold data block	*/
 
 	dirptr = &Lf_data.lf_dir;
 	buf.lf_nextdb = dirptr->lfd_dfree;

@@ -1,19 +1,26 @@
-/* lfgetmode.c  -  lfgetmode */
+/* lfgetmode.c - lfgetmode */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfgetmode  -  parse mode argument and generate integer of mode bits
+ * lfgetmode  -  Parse mode argument and generate integer of mode bits
  *------------------------------------------------------------------------
  */
 int32	lfgetmode (
-	 char	*mode			/* string of mode characters	*/
+	 char	*mode			/* String of mode characters	*/
 	)
 {
-	int32	mbits;			/* mode bits to return		*/
-	char	ch;			/* next char in mode string	*/
+	int32	mbits;			/* Mode bits to return		*/
+	char	ch;			/* Next char in mode string	*/
 
 	mbits = 0;
+
+	/* Mode string specifies:					*/
+	/*	r - read						*/
+	/*	w - write						*/
+	/*	o - old (file must exist)				*/
+	/*	n - new (create a new file)				*/
+
 	while ( (ch = *mode++) != NULLCH) {
 		switch (ch) {
 

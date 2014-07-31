@@ -1,22 +1,22 @@
-/* lfckfmt.c  -  lfckfmt */
+/* lfckfmt.c - lfckfmt */
 
 #include <xinu.h>
 #include <ramdisk.h>
 
 /*------------------------------------------------------------------------
- * lfckfmt  --  Check the format of an initially-created disk
+ * lfckfmt  -  Check the format of an initially-created disk
  *------------------------------------------------------------------------
  */
 status	lfsckfmt (
 	  did32		disk		/* ID of an open disk device	*/
 	)
 {
-	uint32	ibsectors;		/* number of sectors of i-blocks*/
+	uint32	ibsectors;		/* Number of sectors of i-blocks*/
 	struct	lfdir	dir;		/* Buffer to hold the directory	*/
-	uint32	dblks;			/* total free data blocks	*/
-	struct	lfiblk	iblock;		/* space for one i-block	*/
-	struct	lfdbfree dblock;	/* data block on the free list	*/
-	int32	lfiblks;			/* total free index blocks	*/
+	uint32	dblks;			/* Total free data blocks	*/
+	struct	lfiblk	iblock;		/* Space for one i-block	*/
+	struct	lfdbfree dblock;	/* Data block on the free list	*/
+	int32	lfiblks;		/* Total free index blocks	*/
 	int32	retval;
 	ibid32	nextib;
 	dbid32	nextdb;

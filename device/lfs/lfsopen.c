@@ -1,4 +1,4 @@
-/* lfsopen.c  -  lfsopen */
+/* lfsopen.c - lfsopen */
 
 #include <xinu.h>
 

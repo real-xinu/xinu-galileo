@@ -1,14 +1,14 @@
-/* lfflush.c  -  lfflush */
+/* lfflush.c - lfflush */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfflush  -  flush directory, data block, and index block for an open
+ * lfflush  -  Flush directory, data block, and index block for an open
  *			file (assumes file mutex is held)
  *------------------------------------------------------------------------
  */
 status	lfflush (
-	  struct lflcblk  *lfptr	/* ptr to file pseudo device	*/
+	  struct lflcblk  *lfptr	/* Ptr to file pseudo device	*/
 	)
 {
 

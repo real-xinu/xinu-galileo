@@ -1,4 +1,4 @@
-/* lflputc.c  -  lfputc */
+/* lflputc.c - lfputc */
 
 #include <xinu.h>
 
@@ -8,7 +8,7 @@
  */
 devcall	lflputc (
 	  struct dentry *devptr,	/* Entry in device switch table */
-	  char		ch		/* character (byte) to write	*/
+	  char		ch		/* Character (byte) to write	*/
 	)
 {
 	struct	lflcblk	*lfptr;		/* Ptr to open file table entry	*/

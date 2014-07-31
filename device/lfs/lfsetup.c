@@ -1,24 +1,24 @@
-/* lfsetup.c  -  lfsetup */
+/* lfsetup.c - lfsetup */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lfsetup  -  set a file's index block and data block for the current
+ * lfsetup  -  Set a file's index block and data block for the current
  *		 file position (assumes file mutex held)
  *------------------------------------------------------------------------
  */
 status	lfsetup (
-	  struct lflcblk  *lfptr	/* ptr to slave file device	*/
+	  struct lflcblk  *lfptr	/* Pointer to slave file device	*/
 	)
 {
-	dbid32	dnum;			/* data block to fetch		*/
-	ibid32	ibnum;			/* i-block number during search	*/
-	struct	ldentry	*ldptr;		/* ptr to file entry in dir.	*/
-	struct	lfiblk	*ibptr;		/* ptr to in-memory index block	*/
-	uint32	newoffset;		/* computed data offset for	*/
-					/*  next index block		*/
-	int32	dindex;			/* index into array in an index	*/
-					/*  block			*/
+	dbid32	dnum;			/* Data block to fetch		*/
+	ibid32	ibnum;			/* I-block number during search	*/
+	struct	ldentry	*ldptr;		/* Ptr to file entry in dir.	*/
+	struct	lfiblk	*ibptr;		/* Ptr to in-memory index block	*/
+	uint32	newoffset;		/* Computed data offset for	*/
+					/*   next index block		*/
+	int32	dindex;			/* Index into array in an index	*/
+					/*   block			*/
 
 
 	/* Obtain exclusive access to the directory */
@@ -36,7 +36,7 @@ status	lfsetup (
 	if (lfptr->lfibdirty || lfptr->lfdbdirty) {
 		lfflush(lfptr);
 	}
-	ibnum = lfptr->lfinum;		/* get ID of curr. index block	*/
+	ibnum = lfptr->lfinum;		/* Get ID of curr. index block	*/
 
 	/* If there is no index block in memory (e.g., because the file	*/
 	/*	was just opened), either load the first index block of	*/
@@ -47,12 +47,12 @@ status	lfsetup (
 		/* Check directory entry to see if index block exists	*/
 
 		ibnum = ldptr->ld_ilist;
-		if (ibnum == LF_INULL) { /* empty file - get new i-block*/
+		if (ibnum == LF_INULL) { /* Empty file - get new i-block*/
 			ibnum = lfiballoc();
 			lfibclear(ibptr, 0);
 			ldptr->ld_ilist = ibnum;
 			lfptr->lfibdirty = TRUE;
-		} else {		/* nonempty - read first i-block*/
+		} else {		/* Nonempty - read first i-block*/
 	 		lfibget(Lf_data.lf_dskdev, ibnum, ibptr);
 		}
 		lfptr->lfinum = ibnum;
@@ -78,7 +78,7 @@ status	lfsetup (
 	while ((lfptr->lfpos & ~LF_IMASK) > ibptr->ib_offset ) {
 		ibnum = ibptr->ib_next;
 		if (ibnum == LF_INULL) {
-			/* allocate new index block to extend file */
+			/* Allocate new index block to extend file */
 			ibnum = lfiballoc();
 			ibptr->ib_next = ibnum;
 			lfibput(Lf_data.lf_dskdev, lfptr->lfinum, ibptr);
@@ -103,7 +103,7 @@ status	lfsetup (
 	/*   the correct data block from disk				*/
 
 	dnum = lfptr->lfiblock.ib_dba[dindex];
-	if (dnum == LF_DNULL) {		/* allocate new data block */
+	if (dnum == LF_DNULL) {		/* Allocate new data block */
 		dnum = lfdballoc((struct lfdbfree *)&lfptr->lfdblock);
 		lfptr->lfiblock.ib_dba[dindex] = dnum;
 		lfptr->lfibdirty = TRUE;

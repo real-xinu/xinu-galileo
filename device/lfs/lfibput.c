@@ -3,20 +3,20 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  lfibput  --  write an index block to disk given its ID (assumes
+ *  lfibput  -  Write an index block to disk given its ID (assumes
  *			mutex is held)
  *------------------------------------------------------------------------
  */
 status	lfibput(
 	  did32		diskdev,	/* ID of disk device		*/
 	  ibid32	inum,		/* ID of index block to write	*/
-	  struct lfiblk	*ibuff		/* buffer holding the index blk	*/
+	  struct lfiblk	*ibuff		/* Buffer holding the index blk	*/
 	)
 {
 	dbid32	diskblock;		/* ID of disk sector (block)	*/
-	char	*from, *to;		/* pointers used in copying	*/
-	int32	i;			/* loop index used during copy	*/
-	char	dbuff[LF_BLKSIZ];	/* temp. buffer to hold d-block	*/
+	char	*from, *to;		/* Pointers used in copying	*/
+	int32	i;			/* Loop index used during copy	*/
+	char	dbuff[LF_BLKSIZ];	/* Temp. buffer to hold d-block	*/
 
 	/* Compute disk block number and offset of index block */
 

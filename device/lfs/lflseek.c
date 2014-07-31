@@ -1,4 +1,4 @@
-/* lflseek.c  -  lflseek */
+/* lflseek.c - lflseek */
 
 #include <xinu.h>
 

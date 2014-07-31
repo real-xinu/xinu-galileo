@@ -1,9 +1,9 @@
-/* lflread.c  -  lflread */
+/* lflread.c - lflread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lflread  --  read from a previously opened local file
+ * lflread  -  Read from a previously opened local file
  *------------------------------------------------------------------------
  */
 devcall	lflread (

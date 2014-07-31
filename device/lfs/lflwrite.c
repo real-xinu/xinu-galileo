@@ -1,4 +1,4 @@
-/* lflwrite.c  -  lflwrite */
+/* lflwrite.c - lflwrite */
 
 #include <xinu.h>
 

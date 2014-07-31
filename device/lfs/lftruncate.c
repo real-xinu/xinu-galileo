@@ -1,28 +1,28 @@
-/* lftruncate.c  -  lftruncate */
+/* lftruncate.c - lftruncate */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * lftruncate  -  truncate a file by freeing its index and data blocks
+ * lftruncate  -  Truncate a file by freeing its index and data blocks
  *			(assumes directory mutex held)
  *------------------------------------------------------------------------
  */
 status	lftruncate (
-	  struct lflcblk *lfptr		/* ptr to file's cntl blk entry	*/
+	  struct lflcblk *lfptr		/* Ptr to file's cntl blk entry	*/
 	)
 {
-	struct	ldentry	*ldptr;		/* pointer to file's dir. entry	*/
-	struct	lfiblk	iblock;		/* buffer for one index block	*/
-	ibid32	ifree;			/* start of index blk free list	*/
-	ibid32	firstib;		/* first index blk of the file	*/
-	ibid32	nextib;			/* walks down list of the	*/
+	struct	ldentry	*ldptr;		/* Pointer to file's dir. entry	*/
+	struct	lfiblk	iblock;		/* Buffer for one index block	*/
+	ibid32	ifree;			/* Start of index blk free list	*/
+	ibid32	firstib;		/* First index blk of the file	*/
+	ibid32	nextib;			/* Walks down list of the	*/
 					/*   file's index blocks	*/
-	dbid32	nextdb;			/* next data block to free	*/
-	int32	i;			/* moves through data blocks in	*/
+	dbid32	nextdb;			/* Next data block to free	*/
+	int32	i;			/* Moves through data blocks in	*/
 					/*   a given index block	*/
 
 	ldptr = lfptr->lfdirptr;	/* Get pointer to dir. entry	*/
-	if (ldptr->ld_size == 0) {	/* file is already empty */
+	if (ldptr->ld_size == 0) {	/* File is already empty */
 		return OK;
 	}
 
@@ -48,8 +48,8 @@ status	lftruncate (
 	Lf_data.lf_dirdirty = TRUE;
 
 	/* Walk along index block list, disposing of each data block	*/
-	/*  and clearing the corresponding pointer.  A note on loop	*/
-	/*  termination: last pointer is set to ifree below.		*/
+	/*   and clearing the corresponding pointer.  A note on loop	*/
+	/*   termination: last pointer is set to ifree below.		*/
 
 	for (nextib=firstib; nextib!=ifree; nextib=iblock.ib_next) {
 
@@ -59,7 +59,7 @@ status	lftruncate (
 
 		/* Free each data block in the index block		*/
 
-		for (i=0; i<LF_IBLEN; i++) {	/* for each d-block	*/
+		for (i=0; i<LF_IBLEN; i++) {	/* For each d-block	*/
 
 			/* Free the data block */
 
