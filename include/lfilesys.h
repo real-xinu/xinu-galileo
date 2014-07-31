@@ -39,40 +39,40 @@
 #define	LF_DISK_DEV	SYSERR
 #endif
 
-#define	LF_MODE_R	F_MODE_R	/* mode bit for "read"		*/
-#define	LF_MODE_W	F_MODE_W	/* mode bit for "write"		*/
-#define	LF_MODE_RW	F_MODE_RW	/* mode bits for "read or write"*/
-#define	LF_MODE_O	F_MODE_O	/* mode bit for "old"		*/
-#define	LF_MODE_N	F_MODE_N	/* mode bit for "new"		*/
+#define	LF_MODE_R	F_MODE_R	/* Mode bit for "read"		*/
+#define	LF_MODE_W	F_MODE_W	/* Mode bit for "write"		*/
+#define	LF_MODE_RW	F_MODE_RW	/* Mode bits for "read or write"*/
+#define	LF_MODE_O	F_MODE_O	/* Mode bit for "old"		*/
+#define	LF_MODE_N	F_MODE_N	/* Mode bit for "new"		*/
 
-#define	LF_BLKSIZ	512		/* assumes 512-byte disk blocks	*/
-#define	LF_NAME_LEN	16		/* length of name plus null	*/
-#define	LF_NUM_DIR_ENT	20		/* num. of files in a directory	*/
+#define	LF_BLKSIZ	512		/* Assumes 512-byte disk blocks	*/
+#define	LF_NAME_LEN	16		/* Length of name plus null	*/
+#define	LF_NUM_DIR_ENT	20		/* Num. of files in a directory	*/
 
-#define	LF_FREE		0		/* slave device is available	*/
-#define	LF_USED		1		/* slave device is in use	*/
+#define	LF_FREE		0		/* Slave device is available	*/
+#define	LF_USED		1		/* Slave device is in use	*/
 
-#define	LF_INULL	(ibid32) -1	/* index block null pointer	*/
-#define	LF_DNULL	(dbid32) -1	/* data block null pointer	*/
-#define	LF_IBLEN	16		/* data block ptrs per i-block	*/
-#define	LF_IDATA	8192		/* bytes of data indexed by a	*/
-					/*  single index block		*/
-#define	LF_IMASK	0x00001fff	/* mask for the data indexed by	*/
-					/*  a single index block (i.e.,	*/
-					/*  bytes 0 through 8191).	*/
-#define	LF_DMASK	0x000001ff	/* mask for the data in a data	*/
-					/*  block  (0 through 511)	*/
+#define	LF_INULL	(ibid32) -1	/* Index block null pointer	*/
+#define	LF_DNULL	(dbid32) -1	/* Data block null pointer	*/
+#define	LF_IBLEN	16		/* Data block ptrs per i-block	*/
+#define	LF_IDATA	8192		/* Bytes of data indexed by a	*/
+					/*   single index block		*/
+#define	LF_IMASK	0x00001fff	/* Mask for the data indexed by	*/
+					/*   one index block (i.e.,	*/
+					/*   bytes 0 through 8191).	*/
+#define	LF_DMASK	0x000001ff	/* Mask for the data in a data	*/
+					/*   block (0 through 511)	*/
 
-#define	LF_AREA_IB	1		/* first sector of i-blocks	*/
-#define	LF_AREA_DIR	0		/* first sector of directory	*/
+#define	LF_AREA_IB	1		/* First sector of i-blocks	*/
+#define	LF_AREA_DIR	0		/* First sector of directory	*/
 
 /* Structure of an index block on disk */
 
-struct	lfiblk		{		/* format of index block	*/
-	ibid32		ib_next;	/* address of next index block	*/
-	uint32		ib_offset;	/* first data byte of the file	*/
-					/*  indexed by this i-block	*/
-	dbid32		ib_dba[LF_IBLEN];/* ptrs to data blocks indexed	*/
+struct	lfiblk		{		/* Format of index block	*/
+	ibid32		ib_next;	/* Address of next index block	*/
+	uint32		ib_offset;	/* First data byte of the file	*/
+					/*  Indexed by this i-block	*/
+	dbid32		ib_dba[LF_IBLEN];/* Ptrs to data blocks indexed	*/
 };
 
 /* Conversion functions below assume 7 index blocks per disk block */
@@ -89,55 +89,55 @@ struct	lfiblk		{		/* format of index block	*/
 
 /* Structure used in each directory entry for the local file system */
 
-struct	ldentry	{			/* description of entry for one	*/
-					/*  file in the directory	*/
-	uint32	ld_size;		/* curr. size of file in bytes	*/
+struct	ldentry	{			/* Description of entry for one	*/
+					/*   file in the directory	*/
+	uint32	ld_size;		/* Curr. size of file in bytes	*/
 	ibid32	ld_ilist;		/* ID of first i-block for file	*/
 					/*   or IB_NULL for empty file	*/
-	char	ld_name[LF_NAME_LEN];	/* null-terminated file name	*/
+	char	ld_name[LF_NAME_LEN];	/* Null-terminated file name	*/
 };
 
 /* Structure of a data block when on the free list on disk */
 
 struct	lfdbfree {
-	dbid32	lf_nextdb;		/* next data block on the list	*/
+	dbid32	lf_nextdb;		/* Next data block on the list	*/
 	char	lf_unused[LF_BLKSIZ - sizeof(dbid32)];
 };
 
 /* Format of the file system directory, either on disk or in memory */
 
 #pragma pack(2)
-struct	lfdir	{			/* entire directory on disk	*/
-	dbid32	lfd_dfree;		/* list of free d-blocks on disk*/
-	ibid32	lfd_ifree;		/* list of free i-blocks on disk*/
-	int32	lfd_nfiles;		/* current number of files	*/
-	struct	ldentry lfd_files[LF_NUM_DIR_ENT]; /* set of files	*/
-	char	padding[20];		/* unused chars in directory blk*/
+struct	lfdir	{			/* Entire directory on disk	*/
+	dbid32	lfd_dfree;		/* List of free d-blocks on disk*/
+	ibid32	lfd_ifree;		/* List of free i-blocks on disk*/
+	int32	lfd_nfiles;		/* Current number of files	*/
+	struct	ldentry lfd_files[LF_NUM_DIR_ENT]; /* Set of files	*/
+	char	padding[20];		/* Unused chars in directory blk*/
 };
 #pragma pack()
 
 /* Global data used by local file system */
 
-struct	lfdata	{			/* local file system data	*/
-	did32	lf_dskdev;		/* device ID of disk to use	*/
-	sid32	lf_mutex;		/* mutex for the directory and	*/
-					/*  index/data free lists	*/
+struct	lfdata	{			/* Local file system data	*/
+	did32	lf_dskdev;		/* Device ID of disk to use	*/
+	sid32	lf_mutex;		/* Mutex for the directory and	*/
+					/*   index/data free lists	*/
 	struct	lfdir	lf_dir;		/* In-memory copy of directory	*/
 	bool8	lf_dirpresent;		/* True when directory is in	*/
-					/*  memory (first file is open)	*/
+					/*   memory (1st file is open)	*/
 	bool8	lf_dirdirty;		/* Has the directory changed?	*/
 };
 
 /* Control block for local file pseudo-device */
 
 struct	lflcblk	{			/* Local file control block	*/
-					/*  (one for each open file)	*/
+					/*   (one for each open file)	*/
 	byte	lfstate;		/* Is entry free or used	*/
-	did32	lfdev;			/* device ID of this device	*/
+	did32	lfdev;			/* Device ID of this device	*/
 	sid32	lfmutex;		/* Mutex for this file		*/
 	struct	ldentry	*lfdirptr;	/* Ptr to file's entry in the	*/
-					/*  in-memory directory		*/
-	int32	lfmode;			/* mode (read/write/both)	*/
+					/*   in-memory directory	*/
+	int32	lfmode;			/* Mode (read/write/both)	*/
 	uint32	lfpos;			/* Byte position of next byte	*/
 					/*   to read or write		*/
 	char	lfname[LF_NAME_LEN];	/* Name of the file		*/
@@ -147,10 +147,10 @@ struct	lflcblk	{			/* Local file control block	*/
 					/*   block			*/
 	dbid32	lfdnum;			/* Number of current data block	*/
 					/*   in lfdblock or LF_DNULL	*/
-	char	lfdblock[LF_BLKSIZ];	/* in-mem copy of current data	*/
+	char	lfdblock[LF_BLKSIZ];	/* In-mem copy of current data	*/
 					/*   block			*/
 	char	*lfbyte;		/* Ptr to byte in lfdblock or	*/
-					/*  address one beyond lfdblock	*/
+					/*   address one beyond lfdblock*/
 					/*   if current file pos lies	*/
 					/*   outside lfdblock		*/
 	bool8	lfibdirty;		/* Has lfiblock changed?	*/
