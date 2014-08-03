@@ -1,12 +1,12 @@
-/* eth_q_read.c - eth_q_read */
+/* ethread.c - ethread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * eth_q_read  -  Read an incoming packet on Intel Quark Ethernet
+ * ethread  -  Read an incoming packet on Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-devcall	eth_q_read	(
+devcall	ethread	(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buf,			/* Buffer for the packet	*/
 	  int32	len 			/* Size of the buffer		*/

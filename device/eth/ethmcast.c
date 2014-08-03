@@ -1,12 +1,12 @@
-/* eth_q_mcast.c - eth_q_add_mcast_addr, eth_q_remove_mcast_addr */
+/* ethmcast.c - ethmcast_add, ethmcast_remove */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * eth_q_add_mcast  -  Add multicast address to Intel Quark Ethernet
+ * ethmcast_add  -  Add multicast address to Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-int32	eth_q_add_mcast	(
+int32	ethmcast_add	(
 	  struct ethcblk *ethptr, 		/* Ptr to control block	*/
 	  byte	 addr[ETH_ADDR_LEN]		/* Mcast addr to add	*/
 	)
@@ -36,10 +36,10 @@ int32	eth_q_add_mcast	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_remove_mcast  -  Remove multicast addr. from Intel Quark Ethernet
+ * ethmcast_remove  -  Remove multicast addr. from Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-int32	eth_q_remove_mcast	(
+int32	ethmcast_remove	(
 	  struct ethcblk *ethptr,	/* Pointer to control block	*/
 	  byte	 addr[ETH_ADDR_LEN]	/* Mcast address to remove	*/
 	)

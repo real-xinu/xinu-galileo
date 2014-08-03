@@ -1,14 +1,14 @@
-/* eth_q_init.c - eth_q_init, eth_q_phy_read, eth_q_phy_write */
+/* ethinit.c - ethinit, eth_phy_read, eth_phy_write */
 
 #include <xinu.h>
 
 struct	ethcblk	ethertab[1];
 
 /*------------------------------------------------------------------------
- * eth_q_phy_read  -  Read a PHY register
+ * eth_phy_read  -  Read a PHY register
  *------------------------------------------------------------------------
  */
-uint16	eth_q_phy_read	(
+uint16	eth_phy_read	(
 	  volatile	struct eth_q_csreg *csrptr,	/* CSR address	*/
 	  uint32	regnum				/* Register	*/
 	)
@@ -42,10 +42,10 @@ uint16	eth_q_phy_read	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_phy_write  -  Write a PHY register
+ * eth_phy_write  -  Write a PHY register
  *------------------------------------------------------------------------
  */
-void	eth_q_phy_write	(
+void	eth_phy_write	(
 	  volatile	struct eth_q_csreg *csrptr, /* CSR address	*/
 	  uint32	regnum,			    /* Register		*/
 			uint16	value		    /* Value to write	*/
@@ -81,10 +81,10 @@ void	eth_q_phy_write	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_phy_reset  -  Reset an Ethernet PHY
+ * eth_phy_reset  -  Reset an Ethernet PHY
  *------------------------------------------------------------------------
  */
-int32	eth_q_phy_reset	(
+int32	eth_phy_reset	(
 	  volatile struct eth_q_csreg *csrptr	/* CSR address		*/
 	)
 {
@@ -93,16 +93,16 @@ int32	eth_q_phy_reset	(
 
 	/* Read the PHY control register (register 0) */
 
-	value = eth_q_phy_read(csrptr, 0);
+	value = eth_phy_read(csrptr, 0);
 
 	/* Set bit 15 in control register to reset the PHY */
 
-	eth_q_phy_write(csrptr, 0, (value | 0x8000));
+	eth_phy_write(csrptr, 0, (value | 0x8000));
 
 	/* Wait for PHY reset process to complete */
 
 	retries = 0;
-	while(eth_q_phy_read(csrptr, 0) & 0x8000) {
+	while(eth_phy_read(csrptr, 0) & 0x8000) {
 		delay(ETH_QUARK_INIT_DELAY);
 		if((++retries) > ETH_QUARK_MAX_RETRIES)
 			return SYSERR;
@@ -110,13 +110,13 @@ int32	eth_q_phy_reset	(
 
 	/* See if the PHY has auto-negotiation capability */
 
-	value = eth_q_phy_read(csrptr, 1);	/* PHY Status register	*/
+	value = eth_phy_read(csrptr, 1);	/* PHY Status register	*/
 	if(value & 0x0008) { /* Auto-negotiation capable */
 
 		/* Wait for the auto-negotiation process to complete */
 
 		retries = 0;
-		while((eth_q_phy_read(csrptr, 1) & 0x0020) == 0) {
+		while((eth_phy_read(csrptr, 1) & 0x0020) == 0) {
 			delay(ETH_QUARK_INIT_DELAY);
 			if((++retries) > ETH_QUARK_MAX_RETRIES)
 				return SYSERR;
@@ -125,7 +125,7 @@ int32	eth_q_phy_reset	(
 		/* Wait for the Link to be Up */
 
 		retries = 0;
-		while((eth_q_phy_read(csrptr, 1) & 0x0004) == 0) {
+		while((eth_phy_read(csrptr, 1) & 0x0004) == 0) {
 			delay(ETH_QUARK_INIT_DELAY);
 			if((++retries) > ETH_QUARK_MAX_RETRIES)
 				return SYSERR;
@@ -140,10 +140,10 @@ int32	eth_q_phy_reset	(
 }
 
 /*------------------------------------------------------------------------
- * eth_q_init  -  Initialize the Intel Quark Ethernet device
+ * ethinit  -  Initialize the Intel Quark Ethernet device
  *------------------------------------------------------------------------
  */
-int32	eth_q_init (
+int32	ethinit (
 	  struct dentry *devptr		/* Entry in device switch table	*/
 	)
 {
@@ -179,7 +179,7 @@ int32	eth_q_init (
 	csrptr->omr |= ETH_QUARK_OMR_TSF;
 
 	/* Reset the Ethernet PHY */
-	eth_q_phy_reset(csrptr);
+	eth_phy_reset(csrptr);
 
 	/* Set the interrupt handler */
 	set_evec(devptr->dvirq, (uint32)devptr->dvintr);

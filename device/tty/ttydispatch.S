@@ -3,7 +3,7 @@
 #include <icu.s>
 		.text
 		.globl	ttydispatch
-		.globl	ttyinterrupt
+		.globl	ttyhandler
 
 /*------------------------------------------------------------------------
  *  ttydispatch  -  Dispatch an interrupt to the tty handler function
@@ -15,7 +15,7 @@ ttydispatch:
 		cli			/* Prevent further interrupts	*/
 		movb	$EOI,%al	/* Clear the interrupt		*/
 		outb	%al,$OCW1_2
-		call	ttyinterrupt	/* Call the handler		*/
+		call	ttyhandler	/* Call the handler		*/
 		popfl			/* Restore the flags register	*/
 		popal			/* Restore general-purpose regs.*/
 		iret			/* Return from interrupt	*/

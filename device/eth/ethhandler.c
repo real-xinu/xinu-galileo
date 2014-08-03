@@ -1,12 +1,12 @@
-/* eth_q_intr.c - eth_q_intr */
+/* ethhandler.c - ethhandler */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * eth_q_intr  -  Interrupt handler for Intel Quark Ethernet
+ * ethhandler  -  Interrupt handler for Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-interrupt	eth_q_intr(void)
+interrupt	ethhandler(void)
 {
 	struct	ethcblk	*ethptr;	/* Ethertab entry pointer	*/
 	struct	eth_q_csreg *csrptr;	/* Pointer to Ethernet CRSs	*/

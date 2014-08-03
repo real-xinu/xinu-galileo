@@ -1,10 +1,10 @@
-/* eth_q_dispatch.S - eth_q_dispatch */
+/* ethdispatch.S - ethdispatch */
 
 #include <icu.s>
 		.text
-		.globl	eth_q_dispatch
-		.globl	eth_q_intr
-eth_q_dispatch:
+		.globl	ethdispatch
+		.globl	ethhandler
+ethdispatch:
 		pushal
 		pushfl
 		cli
@@ -13,7 +13,7 @@ eth_q_dispatch:
 		movb	$EOI,%al
 		outb	%al,$OCW2_2
 
-		call	eth_q_intr
+		call	ethhandler
 
 		popfl
 		popal

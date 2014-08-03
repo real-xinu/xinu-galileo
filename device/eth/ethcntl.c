@@ -1,12 +1,12 @@
-/* eth_q_cntl.c - _eth_q_cntl */
+/* ethcntl.c - ethcntl */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * _eth_q_cntl - implement control function for a quark ethernet device
+ * ethcntl - implement control function for a quark ethernet device
  *------------------------------------------------------------------------
  */
-devcall	eth_q_cntl(
+devcall	ethcntl(
 	struct 	dentry *devptr, 	/* entry in device switch table */
 	int32	func,			/* control function		*/
 	int32	arg1,			/* argument 1, if needed	*/
@@ -28,11 +28,11 @@ devcall	eth_q_cntl(
 			break;
 
 		case ETH_CTRL_ADD_MCAST:
-			retval = eth_q_add_mcast(ethptr, (byte *)arg1);
+			retval = ethmcast_add(ethptr, (byte *)arg1);
 			break;
 
 		case ETH_CTRL_REMOVE_MCAST:
-			retval = eth_q_remove_mcast(ethptr, (byte *)arg1);
+			retval = ethmcast_remove(ethptr, (byte *)arg1);
 			break;
 
 		default:

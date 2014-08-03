@@ -35,10 +35,10 @@ tty:
 /* type of a ethernet device */
 eth:
 	on quark_eth
-		-i eth_q_init	-o ioerr	-c ioerr
-		-r eth_q_read	-g ioerr	-p ioerr
-		-w eth_q_write	-s ioerr	-n eth_q_cntl
-		-intr eth_q_dispatch
+		-i ethinit	-o ioerr	-c ioerr
+		-r ethread	-g ioerr	-p ioerr
+		-w ethwrite	-s ioerr	-n ethcntl
+		-intr ethdispatch
 
 /* type of a remote disk system device */
 rds:

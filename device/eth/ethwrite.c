@@ -1,12 +1,12 @@
-/* eth_q_write.c - eth_q_write */
+/* ethwrite.c - ethwrite */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * eth_q_write  -  enqueue packet for transmission on Intel Quark Ethernet
+ * ethwrite  -  enqueue packet for transmission on Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-devcall	eth_q_write	(
+devcall	ethwrite	(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buf,			/* Buffer that hols a packet	*/
 	  int32	len 			/* Length of the packet		*/

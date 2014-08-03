@@ -1,12 +1,12 @@
-/* ttyinterrupt.c - ttyinterrupt */
+/* ttyhandler.c - ttyhandler */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ttyinterrupt  -  Handle an interrupt for a tty (serial) device
+ *  ttyhandler  -  Handle an interrupt for a tty (serial) device
  *------------------------------------------------------------------------
  */
-void ttyinterrupt(void) {
+void ttyhandler(void) {
 	struct	dentry	*devptr;	/* Address of device control blk*/
 	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/	
 	struct	uart_csreg *csrptr;	/* Address of UART's CSR	*/
@@ -56,7 +56,7 @@ void ttyinterrupt(void) {
 		/* While chars avail. in UART buffer, call ttyinter_in	*/
 
 		while ( (csrptr->lsr & UART_LSR_DR) != 0) {
-			ttyinter_in(typtr, csrptr);
+			ttyhandle_in(typtr, csrptr);
                 }
 
 		resched_cntl(DEFER_STOP);
@@ -66,7 +66,7 @@ void ttyinterrupt(void) {
             /* Transmitter output FIFO is empty (i.e., ready for more)	*/
 
 	    case UART_IIR_THRE:
-		ttyinter_out(typtr, csrptr);
+		ttyhandle_out(typtr, csrptr);
 		return;
 
 	    /* Modem status change (simply ignore) */

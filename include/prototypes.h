@@ -75,27 +75,27 @@ extern	intmask	disable(void);
 
 extern	void	enable(void);
 
-/* in file eth_q_init.c */
-extern 	int32	eth_q_init(struct dentry *);
+/* in file ethinit.c */
+extern 	int32	ethinit(struct dentry *);
 
-/* in file eth_q_intr.c */
-extern 	interrupt	eth_q_intr();
+/* in file ethhandler.c */
+extern 	interrupt	ethhandler();
 
-/* in file eth_q_cntl.c */
-extern 	devcall eth_q_cntl(struct dentry *, int32, int32, int32);
+/* in file ethcntl.c */
+extern 	devcall ethcntl(struct dentry *, int32, int32, int32);
 
-/* in file eth_q_dispatch.S */
-extern	void	eth_q_dispatch(void);
+/* in file ethdispatch.S */
+extern	void	ethdispatch(void);
 
-/* in file eth_q_mcast.c */
-extern	int32	eth_q_add_mcast(struct ethcblk *, byte[]);
-extern	int32	eth_q_remove_mcast(struct ethcblk *, byte[]);
+/* in file ethmcast.c */
+extern	int32	ethmcast_add(struct ethcblk *, byte[]);
+extern	int32	ethmcast_remove(struct ethcblk *, byte[]);
 
-/* in file eth_q_read.c */
-extern  devcall eth_q_read(struct dentry *, char *, int32);
+/* in file ethread.c */
+extern  devcall ethread(struct dentry *, char *, int32);
 
-/* in file eth_q_write.c */
-extern 	devcall eth_q_write(struct dentry *, char *buf, int32);
+/* in file ethwrite.c */
+extern 	devcall ethwrite(struct dentry *, char *buf, int32);
 
 /* in file early_imr.c */
 void remove_irm_protections();
@@ -583,14 +583,14 @@ extern	interrupt	ttydispatch(void);
 /* in file ttygetc.c */
 extern	devcall	ttygetc(struct dentry *);
 
-/* in file ttyinter_in.c */
-extern	void	ttyinter_in(struct ttycblk *, struct uart_csreg *);
+/* in file ttyhandle_in.c */
+extern	void	ttyhandle_in(struct ttycblk *, struct uart_csreg *);
 
-/* in file ttyinter_out.c */
-extern	void	ttyinter_out(struct ttycblk *, struct uart_csreg *);
+/* in file ttyhandle_out.c */
+extern	void	ttyhandle_out(struct ttycblk *, struct uart_csreg *);
 
-/* in file ttyinterrupt.c */
-extern	void	ttyinterrupt(void);
+/* in file ttyhandler.c */
+extern	void	ttyhandler(void);
 
 /* in file ttyinit.c */
 extern	devcall	ttyinit(struct dentry *);
