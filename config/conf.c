@@ -37,7 +37,7 @@ struct	dentry	devtab[NDEVS] =
 	{ 2, 0, "ETHER0",
 	  (void *)ethinit, (void *)ioerr, (void *)ioerr,
 	  (void *)ethread, (void *)ethwrite, (void *)ioerr,
-	  (void *)ioerr, (void *)ioerr, (void *)ethcntl,
+	  (void *)ioerr, (void *)ioerr, (void *)ethcontrol,
 	  (void *)0x0, (void *)ethdispatch, 43 },
 
 /* NAMESPACE is nam */

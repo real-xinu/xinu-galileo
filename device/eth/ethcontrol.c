@@ -1,12 +1,12 @@
-/* ethcntl.c - ethcntl */
+/* ethcontrol.c - ethcontrol */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * ethcntl - implement control function for a quark ethernet device
+ * ethcontrol - implement control function for a quark ethernet device
  *------------------------------------------------------------------------
  */
-devcall	ethcntl(
+devcall	ethcontrol (
 	struct 	dentry *devptr, 	/* entry in device switch table */
 	int32	func,			/* control function		*/
 	int32	arg1,			/* argument 1, if needed	*/
@@ -27,9 +27,13 @@ devcall	ethcntl(
 					ETH_ADDR_LEN);
 			break;
 
+		/* Add a multicast address */
+
 		case ETH_CTRL_ADD_MCAST:
 			retval = ethmcast_add(ethptr, (byte *)arg1);
 			break;
+
+		/* Remove a multicast address */
 
 		case ETH_CTRL_REMOVE_MCAST:
 			retval = ethmcast_remove(ethptr, (byte *)arg1);

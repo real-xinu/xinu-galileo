@@ -85,7 +85,8 @@ interrupt	ethhandler(void)
 
 		count = 0;	/* Start packet count at zero */
 
-		/* Repeat until we have received maximum of 32 packets */
+		/* Repeat until we have received		*/
+		/* maximum no. packets that can fit in queue 	*/
 
 		while(count <= ethptr->rxRingSize) {
 

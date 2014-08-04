@@ -81,8 +81,8 @@ extern 	int32	ethinit(struct dentry *);
 /* in file ethhandler.c */
 extern 	interrupt	ethhandler();
 
-/* in file ethcntl.c */
-extern 	devcall ethcntl(struct dentry *, int32, int32, int32);
+/* in file ethcontrol.c */
+extern 	devcall ethcontrol(struct dentry *, int32, int32, int32);
 
 /* in file ethdispatch.S */
 extern	void	ethdispatch(void);

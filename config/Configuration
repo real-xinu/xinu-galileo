@@ -37,7 +37,7 @@ eth:
 	on quark_eth
 		-i ethinit	-o ioerr	-c ioerr
 		-r ethread	-g ioerr	-p ioerr
-		-w ethwrite	-s ioerr	-n ethcntl
+		-w ethwrite	-s ioerr	-n ethcontrol
 		-intr ethdispatch
 
 /* type of a remote disk system device */
