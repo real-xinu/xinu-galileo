@@ -75,7 +75,7 @@ int32	rfscomm (
 			continue;
 		}
 
-		return retval;		/* return length to caller */
+		return retval;		/* Return length to caller */
 	}
 
 	/* Retries exhausted without success */
