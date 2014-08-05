@@ -1,24 +1,24 @@
-/* rdsinit.c  -  rdsinit */
+/* rdsinit.c - rdsinit */
 
 #include <xinu.h>
 
 struct	rdscblk	rdstab[Nrds];
 
 /*------------------------------------------------------------------------
- *  rdsinit - initialize the remote disk system device
+ *  rdsinit  -  Initialize the remote disk system device
  *------------------------------------------------------------------------
  */
 devcall	rdsinit (
-	  struct dentry	*devptr		/* entry in device switch table	*/
+	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* ptr to device contol block	*/
-	struct	rdbuff	*bptr;		/* ptr to buffer in memory	*/
-					/*    used to form linked list	*/
-	struct	rdbuff	*pptr;		/* ptr to previous buff on list	*/
-	struct	rdbuff	*buffend;	/* last address in buffer memory*/
-	uint32	size;			/* total size of memory needed	*/
-					/*    buffers			*/
+	struct	rdscblk	*rdptr;		/* Ptr to device contol block	*/
+	struct	rdbuff	*bptr;		/* Ptr to buffer in memory	*/
+					/*   used to form linked list	*/
+	struct	rdbuff	*pptr;		/* Ptr to previous buff on list	*/
+	struct	rdbuff	*buffend;	/* Last address in buffer memory*/
+	uint32	size;			/* Total size of memory needed	*/
+					/*   buffers			*/
 
 	/* Obtain address of control block */
 
@@ -65,10 +65,10 @@ devcall	rdsinit (
 		pptr = bptr;
 		bptr = (struct rdbuff *)
 				(sizeof(struct rdbuff)+ (char *)bptr);
-		pptr->rd_status = RD_INVALID;	/* buffer is empty	*/
-		pptr->rd_next = bptr;		/* point to next buffer */
+		pptr->rd_status = RD_INVALID;	/* Buffer is empty	*/
+		pptr->rd_next = bptr;		/* Point to next buffer */
 	}
-	pptr->rd_next = (struct rdbuff *) NULL;	/* last buffer on list	*/
+	pptr->rd_next = (struct rdbuff *) NULL;	/* Last buffer on list	*/
 
 	/* Create the request list and available buffer semaphores */
 

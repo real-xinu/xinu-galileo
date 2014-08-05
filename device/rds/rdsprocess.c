@@ -1,34 +1,34 @@
-/* rdsprocess.c  -  rdsprocess */
+/* rdsprocess.c - rdsprocess */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsprocess - high-priority background process that repeatedly extracts
- *		an item from the request queue and sends the request to
- *		the remote disk server
+ * rdsprocess  -  High-priority background process to repeatedly extract
+ *		  an item from the request queue and send the request to
+ *		  the remote disk server
  *------------------------------------------------------------------------
  */
 void	rdsprocess (
-	  struct rdscblk    *rdptr	/* ptr to device control block	*/
+	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
 	)
 {
-	struct	rd_msg_wreq msg;	/* message to be sent		*/
-					/*  (includes data area)	*/
-	struct	rd_msg_rres resp;	/* buffer to hold response	*/
-					/*  (includes data area)	*/
-	int32	retval;			/* return value from rdscomm	*/
-	char	*idto;			/* ptr to ID string copy	*/
-	char	*idfrom;		/* ptr into ID string		*/
-	struct	rdbuff	*bptr;		/* ptr to buffer at the head of	*/
+	struct	rd_msg_wreq msg;	/* Message to be sent		*/
+					/*   (includes data area)	*/
+	struct	rd_msg_rres resp;	/* Buffer to hold response	*/
+					/*   (includes data area)	*/
+	int32	retval;			/* Return value from rdscomm	*/
+	char	*idto;			/* Ptr to ID string copy	*/
+	char	*idfrom;		/* Ptr into ID string		*/
+	struct	rdbuff	*bptr;		/* Ptr to buffer at the head of	*/
 					/*   the request queue		*/
-	struct	rdbuff	*nptr;		/* ptr to next buffer on the	*/
+	struct	rdbuff	*nptr;		/* Ptr to next buffer on the	*/
 					/*   request queue		*/
-	struct	rdbuff	*pptr;		/* ptr to previous buffer	*/
-	struct	rdbuff	*qptr;		/* ptr that runs along the	*/
+	struct	rdbuff	*pptr;		/* Ptr to previous buffer	*/
+	struct	rdbuff	*qptr;		/* Ptr that runs along the	*/
 					/*   request queue		*/
-	int32	i;			/* loop index			*/
+	int32	i;			/* Loop index			*/
 
-	while (TRUE) {			/* do forever */
+	while (TRUE) {			/* Do forever */
 
 	    /* Wait until the request queue contains a node */
 	    wait(rdptr->rd_reqsem);
@@ -42,13 +42,13 @@ void	rdsprocess (
 
 		/* Build a read request message for the server */
 
-		msg.rd_type = htons(RD_MSG_RREQ);	/* read request	*/
+		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
 		msg.rd_status = htons(0);
-		msg.rd_seq = 0;		/* rdscomm fills in an entry	*/
+		msg.rd_seq = 0;		/* Rdscomm fills in an entry	*/
 		idto = msg.rd_id;
-		memset(idto, NULLCH, RD_IDLEN);/* initialize ID to zero	*/
+		memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero	*/
 		idfrom = rdptr->rd_id;
-		while ( (*idto++ = *idfrom++) != NULLCH ) { /* copy ID	*/
+		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
 			;
 		}
 
@@ -132,14 +132,14 @@ void	rdsprocess (
 
 		/* Build a write request message for the server */
 
-		msg.rd_type = htons(RD_MSG_WREQ);	/* write request*/
+		msg.rd_type = htons(RD_MSG_WREQ);	/* Write request*/
 		msg.rd_blk = bptr->rd_blknum;
 		msg.rd_status = htons(0);
-		msg.rd_seq = 0;		/* rdscomm fills in an entry	*/
+		msg.rd_seq = 0;		/* Rdscomb fills in an entry	*/
 		idto = msg.rd_id;
-		memset(idto, NULLCH, RD_IDLEN);/* initialize ID to zero	*/
+		memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero	*/
 		idfrom = rdptr->rd_id;
-		while ( (*idto++ = *idfrom++) != NULLCH ) { /* copy ID	*/
+		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
 			;
 		}
 		for (i=0; i<RD_BLKSIZ; i++) {

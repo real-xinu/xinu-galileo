@@ -1,25 +1,25 @@
-/* rdsread.c  -  rdsread */
+/* rdsread.c - rdsread */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsread - Read a block from a remote disk
+ * rdsread  -  Read a block from a remote disk
  *------------------------------------------------------------------------
  */
 devcall	rdsread (
-	  struct dentry	*devptr,	/* entry in device switch table	*/
-	  char	*buff,			/* buffer to hold disk block	*/
-	  int32	blk			/* block number of block to read*/
+	  struct dentry	*devptr,	/* Entry in device switch table	*/
+	  char	*buff,			/* Buffer to hold disk block	*/
+	  int32	blk			/* Block number of block to read*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* pointer to control block	*/
-	struct	rdbuff	*bptr;		/* ptr to buffer possibly on	*/
-					/*  the request list		*/
-	struct	rdbuff	*nptr;		/* ptr to "next" node on a	*/
-					/*  list			*/
-	struct	rdbuff	*pptr;		/* ptr to "previous" node on	*/
-					/*  a list			*/
-	struct	rdbuff	*cptr;		/* ptr used to walk the cache	*/
+	struct	rdscblk	*rdptr;		/* Pointer to control block	*/
+	struct	rdbuff	*bptr;		/* Pointer to buffer possibly	*/
+					/*   in the request list	*/
+	struct	rdbuff	*nptr;		/* Pointer to "next" node on a	*/
+					/*   list			*/
+	struct	rdbuff	*pptr;		/* Pointer to "previous" node	*/
+					/*   on a list			*/
+	struct	rdbuff	*cptr;		/* Pointer that walks the cache	*/
 
 	/* If device not currently in use, report an error */
 
@@ -44,7 +44,7 @@ devcall	rdsread (
 
 	/* Search the request list for most recent occurrence of block */
 
-	bptr = rdptr->rd_rtprev;	/* start at tail of list */
+	bptr = rdptr->rd_rtprev;  /* Start at tail of list */
 
 	while (bptr != (struct rdbuff *)&rdptr->rd_rhnext) {
 	    if (bptr->rd_blknum == blk)  {

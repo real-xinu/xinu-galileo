@@ -1,25 +1,25 @@
-/* rdsopen.c  -  rdsopen */
+/* rdsopen.c - rdsopen */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsopen - open a remote disk device and specify an ID to use
+ * rdsopen  -  Open a remote disk device and specify an ID to use
  *------------------------------------------------------------------------
  */
 
 devcall	rdsopen (
-	 struct	dentry	*devptr,	/* entry in device switch table	*/
-	 char	*diskid,		/* disk ID to use		*/
-	 char	*mode			/* unused for a remote disk	*/
+	 struct	dentry	*devptr,	/* Entry in device switch table	*/
+	 char	*diskid,		/* Disk ID to use		*/
+	 char	*mode			/* Unused for a remote disk	*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* ptr to control block entry	*/
-	struct	rd_msg_oreq msg;	/* message to be sent		*/
-	struct	rd_msg_ores resp;	/* buffer to hold response	*/
-	int32	retval;			/* return value from rdscomm	*/
-	int32	len;			/* counts chars in diskid	*/
-	char	*idto;			/* ptr to ID string copy	*/
-	char	*idfrom;		/* pointer into ID string	*/
+	struct	rdscblk	*rdptr;		/* Ptr to control block entry	*/
+	struct	rd_msg_oreq msg;	/* Message to be sent		*/
+	struct	rd_msg_ores resp;	/* Buffer to hold response	*/
+	int32	retval;			/* Return value from rdscomm	*/
+	int32	len;			/* Counts chars in diskid	*/
+	char	*idto;			/* Ptr to ID string copy	*/
+	char	*idfrom;		/* Pointer into ID string	*/
 
 	rdptr = &rdstab[devptr->dvminor];
 
@@ -52,12 +52,12 @@ devcall	rdsopen (
 
 	msg.rd_type = htons(RD_MSG_OREQ);/* Request an open		*/
 	msg.rd_status = htons(0);
-	msg.rd_seq = 0;			/* rdscomm fills in an entry	*/
+	msg.rd_seq = 0;			/* Rdscomm fills in an entry	*/
 	idto = msg.rd_id;
 	memset(idto, NULLCH, RD_IDLEN);/* initialize ID to zero bytes	*/
 
 	idfrom = diskid;
-	while ( (*idto++ = *idfrom++) != NULLCH ) { /* copy ID to req.	*/
+	while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID to req.	*/
 		;
 	}
 

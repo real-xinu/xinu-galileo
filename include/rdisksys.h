@@ -19,7 +19,7 @@
 #endif
 
 #ifndef	RD_LOC_PORT
-#define	RD_LOC_PORT	33124		/* base port number - minor dev	*/
+#define	RD_LOC_PORT	33124		/* Base port number - minor dev	*/
 					/*   number is added to insure	*/
 					/*   that each device is unique	*/
 #endif
@@ -33,9 +33,9 @@
 
 /* Constants for state of the device */
 
-#define	RD_FREE		 0		/* device is available		*/
-#define	RD_OPEN		 1		/* device is open (in use)	*/
-#define	RD_PEND		 2		/* open is pending		*/
+#define	RD_FREE		 0		/* Device is available		*/
+#define	RD_OPEN		 1		/* Device is open (in use)	*/
+#define	RD_PEND		 2		/* Open is pending		*/
 
 /* Operations for request queue */
 
@@ -53,55 +53,56 @@
 /*  node on the free list of buffers					*/
 
 struct	rdbuff	{			/* Request list node		*/
-	struct	rdbuff	*rd_next;	/* ptr to next node on a list	*/
-	struct	rdbuff	*rd_prev;	/* ptr to prev node on a list	*/
-	int32	rd_op;			/* operation - read/write/sync	*/
-	int32	rd_refcnt;		/* reference count of processes	*/
+	struct	rdbuff	*rd_next;	/* Ptr to next node on a list	*/
+	struct	rdbuff	*rd_prev;	/* Ptr to prev node on a list	*/
+	int32	rd_op;			/* Operation - read/write/sync	*/
+	int32	rd_refcnt;		/* Reference count of processes	*/
 					/*   reading the block		*/
-	uint32	rd_blknum;		/* block number of this block	*/
-	int32	rd_status;		/* is buffer currently valid?	*/
-	pid32	rd_pid;			/* process that initiated a	*/
+	uint32	rd_blknum;		/* Block number of this block	*/
+	int32	rd_status;		/* Is buffer currently valid?	*/
+	pid32	rd_pid;			/* Process that initiated a	*/
 					/*   read request for the block	*/
-	char	rd_block[RD_BLKSIZ];	/* space to hold one disk block	*/
+	char	rd_block[RD_BLKSIZ];	/* Space to hold one disk block	*/
 };
 
 struct	rdscblk	{
-	int32	rd_state;		/* state of device		*/
+	int32	rd_state;		/* State of device		*/
 	char	rd_id[RD_IDLEN];	/* Disk ID currently being used	*/
-	int32	rd_seq;			/* next sequence number to use	*/
+	int32	rd_seq;			/* Next sequence number to use	*/
 	/* Request queue head and tail */
-	struct	rdbuff	*rd_rhnext;	/* head of request queue: next	*/
-	struct	rdbuff	*rd_rhprev;	/*  and previous		*/
-	struct	rdbuff	*rd_rtnext;	/* tail of request queue: next	*/
-	struct	rdbuff	*rd_rtprev;	/*  (null) and previous		*/
+	struct	rdbuff	*rd_rhnext;	/* Head of request queue: next	*/
+	struct	rdbuff	*rd_rhprev;	/*   and previous		*/
+	struct	rdbuff	*rd_rtnext;	/* Tail of request queue: next	*/
+	struct	rdbuff	*rd_rtprev;	/*   (null) and previous	*/
 
 	/* Cache head and tail */
-	struct	rdbuff	*rd_chnext;	/* head of cache: next and	*/
-	struct	rdbuff	*rd_chprev;	/*  previous			*/
-	struct	rdbuff	*rd_ctnext;	/* tail of cache: next (null)	*/
-	struct	rdbuff	*rd_ctprev;	/*  and previous		*/
+
+	struct	rdbuff	*rd_chnext;	/* Head of cache: next and	*/
+	struct	rdbuff	*rd_chprev;	/*   previous			*/
+	struct	rdbuff	*rd_ctnext;	/* Tail of cache: next (null)	*/
+	struct	rdbuff	*rd_ctprev;	/*   and previous		*/
 
 	/* Free list head (singly-linked) */
 
-	struct	rdbuff	*rd_free;	/* ptr to free list		*/
+	struct	rdbuff	*rd_free;	/* Pointer to free list		*/
 
-	pid32	rd_comproc;		/* process ID of comm. process	*/
-	bool8	rd_comruns;		/* has comm. process started?	*/
-	sid32	rd_availsem;		/* semaphore ID for avail buffs	*/
-	sid32	rd_reqsem;		/* semaphore ID for requests	*/
-	uint32	rd_ser_ip;		/* server IP address		*/
-	uint16	rd_ser_port;		/* server UDP port		*/
-	uint16	rd_loc_port;		/* local (client) UPD port	*/
-	bool8	rd_registered;		/* has UDP port been registered?*/
+	pid32	rd_comproc;		/* Process ID of comm. process	*/
+	bool8	rd_comruns;		/* Has comm. process started?	*/
+	sid32	rd_availsem;		/* Semaphore ID for avail buffs	*/
+	sid32	rd_reqsem;		/* Semaphore ID for requests	*/
+	uint32	rd_ser_ip;		/* Server IP address		*/
+	uint16	rd_ser_port;		/* Server UDP port		*/
+	uint16	rd_loc_port;		/* Local (client) UPD port	*/
+	bool8	rd_registered;		/* Has UDP port been registered?*/
 };
 
 
-extern	struct	rdscblk	rdstab[];	/* remote disk control block	*/
+extern	struct	rdscblk	rdstab[];	/* Remote disk control block	*/
 
 /* Definitions of parameters used during server access */
 
-#define	RD_RETRIES	3		/* times to retry sending a msg	*/
-#define	RD_TIMEOUT	2000		/* wait two seconds for reply	*/
+#define	RD_RETRIES	3		/* Times to retry sending a msg	*/
+#define	RD_TIMEOUT	2000		/* Timeout for reply (2 seconds)*/
 
 /* Control functions for a remote file pseudo device */
 
@@ -136,17 +137,17 @@ extern	struct	rdscblk	rdstab[];	/* remote disk control block	*/
 /* Message header fields present in each message */
 
 #define	RD_MSG_HDR			/* Common message fields	*/\
-	uint16	rd_type;		/* message type			*/\
+	uint16	rd_type;		/* Message type			*/\
 	uint16	rd_status;		/* 0 in req, status in response	*/\
-	uint32	rd_seq;			/* message sequence number	*/\
-	char	rd_id[RD_IDLEN];	/* null-terminated disk ID	*/
+	uint32	rd_seq;			/* Message sequence number	*/\
+	char	rd_id[RD_IDLEN];	/* Null-terminated disk ID	*/
 
 /************************************************************************/
 /*				Header					*/
 /************************************************************************/
 /* The standard header present in all messages with no extra fields */
 #pragma pack(2)
-struct	rd_msg_hdr {			/* header fields present in each*/
+struct	rd_msg_hdr {			/* Header fields present in each*/
 	RD_MSG_HDR			/*   remote file system message	*/
 };
 #pragma pack()
@@ -155,17 +156,17 @@ struct	rd_msg_hdr {			/* header fields present in each*/
 /*				Read					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_rreq	{		/* remote file read request	*/
-	RD_MSG_HDR			/* header fields		*/
-	uint32	rd_blk;			/* block number to read		*/
+struct	rd_msg_rreq	{		/* Remote file read request	*/
+	RD_MSG_HDR			/* Header fields		*/
+	uint32	rd_blk;			/* Block number to read		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_rres	{		/* remote file read reply	*/
-	RD_MSG_HDR			/* header fields		*/
-	uint32	rd_blk;			/* block number that was read	*/
-	char	rd_data[RD_BLKSIZ];	/* array containing one block	*/
+struct	rd_msg_rres	{		/* Remote file read reply	*/
+	RD_MSG_HDR			/* Header fields		*/
+	uint32	rd_blk;			/* Block number that was read	*/
+	char	rd_data[RD_BLKSIZ];	/* Array containing one block	*/
 };
 #pragma pack()
 
@@ -173,17 +174,17 @@ struct	rd_msg_rres	{		/* remote file read reply	*/
 /*				Write					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_wreq	{		/* remote file write request	*/
-	RD_MSG_HDR			/* header fields		*/
-	uint32	rd_blk;			/* block number to write	*/
-	char	rd_data[RD_BLKSIZ];	/* array containing one block	*/
+struct	rd_msg_wreq	{		/* Remote file write request	*/
+	RD_MSG_HDR			/* Header fields		*/
+	uint32	rd_blk;			/* Block number to write	*/
+	char	rd_data[RD_BLKSIZ];	/* Array containing one block	*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_wres	{		/* remote file write response	*/
-	RD_MSG_HDR			/* header fields		*/
-	uint32	rd_blk;			/* block number that was written*/
+struct	rd_msg_wres	{		/* Remote file write response	*/
+	RD_MSG_HDR			/* Header fields		*/
+	uint32	rd_blk;			/* Block number that was written*/
 };
 #pragma pack()
 
@@ -191,14 +192,14 @@ struct	rd_msg_wres	{		/* remote file write response	*/
 /*				Open					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_oreq	{		/* remote file open request	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_oreq	{		/* Remote file open request	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_ores	{		/* remote file open response	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_ores	{		/* Remote file open response	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
@@ -206,14 +207,14 @@ struct	rd_msg_ores	{		/* remote file open response	*/
 /*				Close					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_creq	{		/* remote file close request	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_creq	{		/* Remote file close request	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_cres	{		/* remote file close response	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_cres	{		/* Remote file close response	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
@@ -221,13 +222,13 @@ struct	rd_msg_cres	{		/* remote file close response	*/
 /*				Delete					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_dreq	{		/* remote file delete request	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_dreq	{		/* Remote file delete request	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_dres	{		/* remote file delete response	*/
-	RD_MSG_HDR			/* header fields		*/
+struct	rd_msg_dres	{		/* Remote file delete response	*/
+	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()

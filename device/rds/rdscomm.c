@@ -1,26 +1,26 @@
-/* rdscomm.c  -  rdscomm */
+/* rdscomm.c - rdscomm */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdscomm - handle communication with a remote disk server (send a
- *		request and receive a reply, including sequencing and
- *		retries)
+ * rdscomm  -  handle communication with a remote disk server (send a
+ *		 request and receive a reply, including sequencing and
+ *		 retries)
  *------------------------------------------------------------------------
  */
 status	rdscomm (
-	  struct rd_msg_hdr *msg,	/* message to send		*/
-	  int32		    mlen,	/* message length		*/
-	  struct rd_msg_hdr *reply,	/* buffer for reply		*/
-	  int32		    rlen,	/* size of reply buffer		*/
-	  struct rdscblk    *rdptr	/* ptr to device control block	*/
+	  struct rd_msg_hdr *msg,	/* Message to send		*/
+	  int32		    mlen,	/* Message length		*/
+	  struct rd_msg_hdr *reply,	/* Buffer for reply		*/
+	  int32		    rlen,	/* Size of reply buffer		*/
+	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
 	)
 {
-	int32	i;			/* counts retries		*/
-	int32	retval;			/* return value			*/
-	int32	seq;			/* sequence for this exchange	*/
-	uint32	localip;		/* local IP address		*/
-	int16	rtype;			/* reply type in host byte order*/
+	int32	i;			/* Counts retries		*/
+	int32	retval;			/* Return value			*/
+	int32	seq;			/* Sequence for this exchange	*/
+	uint32	localip;		/* Local IP address		*/
+	int16	rtype;			/* Reply type in host byte order*/
 	bool8	xmit;			/* Should we transmit again?	*/
 	int32	slot;			/* UDP slot			*/
 

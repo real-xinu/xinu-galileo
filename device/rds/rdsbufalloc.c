@@ -1,18 +1,18 @@
-/* rdsbufalloc.c  -  rdsbufalloc */
+/* rdsbufalloc.c - rdsbufalloc */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsbufalloc - allocate a buffer from the free list or the cache
+ * rdsbufalloc  -  Allocate a buffer from the free list or the cache
  *------------------------------------------------------------------------
  */
 struct rdbuff *rdsbufalloc (
-	  struct rdscblk *rdptr		/* ptr to device control block	*/
+	  struct rdscblk *rdptr		/* Ptr to device control block	*/
 	)
 {
-	struct	rdbuff	*bptr;		/* ptr to a buffer		*/
-	struct	rdbuff	*pptr;		/* ptr to previous buffer	*/
-	struct	rdbuff	*nptr;		/* ptr to next buffer		*/
+	struct	rdbuff	*bptr;		/* Pointer to a buffer		*/
+	struct	rdbuff	*pptr;		/* Pointer to previous buffer	*/
+	struct	rdbuff	*nptr;		/* Pointer to next buffer	*/
 
 	/* Wait for an available buffer */
 

@@ -1,19 +1,19 @@
-/* rdsclose.c  -  rdsclose */
+/* rdsclose.c - rdsclose */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsclose - Close a remote disk device
+ * rdsclose  -  Close a remote disk device
  *------------------------------------------------------------------------
  */
 devcall	rdsclose (
-	  struct dentry	*devptr		/* entry in device switch table	*/
+	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* ptr to control block entry	*/
-	struct	rdbuff	*bptr;		/* ptr to buffer on a list	*/
-	struct	rdbuff	*nptr;		/* ptr to next buff on the list	*/
-	int32	nmoved;			/* number of buffers moved	*/
+	struct	rdscblk	*rdptr;		/* Ptr to control block entry	*/
+	struct	rdbuff	*bptr;		/* Ptr to buffer on a list	*/
+	struct	rdbuff	*nptr;		/* Ptr to next buff on the list	*/
+	int32	nmoved;			/* Number of buffers moved	*/
 
 	/* Device must be open */
 
@@ -58,3 +58,4 @@ devcall	rdsclose (
 	rdptr->rd_state = RD_FREE;
 	return OK;
 }
+

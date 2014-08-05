@@ -1,22 +1,22 @@
-/* rdswrite.c  -  rdswrite */
+/* rdswrite.c - rdswrite */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdswrite - Write a block to a remote disk
+ * rdswrite  -  Write a block to a remote disk
  *------------------------------------------------------------------------
  */
 devcall	rdswrite (
-	  struct dentry	*devptr,	/* entry in device switch table	*/
-	  char	*buff,			/* buffer that holds a disk blk	*/
-	  int32	blk			/* block number to write	*/
+	  struct dentry	*devptr,	/* Entry in device switch table	*/
+	  char	*buff,			/* Buffer that holds a disk blk	*/
+	  int32	blk			/* Block number to write	*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* pointer to control block	*/
-	struct	rdbuff	*bptr;		/* ptr to buffer on a list	*/
-	struct	rdbuff	*pptr;		/* ptr to previous buff on list	*/
-	struct	rdbuff	*nptr;		/* ptr to next buffer on list	*/
-	bool8	found;			/* was buff found during search?*/
+	struct	rdscblk	*rdptr;		/* Pointer to control block	*/
+	struct	rdbuff	*bptr;		/* Pointer to buffer on a list	*/
+	struct	rdbuff	*pptr;		/* Ptr to previous buff on list	*/
+	struct	rdbuff	*nptr;		/* Ptr to next buffer on list	*/
+	bool8	found;			/* Was buff found during search?*/
 
 	/* If device not currently in use, report an error */
 
@@ -50,7 +50,7 @@ devcall	rdswrite (
 				nptr = bptr->rd_next;
 
 				/* Unlink node from cache list and reset*/
-				/*  the available semaphore accordingly	*/
+				/*   the available semaphore accordingly*/
 
 				pptr->rd_next = bptr->rd_next;
 				nptr->rd_prev = bptr->rd_prev;

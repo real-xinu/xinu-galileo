@@ -1,27 +1,27 @@
-/* rdscontrol.c  -  rdscontrol */
+/* rdscontrol.c - rdscontrol */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdscontrol - Provide control functions for the remote disk
+ * rdscontrol  -  Provide control functions for the remote disk
  *------------------------------------------------------------------------
  */
 devcall	rdscontrol (
-	 struct dentry	*devptr,	/* entry in device switch table	*/
-	 int32	func,			/* a control function		*/
-	 int32	arg1,			/* argument #1			*/
-	 int32	arg2			/* argument #2			*/
+	 struct dentry	*devptr,	/* Entry in device switch table	*/
+	 int32	func,			/* The control function to use	*/
+	 int32	arg1,			/* Argument #1			*/
+	 int32	arg2			/* Argument #2			*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* pointer to control block	*/
-	struct	rdbuff	*bptr;		/* ptr to buffer that will be	*/
-					/*  placed on the req. queue	*/
-	struct	rdbuff	*pptr;		/* ptr to "previous" node on	*/
-					/*  a list			*/
-	struct	rd_msg_dreq msg;	/* buffer for delete request	*/
-	struct	rd_msg_dres resp;	/* buffer for delete response	*/
-	char	*to, *from;		/* used during name copy	*/
-	int32	retval;			/* return value			*/
+	struct	rdscblk	*rdptr;		/* Pointer to control block	*/
+	struct	rdbuff	*bptr;		/* Ptr to buffer that will be	*/
+					/*   placed on the req. queue	*/
+	struct	rdbuff	*pptr;		/* Ptr to "previous" node on	*/
+					/*   a list			*/
+	struct	rd_msg_dreq msg;	/* Buffer for delete request	*/
+	struct	rd_msg_dres resp;	/* Buffer for delete response	*/
+	char	*to, *from;		/* Used during name copy	*/
+	int32	retval;			/* Return value			*/
 
 	/* Verify that device is currently open */
 
@@ -47,7 +47,7 @@ devcall	rdscontrol (
 
 		bptr->rd_op = RD_OP_SYNC;
 		bptr->rd_refcnt = 1;
-		bptr->rd_blknum = 0;		/* unused */
+		bptr->rd_blknum = 0;		/* Unused */
 		bptr->rd_status = RD_INVALID;
 		bptr->rd_pid = getpid();
 
@@ -80,7 +80,7 @@ devcall	rdscontrol (
 		msg.rd_status = htons(0);
 		msg.rd_seq = 0;	/* rdscomm will insert sequence # later	*/
 		to = msg.rd_id;
-		memset(to, NULLCH, RD_IDLEN);	/* initialize to zeroes	*/
+		memset(to, NULLCH, RD_IDLEN);	/* Initialize to zeroes	*/
 		from = rdptr->rd_id;
 		while ( (*to++ = *from++) != NULLCH ) {	/* copy ID	*/
 			;
