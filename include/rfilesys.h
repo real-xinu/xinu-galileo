@@ -1,4 +1,4 @@
-/* rfilesys.h - definitions for remote file system pseudo-devices */
+/* rfilesys.h - Definitions for remote file system pseudo-devices */
 
 #ifndef	Nrfl
 #define	Nrfl	10
@@ -30,13 +30,13 @@
 #endif
 
 struct	rfdata	{
-	int32	rf_seq;			/* next sequence number to use	*/
-	uint32	rf_ser_ip;		/* server IP address		*/
-	uint16	rf_ser_port;		/* server UDP port		*/
-	uint16	rf_loc_port;		/* local (client) UPD port	*/
+	int32	rf_seq;			/* Next sequence number to use	*/
+	uint32	rf_ser_ip;		/* Server IP address		*/
+	uint16	rf_ser_port;		/* Server UDP port		*/
+	uint16	rf_loc_port;		/* Local (client) UPD port	*/
 	int32	rf_udp_slot;		/* UDP slot to use		*/
-	sid32	rf_mutex;		/* mutual exclusion for access	*/
-	bool8	rf_registered;		/* has UDP port been registered?*/
+	sid32	rf_mutex;		/* Mutual exclusion for access	*/
+	bool8	rf_registered;		/* Has UDP port been registered?*/
 };
 
 extern	struct	rfdata	Rf_data;
@@ -47,27 +47,27 @@ extern	struct	rfdata	Rf_data;
 #define	RF_USED	1			/* Entry is currently in use	*/
 
 struct	rflcblk	{
-	int32	rfstate;		/* entry is free or used	*/
-	int32	rfdev;			/* device number of this dev.	*/
+	int32	rfstate;		/* Entry is free or used	*/
+	int32	rfdev;			/* Device number of this dev.	*/
 	char	rfname[RF_NAMLEN];	/* Name of the file		*/
-	uint32	rfpos;			/* current file position	*/
-	uint32	rfmode;			/* mode: read access, write	*/
+	uint32	rfpos;			/* Current file position	*/
+	uint32	rfmode;			/* Mode: read access, write	*/
 					/*	access or both		*/
 };
 
-extern	struct	rflcblk	rfltab[];	/* remote file control blocks	*/
+extern	struct	rflcblk	rfltab[];	/* Remote file control blocks	*/
 
 /* Definitions of parameters used when accessing a remote server	*/
 
-#define	RF_RETRIES	3		/* time to retry sending a msg	*/
-#define	RF_TIMEOUT	1000		/* wait one second for a reply	*/
+#define	RF_RETRIES	3		/* Time to retry sending a msg	*/
+#define	RF_TIMEOUT	1000		/* Wait one second for a reply	*/
 
 /* Control functions for a remote file pseudo device */
 
 #define	RFS_CTL_DEL	F_CTL_DEL	/* Delete a file		*/
 #define	RFS_CTL_TRUNC	F_CTL_TRUNC	/* Truncate a file		*/
-#define	RFS_CTL_MKDIR	F_CTL_MKDIR	/* make a directory		*/
-#define	RFS_CTL_RMDIR	F_CTL_RMDIR	/* remove a directory		*/
+#define	RFS_CTL_MKDIR	F_CTL_MKDIR	/* Make a directory		*/
+#define	RFS_CTL_RMDIR	F_CTL_RMDIR	/* Remove a directory		*/
 #define RFS_CTL_SIZE	F_CTL_SIZE	/* Obtain the size of a file	*/
 
 /************************************************************************/
@@ -110,10 +110,10 @@ extern	struct	rflcblk	rfltab[];	/* remote file control blocks	*/
 /* Message header fields present in each message */
 
 #define	RF_MSG_HDR			/* Common message fields	*/\
-	uint16	rf_type;		/* message type			*/\
+	uint16	rf_type;		/* Message type			*/\
 	uint16	rf_status;		/* 0 in req, status in response	*/\
-	uint32	rf_seq;			/* message sequence number	*/\
-	char	rf_name[RF_NAMLEN];	/* null-terminated file name	*/
+	uint32	rf_seq;			/* Message sequence number	*/\
+	char	rf_name[RF_NAMLEN];	/* Null-terminated file name	*/
 
 /* The standard header present in all messages with no extra fields	*/
 
@@ -124,7 +124,7 @@ extern	struct	rflcblk	rfltab[];	/* remote file control blocks	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_hdr {			/* header fields present in each*/
+struct	rf_msg_hdr {			/* Header fields present in each*/
 	RF_MSG_HDR			/*   remote file system message	*/
 };
 #pragma pack()
@@ -136,21 +136,21 @@ struct	rf_msg_hdr {			/* header fields present in each*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_rreq	{		/* remote file read request	*/
-	RF_MSG_HDR			/* header fields		*/
-	uint32	rf_pos;			/* position in file to read	*/
-	uint32	rf_len;			/* number of bytes to read	*/
+struct	rf_msg_rreq	{		/* Remote file read request	*/
+	RF_MSG_HDR			/* Header fields		*/
+	uint32	rf_pos;			/* Position in file to read	*/
+	uint32	rf_len;			/* Number of bytes to read	*/
 					/*   (between 1 and 1024)	*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_rres	{		/* remote file read reply	*/
-	RF_MSG_HDR			/* header fields		*/
-	uint32	rf_pos;			/* position in file		*/
-	uint32	rf_len;			/* number of bytes that follow	*/
+struct	rf_msg_rres	{		/* Remote file read reply	*/
+	RF_MSG_HDR			/* Header fields		*/
+	uint32	rf_pos;			/* Position in file		*/
+	uint32	rf_len;			/* Number of bytes that follow	*/
 					/*   (0 for EOF)		*/
-	char	rf_data[RF_DATALEN];	/* array containing data from	*/
+	char	rf_data[RF_DATALEN];	/* Array containing data from	*/
 					/*   the file			*/
 };
 #pragma pack()
@@ -162,21 +162,21 @@ struct	rf_msg_rres	{		/* remote file read reply	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_wreq	{		/* remote file write request	*/
-	RF_MSG_HDR			/* header fields		*/
-	uint32	rf_pos;			/* position in file		*/
-	uint32	rf_len;			/* number of valid bytes in	*/
+struct	rf_msg_wreq	{		/* Remote file write request	*/
+	RF_MSG_HDR			/* Header fields		*/
+	uint32	rf_pos;			/* Position in file		*/
+	uint32	rf_len;			/* Number of valid bytes in	*/
 					/*   array that follows		*/
-	char	rf_data[RF_DATALEN];	/* array containing data to be	*/
+	char	rf_data[RF_DATALEN];	/* Array containing data to be	*/
 					/*   written to the file	*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_wres	{		/* remote file write response	*/
-	RF_MSG_HDR			/* header fields		*/
-	uint32	rf_pos;			/* original position in file	*/
-	uint32	rf_len;			/* number of bytes written	*/
+struct	rf_msg_wres	{		/* Remote file write response	*/
+	RF_MSG_HDR			/* Header fields		*/
+	uint32	rf_pos;			/* Original position in file	*/
+	uint32	rf_len;			/* Number of bytes written	*/
 };
 #pragma pack()
 
@@ -187,15 +187,15 @@ struct	rf_msg_wres	{		/* remote file write response	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_oreq	{		/* remote file open request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_oreq	{		/* Remote file open request	*/
+	RF_MSG_HDR			/* Header fields		*/
 	int32	rf_mode;		/* Xinu mode bits		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_ores	{		/* remote file open response	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_ores	{		/* Remote file open response	*/
+	RF_MSG_HDR			/* Header fields		*/
 	int32	rf_mode;		/* Xinu mode bits		*/
 };
 #pragma pack()
@@ -207,15 +207,15 @@ struct	rf_msg_ores	{		/* remote file open response	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_sreq	{		/* remote file size request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_sreq	{		/* Remote file size request	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_sres	{		/* remote file status response	*/
-	RF_MSG_HDR			/* header fields		*/
-	uint32	rf_size;		/* size of file in bytes	*/
+struct	rf_msg_sres	{		/* Remote file status response	*/
+	RF_MSG_HDR			/* Header fields		*/
+	uint32	rf_size;		/* Size of file in bytes	*/
 };
 #pragma pack()
 
@@ -226,14 +226,14 @@ struct	rf_msg_sres	{		/* remote file status response	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_dreq	{		/* remote file delete request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_dreq	{		/* Remote file delete request	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_dres	{		/* remote file delete response	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_dres	{		/* Remote file delete response	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
@@ -244,14 +244,14 @@ struct	rf_msg_dres	{		/* remote file delete response	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_treq	{		/* remote file truncate request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_treq	{		/* Remote file truncate request	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_tres	{		/* remote file truncate response*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_tres	{		/* Remote file truncate response*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
@@ -262,14 +262,14 @@ struct	rf_msg_tres	{		/* remote file truncate response*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_mreq	{		/* remote file mkdir request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_mreq	{		/* Remote file mkdir request	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_mres	{		/* remote file mkdir response	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_mres	{		/* Remote file mkdir response	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
@@ -280,13 +280,13 @@ struct	rf_msg_mres	{		/* remote file mkdir response	*/
 /************************************************************************/
 
 #pragma pack(2)
-struct	rf_msg_xreq	{		/* remote file rmdir request	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_xreq	{		/* Remote file rmdir request	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rf_msg_xres	{		/* remote file rmdir response	*/
-	RF_MSG_HDR			/* header fields		*/
+struct	rf_msg_xres	{		/* Remote file rmdir response	*/
+	RF_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
