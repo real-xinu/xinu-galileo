@@ -1,9 +1,7 @@
 /* clkdisp.s - clkdisp (x86) */
 
 /*------------------------------------------------------------------------
- *
- * clkdisp  -  Interrupt dispatcher for clock interrupts
- *
+ * clkdisp  -  Interrupt dispatcher for clock interrupts (x86 version)
  *------------------------------------------------------------------------
  */
 #include <icu.s>

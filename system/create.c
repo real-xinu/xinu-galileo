@@ -7,11 +7,11 @@ local	int newpid();
 #define	roundew(x)	( (x+3)& ~0x3)
 
 /*------------------------------------------------------------------------
- *  create  -  Create a process to start running a procedure
+ *  create  -  Create a process to start running a function on x86
  *------------------------------------------------------------------------
  */
 pid32	create(
-	  void		*procaddr,	/* Procedure address		*/
+	  void		*funcaddr,	/* Address of the function	*/
 	  uint32	ssize,		/* Stack size in words		*/
 	  pri16		priority,	/* Process priority > 0		*/
 	  char		*name,		/* Name (for debugging)		*/
@@ -74,7 +74,7 @@ pid32	create(
 	/*   expects a saved process state to contain: ret address,	*/
 	/*   ebp, interrupt mask, flags, registerss, and an old SP	*/
 
-	*--saddr = (long)procaddr;	/* Make the stack look like it's*/
+	*--saddr = (long)funcaddr;	/* Make the stack look like it's*/
 					/*  half-way through a call to	*/
 					/*  ctxsw that "returns" to the	*/
 					/*  new process			*/
@@ -84,17 +84,17 @@ pid32	create(
 	*--saddr = 0x00000200;		/* New process runs with	*/
 					/*  interrupts enabled		*/
 
-	/* Basically, the following emulates a x86 "pushal" instruction	*/
+	/* Basically, the following emulates an x86 "pushal" instruction*/
 
-	*--saddr = 0;		/* %eax */
-	*--saddr = 0;		/* %ecx */
-	*--saddr = 0;		/* %edx */
-	*--saddr = 0;		/* %ebx */
-	*--saddr = 0;		/* %esp; value filled in below */
-	pushsp = saddr;		/*  remember this location */
-	*--saddr = savsp;	/* %ebp (while finishing ctxsw) */
-	*--saddr = 0;		/* %esi */
-	*--saddr = 0;		/* %edi */
+	*--saddr = 0;			/* %eax */
+	*--saddr = 0;			/* %ecx */
+	*--saddr = 0;			/* %edx */
+	*--saddr = 0;			/* %ebx */
+	*--saddr = 0;			/* %esp; value filled in below	*/
+	pushsp = saddr;			/* Remember this location	*/
+	*--saddr = savsp;		/* %ebp (while finishing ctxsw)	*/
+	*--saddr = 0;			/* %esi */
+	*--saddr = 0;			/* %edi */
 	*pushsp = (unsigned long) (prptr->prstkptr = (char *)saddr);
 	restore(mask);
 	return pid;

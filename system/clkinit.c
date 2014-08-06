@@ -1,4 +1,4 @@
-/* clkinit.c - clkinit */
+/* clkinit.c - clkinit (x86) */
 
 #include <xinu.h>
 
@@ -8,7 +8,7 @@ qid16	sleepq;			/* Queue of sleeping processes		*/
 uint32	preempt;		/* Preemption counter			*/
    
 /*------------------------------------------------------------------------
- * clkinit  -  Initialize the clock and sleep queue at startup
+ * clkinit  -  Initialize the clock and sleep queue at startup (x86)
  *------------------------------------------------------------------------
  */
 void	clkinit(void)
