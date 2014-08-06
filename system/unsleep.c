@@ -4,9 +4,8 @@
 
 /*------------------------------------------------------------------------
  *  unsleep  -  Internal function to remove a process from the sleep
- *			queue prematurely by adjusting the delay of
- *			successive processes.  The caller must move the
- *			process a new state and call resched, if needed.
+ *		    queue prematurely.  The caller must adjust the delay
+ *		    of successive processes.
  *------------------------------------------------------------------------
  */
 status	unsleep(
@@ -17,8 +16,8 @@ status	unsleep(
         struct	procent	*prptr;		/* Ptr to process' table entry	*/
 
         pid32	pidnext;		/* ID of process on sleep queue	*/
-					/*  that follows the process	*/
-					/*  which is being removed	*/
+					/*   that follows the process	*/
+					/*   which is being removed	*/
 
 	mask = disable();
 
