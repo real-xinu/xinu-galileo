@@ -32,6 +32,7 @@ status	rdscomm (
 		if(slot == SYSERR) {
 			return SYSERR;
 		}
+		rdptr->rd_udpslot = slot;
 		rdptr->rd_registered = TRUE;
 	}
 
@@ -41,6 +42,10 @@ status	rdscomm (
 			return SYSERR;
 		}
 	}
+
+	/* Retrieve the saved UDP slot number  */
+
+	slot = rdptr->rd_udpslot;
 
 	/* Assign message next sequence number */
 

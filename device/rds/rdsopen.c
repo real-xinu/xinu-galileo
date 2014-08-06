@@ -72,11 +72,14 @@ devcall	rdsopen (
 	/* Check response */
 
 	if (retval == SYSERR) {
+		rdptr->rd_state = RD_FREE;
 		return SYSERR;
 	} else if (retval == TIMEOUT) {
 		kprintf("Timeout during remote file open\n\r");
+		rdptr->rd_state = RD_FREE;
 		return SYSERR;
 	} else if (ntohs(resp.rd_status) != 0) {
+		rdptr->rd_state = RD_FREE;
 		return SYSERR;
 	}
 

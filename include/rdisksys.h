@@ -94,6 +94,7 @@ struct	rdscblk	{
 	uint16	rd_ser_port;		/* Server UDP port		*/
 	uint16	rd_loc_port;		/* Local (client) UPD port	*/
 	bool8	rd_registered;		/* Has UDP port been registered?*/
+	int32	rd_udpslot;		/* Registered UDP slot		*/
 };
 
 
