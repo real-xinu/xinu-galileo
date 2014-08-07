@@ -47,7 +47,7 @@ status	arp_resolve (
 		return OK;
 	}
 
-	/* Insure only one process uses ARP at a time */
+	/* Ensure only one process uses ARP at a time */
 
 	mask = disable();
 
@@ -178,7 +178,7 @@ void	arp_in (
 		return;
 	}
 
-	/* Insure only one process uses ARP at a time */
+	/* Ensure only one process uses ARP at a time */
 
 	mask = disable();
 
