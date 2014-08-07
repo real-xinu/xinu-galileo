@@ -5,6 +5,7 @@
 
 struct	network	NetData;
 bpid32	netbufpool;
+
 /*------------------------------------------------------------------------
  * net_init  -  Initialize network data structures and processes
  *------------------------------------------------------------------------
@@ -12,6 +13,7 @@ bpid32	netbufpool;
 
 void	net_init (void)
 {
+	int32	nbufs;			/* Total no of buffers		*/
 
 	/* Initialize the network data structure */
 
@@ -22,7 +24,13 @@ void	net_init (void)
 	control(ETHER0, ETH_CTRL_GET_MAC, (int32)NetData.ethucast, 0);
 
 	memset((char *)NetData.ethbcast, 0xFF, ETH_ADDR_LEN);
-	
+
+	/* Create the network buffer pool */
+
+	nbufs = UDP_SLOTS * UDP_QSIZ + ICMP_SLOTS * ICMP_QSIZ + 1;
+
+	netbufpool = mkbufpool(PACKLEN, nbufs);
+
 	/* Initialize the ARP cache */
 
 	arp_init();
@@ -63,12 +71,7 @@ void	net_init (void)
 process	netin ()
 {
 	struct	netpacket *pkt;		/* Ptr to current packet	*/
-	int32	nbufs;			/* Total no of buffers		*/
 	int32	retval;			/* Return value from read	*/
-
-	nbufs = UDP_SLOTS * UDP_QSIZ + ICMP_SLOTS * ICMP_QSIZ + 1;
-
-	netbufpool = mkbufpool(PACKLEN, nbufs);
 
 	/* Do forever: read a packet from the network and process */
 

@@ -1,8 +1,8 @@
 /* net.h */
 
-#define NETSTK		8192 		/* stack size for network setup */
-#define NETPRIO		500    		/* network startup priority 	*/
-#define NETBOOTFILE	128		/* size of the netboot filename	*/
+#define NETSTK		8192 		/* Stack size for network setup */
+#define NETPRIO		500    		/* Network startup priority 	*/
+#define NETBOOTFILE	128		/* Size of the netboot filename	*/
 
 /* Constants used in the networking code */
 

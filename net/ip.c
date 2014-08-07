@@ -28,7 +28,7 @@ void	ip_in(
 
 	ip_ntoh(pktptr);
 
-	/* Insure version and length are valid */
+	/* Ensure version and length are valid */
 
 	if (pktptr->net_ipvh != 0x45) {
 		kprintf("IP version failed\n\r");
