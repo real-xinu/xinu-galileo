@@ -33,6 +33,13 @@ conf.h:		config Configuration
 
 conf.c:		config Configuration
 		./config Configuration conf.c conf.h
+		
+xboot_conf:	config Configuration_xboot
+		./config Configuration_xboot conf.c conf.h
+		
+xboot_install:	xboot_conf
+		cp -p conf.h ../include
+		cp -p conf.c ../system
 
 install:	conf.h conf.c
 		cp -p conf.h ../include

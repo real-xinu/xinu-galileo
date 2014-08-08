@@ -2,9 +2,9 @@
 
 #include <icu.s>
 		.text
-		.globl	sdmcDispatch
-		.globl	sdmcInterrupt
-sdmcDispatch:
+		.globl	sdmcdispatch
+		.globl	sdmcinterrupt
+sdmcdispatch:
 		pushal
 		pushfl
 		cli
@@ -13,7 +13,7 @@ sdmcDispatch:
 		movb	$EOI,%al
 		outb	%al,$OCW2_2
 
-		call	sdmcInterrupt
+		call	sdmcinterrupt
 
 		popfl
 		popal
