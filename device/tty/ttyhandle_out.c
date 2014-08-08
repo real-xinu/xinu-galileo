@@ -41,7 +41,7 @@ void	ttyhandle_out(
 
 	/* While onboard FIFO is not full and the echo queue is	*/
 	/*   nonempty, xmit chars from the echo queue		*/
-  
+
 	while ( (uspace>0) &&  typtr->tyehead != typtr->tyetail) {
 		csrptr->buffer = *typtr->tyehead++;
 		if (typtr->tyehead >= &typtr->tyebuff[TY_EBUFLEN]) {

@@ -6,7 +6,7 @@
  *  quark_irq_routing  -  Set IRQ indirection for devices
  *------------------------------------------------------------------------
  */
-int32	quark_irq_routing(void) 
+int32	quark_irq_routing(void)
 {
 	int	pciinfo;		/* PCI info for Legacy bridge	*/
 	uint32	rcba;			/* Root Complex Base Address	*/

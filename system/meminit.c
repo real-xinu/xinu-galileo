@@ -120,7 +120,7 @@ void	meminit(void) {
 		if((mmap_addr->base_addr <= (uint32)minheap) &&
 		  ((mmap_addr->base_addr + mmap_addr->length) >
 		  (uint32)minheap)) {
-		  
+
 			/* This is the first free block, base address is the minheap */
 			next_memptr = (struct memblk *)roundmb(minheap);
 

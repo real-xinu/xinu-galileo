@@ -119,7 +119,7 @@ mmap_search_start:
 
 	# skip memory segment if it is not usable
 	movl	20(%ecx), %eax		# Test the address block type
-	cmpl	$0x01, %eax		# If type is not equal to 1 
+	cmpl	$0x01, %eax		# If type is not equal to 1
 	jne	mmap_search_next_sgmt	#   then this is not a usable block
 
 	# skip memory segment if it is within the memory for Xinu
@@ -132,7 +132,7 @@ mmap_search_start:
 	
 	# Segment is usable and not within xinu memory region
 	#   Check if it is big enough to hold the null stack
-	#   Subtract off any memory location that overlaps the 
+	#   Subtract off any memory location that overlaps the
 	#     the Xinu memory region
 	movl	4(%ecx), %eax		# Load memory address of segment
 	movl	$end, %ebx		# Load end of xinu

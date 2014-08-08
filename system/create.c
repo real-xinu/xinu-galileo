@@ -1,5 +1,5 @@
 /* create.c - create, newpid */
-    
+
 #include <xinu.h>
 
 local	int newpid();

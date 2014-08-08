@@ -5,7 +5,7 @@
 /*------------------------------------------------------------------------
  * get_sysid_entry_point - Retrieve the system ID entry point table address
  *                           from BIOS space.  This is located somewhere
- *                           between SYSID_ENTRY_POINT_SADDR and 
+ *                           between SYSID_ENTRY_POINT_SADDR and
  *                           SYSID_ENTRY_POINT_EADDR
  *------------------------------------------------------------------------
  */
@@ -39,7 +39,7 @@ char* get_uuid(uint16* uuid_len)
 	}
 	
 	sysid_bios_entry = (struct sysid_bios_struct*)sysid_entry->bios_structure_addr;
-	for(i = 0; i < sysid_entry->bios_struct_count; i++) 
+	for(i = 0; i < sysid_entry->bios_struct_count; i++)
 	{
 		if(memcmp(sysid_bios_entry->header, SYSID_ENTRY_UUID_HDR, sizeof(sysid_bios_entry->header)) == 0) {
 			(*uuid_len) = sysid_bios_entry->len - sizeof(struct sysid_bios_struct);
@@ -54,10 +54,10 @@ char* get_uuid(uint16* uuid_len)
 }
 
 /*------------------------------------------------------------------------
- * build_dhcp_discover_pxe - handcraft a DHCP Discover message in dmsg 
+ * build_dhcp_discover_pxe - handcraft a DHCP Discover message in dmsg
  *------------------------------------------------------------------------
  */
-int32 build_dhcp_discover_pxe(struct dhcpmsg* dmsg) 
+int32 build_dhcp_discover_pxe(struct dhcpmsg* dmsg)
 {
 	uint32  i,j;
 	uint32	xid;			/* xid used for the exchange	*/

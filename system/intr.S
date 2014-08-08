@@ -1,7 +1,7 @@
 /* intr.s - disable, restore, enable, pause, halt, spurious_irq7,	*/
 /*			spurious_irq15					*/
 
-#include <icu.s> 
+#include <icu.s>
 
 	.text
 	.globl	disable
@@ -103,7 +103,7 @@ _Xint0:
 	movl	%esp,%ebp
 	pushal
 	pushl	$0
-	jmp	Xtrap   
+	jmp	Xtrap
 
 	.globl  _Xint1			/* Debug exception		*/
 _Xint1:
@@ -111,7 +111,7 @@ _Xint1:
 	movl	%esp,%ebp
 	pushal
 	pushl	$1
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint2			/* Nonmaskable interrupt	*/
 _Xint2:
@@ -119,7 +119,7 @@ _Xint2:
 	movl	%esp,%ebp
 	pushal
 	pushl	$2
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint3			/* Breakpoint (one-byte INT 3	*/
 _Xint3:
@@ -127,7 +127,7 @@ _Xint3:
 	movl	%esp,%ebp
 	pushal
 	pushl	$3
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint4			/* Overflow (INTO instruction)	*/
 _Xint4:
@@ -135,7 +135,7 @@ _Xint4:
 	movl	%esp,%ebp
 	pushal
 	pushl	$4
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint5			/* Bounds check (BOUND instr)	*/
 _Xint5:
@@ -143,7 +143,7 @@ _Xint5:
 	movl	%esp,%ebp
 	pushal
 	pushl	$5
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint6			/* Invalid opcode		*/
 _Xint6:
@@ -151,7 +151,7 @@ _Xint6:
 	movl	%esp,%ebp
 	pushal
 	pushl	$6
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint7			/* Coprocessor not available	*/
 _Xint7:
@@ -159,7 +159,7 @@ _Xint7:
 	movl	%esp,%ebp
 	pushal
 	pushl	$7
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint8			/* Double fault			*/
 _Xint8:
@@ -167,7 +167,7 @@ _Xint8:
 	movl	%esp,%ebp
 	pushal
 	pushl	$8
-	jmp	Xtrap 
+	jmp	Xtrap
 	
 	.globl  _Xint9			/* (reserved)			*/
 _Xint9:
@@ -175,7 +175,7 @@ _Xint9:
 	movl	%esp,%ebp
 	pushal
 	pushl	$9
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint10			/* Invalid TSS			*/
 _Xint10:
@@ -183,7 +183,7 @@ _Xint10:
 	movl	%esp,%ebp
 	pushal
 	pushl	$10
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint11			/* Segment not present		*/
 _Xint11:
@@ -191,7 +191,7 @@ _Xint11:
 	movl	%esp,%ebp
 	pushal
 	pushl	$11
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint12			/* Stack exception		*/
 _Xint12:
@@ -199,7 +199,7 @@ _Xint12:
 	movl	%esp,%ebp
 	pushal
 	pushl	$12
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint13			/* General protection		*/
 _Xint13:
@@ -207,7 +207,7 @@ _Xint13:
 	movl	%esp,%ebp
 	pushal
 	pushl	$13
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint14			/* Page fault			*/
 _Xint14:
@@ -215,7 +215,7 @@ _Xint14:
 	movl	%esp,%ebp
 	pushal
 	pushl	$14
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint15			/* (reserved)			*/
 _Xint15:
@@ -223,7 +223,7 @@ _Xint15:
 	movl	%esp,%ebp
 	pushal
 	pushl	$15
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint16			/* Coprocessor error		*/
 _Xint16:
@@ -231,7 +231,7 @@ _Xint16:
 	movl	%esp,%ebp
 	pushal
 	pushl	$16
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint17			/* (reserved)			*/
 _Xint17:
@@ -239,7 +239,7 @@ _Xint17:
 	movl	%esp,%ebp
 	pushal
 	pushl	$17
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint18			/* (reserved)			*/
 _Xint18:
@@ -247,7 +247,7 @@ _Xint18:
 	movl	%esp,%ebp
 	pushal
 	pushl	$18
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint19			/* (reserved)			*/
 _Xint19:
@@ -255,7 +255,7 @@ _Xint19:
 	movl	%esp,%ebp
 	pushal
 	pushl	$19
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint20			/* (reserved)			*/
 _Xint20:
@@ -263,7 +263,7 @@ _Xint20:
 	movl	%esp,%ebp
 	pushal
 	pushl	$1
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint21			/* (reserved)			*/
 _Xint21:
@@ -271,7 +271,7 @@ _Xint21:
 	movl	%esp,%ebp
 	pushal
 	pushl	$21
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint22			/* (reserved)			*/
 _Xint22:
@@ -279,7 +279,7 @@ _Xint22:
 	movl	%esp,%ebp
 	pushal
 	pushl	$22
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint23			/* (reserved)			*/
 _Xint23:
@@ -287,7 +287,7 @@ _Xint23:
 	movl	%esp,%ebp
 	pushal
 	pushl	$23
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint24			/* (reserved)			*/
 _Xint24:
@@ -295,7 +295,7 @@ _Xint24:
 	movl	%esp,%ebp
 	pushal
 	pushl	$24
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint25			/* (reserved)			*/
 _Xint25:
@@ -303,7 +303,7 @@ _Xint25:
 	movl	%esp,%ebp
 	pushal
 	pushl	$25
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint26			/* (reserved)			*/
 _Xint26:
@@ -311,7 +311,7 @@ _Xint26:
 	movl	%esp,%ebp
 	pushal
 	pushl	$26
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint27			/* (reserved)			*/
 _Xint27:
@@ -319,7 +319,7 @@ _Xint27:
 	movl	%esp,%ebp
 	pushal
 	pushl	$27
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint28			/* (reserved)			*/
 _Xint28:
@@ -327,7 +327,7 @@ _Xint28:
 	movl	%esp,%ebp
 	pushal
 	pushl	$28
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint29			/* (reserved)			*/
 _Xint29:
@@ -335,7 +335,7 @@ _Xint29:
 	movl	%esp,%ebp
 	pushal
 	pushl	$29
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint30			/* (reserved)			*/
 _Xint30:
@@ -343,7 +343,7 @@ _Xint30:
 	movl	%esp,%ebp
 	pushal
 	pushl	$30
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint31			/* (reserved)			*/
 _Xint31:
@@ -351,7 +351,7 @@ _Xint31:
 	movl	%esp,%ebp
 	pushal
 	pushl	$31
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint32			/* available for ext. interrupt	*/
 _Xint32:
@@ -359,7 +359,7 @@ _Xint32:
 	movl	%esp,%ebp
 	pushal
 	pushl	$32
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint33			/* available for ext. interrupt	*/
 _Xint33:
@@ -367,7 +367,7 @@ _Xint33:
 	movl	%esp,%ebp
 	pushal
 	pushl	$33
-	jmp	Xtrap 
+	jmp	Xtrap
 	
 	.globl  _Xint34			/* available for ext. interrupt	*/
 _Xint34:
@@ -375,7 +375,7 @@ _Xint34:
 	movl	%esp,%ebp
 	pushal
 	pushl	$34
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint35			/* available for ext. interrupt	*/
 _Xint35:
@@ -383,7 +383,7 @@ _Xint35:
 	movl	%esp,%ebp
 	pushal
 	pushl	$35
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint36			/* available for ext. interrupt	*/
 _Xint36:
@@ -391,7 +391,7 @@ _Xint36:
 	movl	%esp,%ebp
 	pushal
 	pushl	$36
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint37			/* available for ext. interrupt	*/
 _Xint37:
@@ -399,7 +399,7 @@ _Xint37:
 	movl	%esp,%ebp
 	pushal
 	pushl	$37
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint38			/* available for ext. interrupt	*/
 _Xint38:
@@ -407,7 +407,7 @@ _Xint38:
 	movl	%esp,%ebp
 	pushal
 	pushl	$38
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint39			/* available for ext. interrupt	*/
 _Xint39:
@@ -415,7 +415,7 @@ _Xint39:
 	movl	%esp,%ebp
 	pushal
 	pushl	$39
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint40			/* available for ext. interrupt	*/
 _Xint40:
@@ -423,7 +423,7 @@ _Xint40:
 	movl	%esp,%ebp
 	pushal
 	pushl	$40
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint41			/* available for ext. interrupt	*/
 _Xint41:
@@ -431,7 +431,7 @@ _Xint41:
 	movl	%esp,%ebp
 	pushal
 	pushl	$41
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint42			/* available for ext. interrupt	*/
 _Xint42:
@@ -439,7 +439,7 @@ _Xint42:
 	movl	%esp,%ebp
 	pushal
 	pushl	$42
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint43			/* available for ext. interrupt	*/
 _Xint43:
@@ -447,7 +447,7 @@ _Xint43:
 	movl	%esp,%ebp
 	pushal
 	pushl	$43
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint44			/* available for ext. interrupt	*/
 _Xint44:
@@ -455,7 +455,7 @@ _Xint44:
 	movl	%esp,%ebp
 	pushal
 	pushl	$44
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint45			/* available for ext. interrupt	*/
 _Xint45:
@@ -463,7 +463,7 @@ _Xint45:
 	movl	%esp,%ebp
 	pushal
 	pushl	$45
-	jmp	Xtrap 
+	jmp	Xtrap
 
 	.globl  _Xint46			/* available for ext. interrupt	*/
 _Xint46:
@@ -471,7 +471,7 @@ _Xint46:
 	movl	%esp,%ebp
 	pushal
 	pushl	$46
-	jmp	Xtrap 
+	jmp	Xtrap
 
 /*------------------------------------------------------------------------
  * _Xint? - array of exception/interrupt entry points that are

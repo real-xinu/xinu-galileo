@@ -18,7 +18,7 @@ static void _prtl16(long num, char *str);
 static void _prtl2(long num, char *str);
 
 /**
- * Format and write output using 'func' to write characters. (Patched 
+ * Format and write output using 'func' to write characters. (Patched
  * for Sun3 by Shawn Ostermann.)  All arguments passed as 4 bytes, long==int.
  * @param *fmt format string
  * @param ap list of values
@@ -271,7 +271,7 @@ static void _prtl10(long num, char *str)
 }
 
 /**
- * Prints 
+ * Prints
  * @param num
  * @param *str
  */
@@ -295,7 +295,7 @@ static void _prtl8(long num, char *str)
 }
 
 /**
- * Prints 
+ * Prints
  * @param num
  * @param *str
  */
@@ -318,7 +318,7 @@ static void _prtl16(long num, char *str)
 }
 
 /**
- * Prints 
+ * Prints
  * @param num
  * @param *str
  */
@@ -341,7 +341,7 @@ static void _prtX16(long num, char *str)
 }
 
 /**
- * Prints 
+ * Prints
  * @param num
  * @param *str
  */

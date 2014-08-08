@@ -20,6 +20,6 @@ xbootjmp:
 	
 	/* Restore EAX and EBX as required by multiboot protocol*/
 	movl	bootsign, %eax
-	movl	bootinfo, %ebx 
+	movl	bootinfo, %ebx
 	
 	jmp 	*%ecx       /* Jump to the Xinu branch address */

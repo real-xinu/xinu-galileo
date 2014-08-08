@@ -45,7 +45,7 @@ void	dhcp_dump(
 	opt_tmp = (unsigned char*)dmsg->dc_opt;
 
 	/* Parse and dump options */
- 
+
 	while(opt_tmp < eom) {
 
 		switch(*opt_tmp) {

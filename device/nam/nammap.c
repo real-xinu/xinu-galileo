@@ -6,7 +6,7 @@ status	namcpy(char *, char *, int32);
 did32	namrepl(char *, char[]);
 
 /*------------------------------------------------------------------------
- *  nammap  -  using namespace, map name to new name and new device 
+ *  nammap  -  using namespace, map name to new name and new device
  *------------------------------------------------------------------------
  */
 devcall	nammap(

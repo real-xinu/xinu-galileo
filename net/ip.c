@@ -426,7 +426,7 @@ process	ipout(void)
 		}
 
 		/* Use ipout to Convert byte order and send */
- 
+
 		ip_out(pktptr);
 	}
 }
