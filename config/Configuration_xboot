@@ -40,48 +40,6 @@ eth:
 		-w ethwrite	-s ioerr	-n ethcontrol
 		-intr ethdispatch
 
-/* type of a remote disk system device */
-rds:
-	on udp
-		-i rdsinit	-o rdsopen	-c rdsclose
-		-r rdsread	-g ioerr	-p ioerr
-		-w rdswrite	-s ioerr	-n rdscontrol
-		-intr ionull
-
-/* type of ram disk */
-ram:
-	on mem
-		-i raminit	-o ramopen	-c ramclose
-		-r ramread	-g ioerr	-p ioerr
-		-w ramwrite	-s ioerr	-n ioerr
-		-intr ionull
-
-/* type of SD memory card */
-/*
-sdmc:
-	on sd
-		-i sdmcinit	-o sdmcopen	-c sdmcclose
-		-r sdmcread	-g ioerr	-p ioerr
-		-w sdmcwrite	-s ioerr	-n ioerr
-		-intr sdmcdispatch
-*/
-
-/* type of a local file system master device */
-lfs:
-	on ram
-		-i lfsinit	-o lfsopen	-c ioerr
-		-r ioerr	-g ioerr	-p ioerr
-		-w ioerr	-s ioerr	-n ioerr
-		-intr ionull
-
-/* type of a local file pseudo-device */
-lfl:
-	on lfs
-		-i lflinit	-o ioerr	-c lflclose
-		-r lflread	-g lflgetc	-p lflputc
-		-w lflwrite	-s lflseek	-n lflcontrol
-		-intr ionull
-		
 /* type of namespace device */
 nam:
 	on top
@@ -106,30 +64,6 @@ nam:
 
    /* Define a namespace device */
    NAMESPACE is nam on top
-
-   /* Define a remote disk system device */
-   RDISK is rds on udp
-   
-   /* Define a ram disk device */
-   RAM0 is ram on mem
-   
-   /* Define the local file system master device (one per system) */
-
-   LFILESYS is lfs on ram
-
-   /* Define local file pseudo-devices (multiple per system) */
-
-   LFILE0 is lfl on lfs
-   LFILE1 is lfl on lfs
-   LFILE2 is lfl on lfs
-   LFILE3 is lfl on lfs
-   LFILE4 is lfl on lfs
-   LFILE5 is lfl on lfs
-   
-   /* Define a SD memory card device */
-   /*
-   SDMC is sdmc on sd csr 0 -irq 0051
-   */
 
 %%
 

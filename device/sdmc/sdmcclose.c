@@ -1,13 +1,13 @@
-/* sdmcClose.c  -  sdmcClose */
+/* sdmcclose.c  -  sdmcclose */
 
 #include <xinu.h>
 #include <sdmc.h>
 
 /*------------------------------------------------------------------------
- * sdmcClose - Close a SD memory card device
+ * sdmcclose - Close a SD memory card device
  *------------------------------------------------------------------------
  */
-devcall	sdmcClose (
+devcall	sdmcclose (
 	  struct dentry	*devptr		/* entry in device switch table	*/
 	)
 {

@@ -1,13 +1,13 @@
-/* sdmcInterrupt.c - sdmcInterrupt */
+/* sdmcinterrupt.c - sdmcinterrupt */
 
 #include <xinu.h>
 #include <sdmc.h>
 
 /*------------------------------------------------------------------------
- *  sdmcInterrupt - handle an interrupt for a SD memory card device
+ *  sdmcinterrupt - handle an interrupt for a SD memory card device
  *------------------------------------------------------------------------
  */
-void sdmcInterrupt(void) {
+void sdmcinterrupt(void) {
 	struct	dentry	*devptr;	/* address of device control blk*/
 	volatile struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
 	struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
@@ -30,7 +30,7 @@ void sdmcInterrupt(void) {
 		if(csrptr->pre_state & SDMC_PRE_STATE_CRD_INS) {
 			
 			/* Open the device */
-			sdmcOpen(devptr, "", "");
+			sdmcopen(devptr, "", "");
 		}
 		return;
 	}

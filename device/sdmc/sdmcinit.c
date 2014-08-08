@@ -6,19 +6,15 @@
 struct	sdmcblk	sdmctab[Nsdmc];
 
 /*------------------------------------------------------------------------
- *  sdmcInit - initialize the SD memory card device
+ *  sdmcinit - initialize the SD memory card device
  *------------------------------------------------------------------------
  */
-devcall	sdmcInit (
+devcall	sdmcinit (
 	  struct dentry	*devptr		/* entry in device switch table	*/
 	)
 {
-	struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
 	volatile struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
-	uint32	pciinfo;		/* PCI info to read config	*/
-	
-	/* Initialize structure pointers */
-	sdmcptr = &sdmctab[devptr->dvminor];
+	uint32	pciinfo;			/* PCI info to read config	*/
 	
 	/* Search for the SD memory card device on the PCI bus */
 	pciinfo = find_pci_device(INTEL_QUARK_SDIO_PCI_DID, INTEL_QUARK_SDIO_PCI_VID, 0);
@@ -37,7 +33,7 @@ devcall	sdmcInit (
 	pci_write_config_word(pciinfo, 0x4, 0x0006);
 	
 	/* Set interrupt IRQ */
-	set_evec(devptr->dvirq, (uint32)sdmcDispatch);
+	set_evec(devptr->dvirq, (uint32)sdmcdispatch);
 	
 	/* Initialize the SD CS register */
 	csrptr = (struct sdmc_csreg *)devptr->dvcsr;
@@ -47,10 +43,7 @@ devcall	sdmcInit (
 	csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN  | SDMC_CRD_INT_SIG_EN;
 	csrptr->err_int_stat_en = 0;
 	csrptr->err_int_sig_en = 0;
-	
-	//csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN | SDMC_CMD_COMP_STAT_EN | SDMC_TX_COMP_STAT_EN | SDMC_CRD_INT_STAT_EN; 
-	//csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN | SDMC_CMD_COMP_SIG_EN | SDMC_TX_COMP_SIG_EN | SDMC_CRD_INT_SIG_EN;
-	
+		
 	/*
 	csrptr->nrm_int_status_en = 0x1FF; 
 	csrptr->nrm_int_sig_en = 0x1FF;

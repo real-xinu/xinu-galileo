@@ -421,23 +421,23 @@ extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
 /* in file rdsprocess.c */
 extern	void	rdsprocess(struct rdscblk *);
 
-/* in file sdmcClose.c */
-extern	devcall	sdmcClose(struct dentry *);
+/* in file sdmcclose.c */
+extern	devcall	sdmcclose(struct dentry *);
 
-/* in file sdmcInit.c */
-extern	devcall	sdmcInit(struct dentry *);
+/* in file sdmcinit.c */
+extern	devcall	sdmcinit(struct dentry *);
 
-/* in file sdmcOpen.c */
-extern	devcall	sdmcOpen(struct dentry *, char *, char *);
+/* in file sdmcopen.c */
+extern	devcall	sdmcopen(struct dentry *, char *, char *);
 
-/* in file sdmcRead.c */
-extern	devcall	sdmcRead(struct dentry *, char *, int32);
+/* in file sdmcread.c */
+extern	devcall	sdmcread(struct dentry *, char *, int32);
 
-/* in file sdmcWrite.c */
-extern	devcall	sdmcWrite(struct dentry *, char *, int32);
+/* in file sdmcwrite.c */
+extern	devcall	sdmcwrite(struct dentry *, char *, int32);
 
-/* in file sdmcDispatch.S */
-extern	interrupt	sdmcDispatch(void);
+/* in file sdmcdispatch.S */
+extern	interrupt	sdmcdispatch(void);
 
 /* in file read.c */
 extern	syscall	read(did32, char *, uint32);

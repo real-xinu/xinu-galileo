@@ -1,13 +1,13 @@
-/* sdmcWrite.c  -  sdmcWrite */
+/* sdmcwrite.c  -  sdmcwrite */
 
 #include <xinu.h>
 #include <sdmc.h>
 
 /*------------------------------------------------------------------------
- * sdmcWrite - Write a buffer to an SD memory card
+ * sdmcwrite - Write a buffer to an SD memory card
  *------------------------------------------------------------------------
  */
-devcall	sdmcWrite (
+devcall	sdmcwrite (
 	  struct dentry	*devptr,	/* entry in device switch table	*/
 	  char	*buff,			/* buffer to hold disk block	*/
 	  int32	blk			/* block number of disk block	*/
