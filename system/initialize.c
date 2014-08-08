@@ -14,8 +14,6 @@ extern	void main(void);	/* Main is the first process created	*/
 extern	void xdone(void);	/* System "shutdown" procedure		*/
 static	void sysinit(); 	/* Internal system initialization	*/
 extern	void meminit(void);	/* Initializes the free memory list	*/
-extern	int32 acpi_scan(void);	/* Scans BIOS-provided ACPI data	*/
-extern	int quark_irq_routing();
 
 /* Declarations of major kernel variables */
 
