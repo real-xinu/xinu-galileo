@@ -91,6 +91,9 @@ xinu:	Makefile $(BLDDIRS) $(CONFH) $(CONFC) $(XINU_LD_LIST)
 	@$(MAKEXBIN) $(XINUBIN) $(XINUXBIN)
 	@echo
 
+xboot:
+	@make -f Makefile_xboot
+
 $(BLDDIRS): 
 	@mkdir -p $(BLDDIRS)
 
@@ -124,6 +127,9 @@ clean:
 	@rm -f $(XINUBIN)
 	@rm -f $(XINUXBIN)
 
+xbootclean:
+	@make -f Makefile_xboot clean
+
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
@@ -142,18 +148,30 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/device/rfs					\
 		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'		\
 		-s $(TOPDIR)/shell  'xsh_rdstest*' > .defs
+		
+xbootrebuild:
+	@make -f Makefile_xboot rebuild
 
 defclean:
 	rm -f .defs
 	touch .defs
+	
+xbootdefclean:
+	@make -f Makefile_xboot defclean
 
 depend: rebuild
 	@echo;echo Making all dependencies in .deps
 	@$(MAKEDEP) ${INCLUDE} ${SRC_FULL} > .deps
 	@echo;echo Finished making dependencies
+	
+xbootdepend:
+	@make -f Makefile_xboot depend
 
 depclean:
 	rm -f .deps
 	touch .deps
+	
+xbootdepclean:
+	@make -f Makefile_xboot depclean
 
 include .deps
