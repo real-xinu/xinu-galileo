@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /*------------------------------------------------------------------------
- * getutime  --  Obtain time in seconds past Jan 1, 1970, UCT (GMT)
+ * getutime  -  Obtain time in seconds past Jan 1, 1970, UCT (GMT)
  *------------------------------------------------------------------------
  */
 status	getutime(

@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ptsend  --  Send a message to a port by adding it to the queue
+ *  ptsend  -  Send a message to a port by adding it to the queue
  *------------------------------------------------------------------------
  */
 syscall	ptsend(

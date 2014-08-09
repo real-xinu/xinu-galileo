@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  semreset  --  reset a semaphore's count and release waiting processes
+ *  semreset  -  Reset a semaphore's count and release waiting processes
  *------------------------------------------------------------------------
  */
 syscall	semreset(
