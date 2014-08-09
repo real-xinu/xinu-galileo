@@ -93,7 +93,7 @@ void	nulluser()
 
 /*------------------------------------------------------------------------
  *
- * sysinit - intialize all Xinu data structures and devices
+ * sysinit  -  Intialize all Xinu data structures and devices
  *
  *------------------------------------------------------------------------
  */
@@ -101,7 +101,7 @@ static	void	sysinit()
 {
 	int32	i;
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
-	struct	sentry	*semptr;	/* Prr to semaphore table entry	*/
+	struct	sentry	*semptr;	/* Ptr to semaphore table entry	*/
 
 	/* Platform Specific Initialization */
 
