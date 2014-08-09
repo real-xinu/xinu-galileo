@@ -1,4 +1,4 @@
-/* shell.h - declarations and constants used by the Xinu shell */
+/* shell.h - Declarations and constants used by the Xinu shell */
 
 /* Size constants */
 
