@@ -14,7 +14,7 @@ LFLAGS	= -lfl
 
 CONFIG	= config
 
-all:		conf.h conf.c
+all:		conf.h conf.c xboot_conf.c xboot_conf.h
 
 ${CONFIG}:	lex.yy.c y.tab.c
 		$(CC) ${CFLAGS} -o $@ y.tab.c ${LFLAGS}
@@ -33,14 +33,17 @@ conf.h:		config Configuration
 
 conf.c:		config Configuration
 		./config Configuration conf.c conf.h
-		
-xboot_conf:	config Configuration_xboot
-		./config Configuration_xboot conf.c conf.h
-		
-xboot_install:	xboot_conf
-		cp -p conf.h ../include
-		cp -p conf.c ../system
 
 install:	conf.h conf.c
 		cp -p conf.h ../include
 		cp -p conf.c ../system
+		
+xboot_conf.c:	config Configuration_xboot
+		./config Configuration_xboot xboot_conf.c xboot_conf.h
+		
+xboot_conf.h:	config Configuration_xboot
+		./config Configuration_xboot xboot_conf.c xboot_conf.h
+		
+xboot_install:	xboot_conf.c xboot_conf.h
+		cp -p xboot_conf.h ../include/conf.h
+		cp -p xboot_conf.c ../system/conf.c

@@ -26,7 +26,6 @@
 #include <arp.h>
 #include <udp.h>
 #include <dhcp.h>
-#include <pxe.h>
 #include <icmp.h>
 #include <tftp.h>
 #include <name.h>

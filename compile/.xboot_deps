@@ -1034,20 +1034,6 @@ write.o: ../system/write.c ../include/xinu.h ../include/kernel.h \
  ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
  ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
  ../include/string.h
-xboot.o: ../system/xboot.c ../include/xinu.h ../include/kernel.h \
- ../include/conf.h ../include/process.h ../include/queue.h \
- ../include/resched.h ../include/mark.h ../include/semaphore.h \
- ../include/memory.h ../include/bufpool.h ../include/clock.h \
- ../include/ports.h ../include/uart.h ../include/tty.h \
- ../include/device.h ../include/interrupt.h ../include/file.h \
- ../include/rfilesys.h ../include/rdisksys.h ../include/lfilesys.h \
- ../include/ether.h ../include/gpio.h ../include/net.h ../include/ip.h \
- ../include/arp.h ../include/udp.h ../include/dhcp.h ../include/pxe.h \
- ../include/icmp.h ../include/tftp.h ../include/name.h ../include/shell.h \
- ../include/date.h ../include/prototypes.h ../include/delay.h \
- ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
- ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
- ../include/string.h
 xdone.o: ../system/xdone.c ../include/xinu.h ../include/kernel.h \
  ../include/conf.h ../include/process.h ../include/queue.h \
  ../include/resched.h ../include/mark.h ../include/semaphore.h \
@@ -3683,20 +3669,6 @@ write.o: ../system/write.c ../include/xinu.h ../include/kernel.h \
  ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
  ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
  ../include/string.h
-xboot.o: ../system/xboot.c ../include/xinu.h ../include/kernel.h \
- ../include/conf.h ../include/process.h ../include/queue.h \
- ../include/resched.h ../include/mark.h ../include/semaphore.h \
- ../include/memory.h ../include/bufpool.h ../include/clock.h \
- ../include/ports.h ../include/uart.h ../include/tty.h \
- ../include/device.h ../include/interrupt.h ../include/file.h \
- ../include/rfilesys.h ../include/rdisksys.h ../include/lfilesys.h \
- ../include/ether.h ../include/gpio.h ../include/net.h ../include/ip.h \
- ../include/arp.h ../include/udp.h ../include/dhcp.h ../include/pxe.h \
- ../include/icmp.h ../include/tftp.h ../include/name.h ../include/shell.h \
- ../include/date.h ../include/prototypes.h ../include/delay.h \
- ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
- ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
- ../include/string.h
 xdone.o: ../system/xdone.c ../include/xinu.h ../include/kernel.h \
  ../include/conf.h ../include/process.h ../include/queue.h \
  ../include/resched.h ../include/mark.h ../include/semaphore.h \
@@ -4061,20 +4033,6 @@ init.o: ../system/init.c ../include/xinu.h ../include/kernel.h \
  ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
  ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
  ../include/string.h
-initialize.o: ../system/initialize.c ../include/xinu.h \
- ../include/kernel.h ../include/conf.h ../include/process.h \
- ../include/queue.h ../include/resched.h ../include/mark.h \
- ../include/semaphore.h ../include/memory.h ../include/bufpool.h \
- ../include/clock.h ../include/ports.h ../include/uart.h ../include/tty.h \
- ../include/device.h ../include/interrupt.h ../include/file.h \
- ../include/rfilesys.h ../include/rdisksys.h ../include/lfilesys.h \
- ../include/ether.h ../include/gpio.h ../include/net.h ../include/ip.h \
- ../include/arp.h ../include/udp.h ../include/dhcp.h ../include/pxe.h \
- ../include/icmp.h ../include/tftp.h ../include/name.h ../include/shell.h \
- ../include/date.h ../include/prototypes.h ../include/delay.h \
- ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
- ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
- ../include/string.h
 insert.o: ../system/insert.c ../include/xinu.h ../include/kernel.h \
  ../include/conf.h ../include/process.h ../include/queue.h \
  ../include/resched.h ../include/mark.h ../include/semaphore.h \
@@ -4159,20 +4117,6 @@ kprintf.o: ../system/kprintf.c ../include/xinu.h ../include/kernel.h \
  ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
  ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
  ../include/string.h ../include/stdarg.h
-main.o: ../system/main.c ../include/xinu.h ../include/kernel.h \
- ../include/conf.h ../include/process.h ../include/queue.h \
- ../include/resched.h ../include/mark.h ../include/semaphore.h \
- ../include/memory.h ../include/bufpool.h ../include/clock.h \
- ../include/ports.h ../include/uart.h ../include/tty.h \
- ../include/device.h ../include/interrupt.h ../include/file.h \
- ../include/rfilesys.h ../include/rdisksys.h ../include/lfilesys.h \
- ../include/ether.h ../include/gpio.h ../include/net.h ../include/ip.h \
- ../include/arp.h ../include/udp.h ../include/dhcp.h ../include/pxe.h \
- ../include/icmp.h ../include/tftp.h ../include/name.h ../include/shell.h \
- ../include/date.h ../include/prototypes.h ../include/delay.h \
- ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
- ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
- ../include/string.h
 meminit.o: ../system/meminit.c ../include/xinu.h ../include/kernel.h \
  ../include/conf.h ../include/process.h ../include/queue.h \
  ../include/resched.h ../include/mark.h ../include/semaphore.h \
@@ -4775,6 +4719,20 @@ xboot.o: ../system/xboot.c ../include/xinu.h ../include/kernel.h \
  ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
  ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
  ../include/string.h
+xboot_initialize.o: ../system/xboot_initialize.c ../include/xinu.h \
+ ../include/kernel.h ../include/conf.h ../include/process.h \
+ ../include/queue.h ../include/resched.h ../include/mark.h \
+ ../include/semaphore.h ../include/memory.h ../include/bufpool.h \
+ ../include/clock.h ../include/ports.h ../include/uart.h ../include/tty.h \
+ ../include/device.h ../include/interrupt.h ../include/file.h \
+ ../include/rfilesys.h ../include/rdisksys.h ../include/lfilesys.h \
+ ../include/ether.h ../include/gpio.h ../include/net.h ../include/ip.h \
+ ../include/arp.h ../include/udp.h ../include/dhcp.h ../include/pxe.h \
+ ../include/icmp.h ../include/tftp.h ../include/name.h ../include/shell.h \
+ ../include/date.h ../include/prototypes.h ../include/delay.h \
+ ../include/pci.h ../include/quark_eth.h ../include/quark_pdat.h \
+ ../include/quark_irq.h ../include/multiboot.h ../include/stdio.h \
+ ../include/string.h
 xdone.o: ../system/xdone.c ../include/xinu.h ../include/kernel.h \
  ../include/conf.h ../include/process.h ../include/queue.h \
  ../include/resched.h ../include/mark.h ../include/semaphore.h \
@@ -5905,14 +5863,12 @@ clkdisp.o: ../system/clkdisp.S ../include/icu.s
 ctxsw.o: ../system/ctxsw.S
 intr.o: ../system/intr.S ../include/icu.s
 start.o: ../system/start.S
-xbootjmp.o: ../system/xbootjmp.S
 ttydispatch.o: ../device/tty/ttydispatch.S ../include/icu.s
 ethdispatch.o: ../device/eth/ethdispatch.S ../include/icu.s
 clkdisp.o: ../system/clkdisp.S ../include/icu.s
 ctxsw.o: ../system/ctxsw.S
 intr.o: ../system/intr.S ../include/icu.s
 start.o: ../system/start.S
-xbootjmp.o: ../system/xbootjmp.S
 clkdisp.o: ../system/clkdisp.S ../include/icu.s
 ctxsw.o: ../system/ctxsw.S
 intr.o: ../system/intr.S ../include/icu.s

@@ -21,6 +21,7 @@ BUILDMAKE	=	$(TOPDIR)/compile/bin/build-make
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
 
 MAKEDEP		=	$(CC) -M -MG
+XBOOTMAKE	=	make -f Makefile_xboot
 
 DEFS		=	-DBSDURG -DVERSION=\""`cat xboot_version`"\"
 INCLUDE		=	-I$(TOPDIR)/include
@@ -44,7 +45,6 @@ include .xboot_defs
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
 LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
-XBOOT_LD_LIST = $(filter-out binaries/main.o,$(LD_LIST))
 
 #------------------------------------------------------------
 # Rules for files that need special handling
@@ -71,23 +71,24 @@ export
 # Specific additional rules and exceptions
 #--------------------------------------------------------------------------------
 
-xboot:	Makefile $(BLDDIRS) configure $(CONFH) $(CONFC) $(XBOOT_LD_LIST)
+xboot:	Makefile $(BLDDIRS) configure $(CONFH) $(CONFC) $(LD_LIST)
 	@echo;echo 'Loading object files to produce GRUB bootable xboot'
-	@$(LD) $(LDFLAGS) $(XBOOT_LD_LIST) -o $(XBOOT)
+	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XBOOT)
+	@(cd $(TOPDIR)/config; make clean)
 	@echo
 
 $(BLDDIRS): 
 	@mkdir -p $(BLDDIRS)
 
-objects: $(XBOOT_LD_LIST)
+objects: $(LD_LIST)
 
 $(CONFH): $(CONFFILE) $(CONFPGM)
 	@echo making $(CONFH)
-	@make configure
+	@$(XBOOTMAKE) configure
 
 $(CONFC): $(CONFFILE) $(CONFPGM)
 	@echo making $(CONFC)
-	@make configure
+	@$(XBOOTMAKE) configure
 
 $(CONFPGM): $(CONFL) $(CONFY)
 	@echo making the config program
@@ -99,9 +100,9 @@ configure:
 
 clean:
 	@echo removing .o files
-	@rm -f ${XBOOT_LD_LIST}
-	@echo   removing configuration files ...
-	@rm -f $(TOPDIR)/include/conf.h $(TOPDIR)/system/conf.c
+	@rm -f ${LD_LIST}
+	@echo removing configuration files ...
+	@rm -f $(CONFH) $(CONFC)
 	@(cd $(TOPDIR)/config; make clean)
 	@echo removing xboot ...
 	@rm -f $(XBOOT)
@@ -113,12 +114,12 @@ clean:
 rebuild: $(CONFC)
 	@echo Rebuilding the .xboot_defs file
 	@$(BUILDMAKE)							\
-		-s $(TOPDIR)/system  debug.c	 			\
+		-s $(TOPDIR)/system  debug.c  main.c  initialize.c	\
 		-s $(TOPDIR)/lib					\
 		-s $(TOPDIR)/device/tty					\
 		-s $(TOPDIR)/device/nam					\
 		-s $(TOPDIR)/device/eth					\
-		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*' > .xboot_defs
+		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'  pxe.c > .xboot_defs
 
 defclean:
 	rm -f .xboot_defs

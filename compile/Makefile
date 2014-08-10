@@ -24,6 +24,7 @@ BUILDMAKE	=	$(TOPDIR)/compile/bin/build-make
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
 
 MAKEDEP		=	$(CC) -M -MG
+XBOOTMAKE	=	make -f Makefile_xboot
 
 DEFS		=	-DBSDURG -DVERSION=\""`cat version`"\"
 INCLUDE		=	-I$(TOPDIR)/include
@@ -55,7 +56,6 @@ include .defs
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
 LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
-XINU_LD_LIST = $(filter-out binaries/xbootjmp.o binaries/xboot.o,$(LD_LIST))
 
 #------------------------------------------------------------
 # Rules for files that need special handling
@@ -82,22 +82,19 @@ export
 # Specific additional rules and exceptions
 #--------------------------------------------------------------------------------
 
-xinu:	Makefile $(BLDDIRS) $(CONFH) $(CONFC) $(XINU_LD_LIST)
+xinu:	Makefile $(BLDDIRS) $(CONFH) $(CONFC) $(LD_LIST)
 	@echo;echo 'Loading object files to produce GRUB bootable xinu'
-	@$(LD) $(LDFLAGS) $(XINU_LD_LIST) -o $(XINU)
+	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XINU)
 	@echo;echo 'Building $(XINUBIN)'
 	@objcopy -O binary $(XINU) $(XINUBIN)
 	@echo;echo 'Building $(XINUXBIN)'
 	@$(MAKEXBIN) $(XINUBIN) $(XINUXBIN)
 	@echo
 
-xboot:
-	@make -f Makefile_xboot
-
 $(BLDDIRS): 
 	@mkdir -p $(BLDDIRS)
 
-objects: $(XINU_LD_LIST)
+objects: $(LD_LIST)
 
 $(CONFH): $(CONFFILE) $(CONFPGM)
 	@echo making $(CONFH)
@@ -127,9 +124,6 @@ clean:
 	@rm -f $(XINUBIN)
 	@rm -f $(XINUXBIN)
 
-xbootclean:
-	@make -f Makefile_xboot clean
-
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
@@ -137,7 +131,8 @@ xbootclean:
 rebuild: $(CONFC)
 	@echo Rebuilding the .defs file
 	@$(BUILDMAKE)							\
-		-s $(TOPDIR)/system  debug.c	 			\
+		-s $(TOPDIR)/system  debug.c  xboot.c 			\
+			xboot_initialize.c  xbootjmp.S 			\
 		-s $(TOPDIR)/lib					\
 		-s $(TOPDIR)/device/tty					\
 		-s $(TOPDIR)/device/nam					\
@@ -146,32 +141,42 @@ rebuild: $(CONFC)
 		-s $(TOPDIR)/device/ram					\
 		-s $(TOPDIR)/device/lfs					\
 		-s $(TOPDIR)/device/rfs					\
-		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'		\
+		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'  pxe.c	\
 		-s $(TOPDIR)/shell  'xsh_rdstest*' > .defs
-		
-xbootrebuild:
-	@make -f Makefile_xboot rebuild
 
 defclean:
 	rm -f .defs
 	touch .defs
-	
-xbootdefclean:
-	@make -f Makefile_xboot defclean
 
 depend: rebuild
 	@echo;echo Making all dependencies in .deps
 	@$(MAKEDEP) ${INCLUDE} ${SRC_FULL} > .deps
 	@echo;echo Finished making dependencies
-	
-xbootdepend:
-	@make -f Makefile_xboot depend
 
 depclean:
 	rm -f .deps
 	touch .deps
 	
+#--------------------------------------------------------------------------------
+# Specific targets for Xboot
+#--------------------------------------------------------------------------------	
+
+xboot:
+	@$(XBOOTMAKE)
+	
+xbootclean:
+	@$(XBOOTMAKE) clean
+	
+xbootrebuild:
+	@$(XBOOTMAKE) rebuild
+	
+xbootdefclean:
+	@$(XBOOTMAKE) defclean
+	
+xbootdepend:
+	@$(XBOOTMAKE) depend
+	
 xbootdepclean:
-	@make -f Makefile_xboot depclean
+	@$(XBOOTMAKE) depclean
 
 include .deps
