@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  mkbufpool  --  Allocate memory for a buffer pool and link the buffers
+ *  mkbufpool  -  Allocate memory for a buffer pool and link the buffers
  *------------------------------------------------------------------------
  */
 bpid32	mkbufpool(

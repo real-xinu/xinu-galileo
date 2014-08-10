@@ -166,7 +166,7 @@ void trap(int inum)
 		kprintf("exception %d (%s) currpid %d (%s)\n", inum,
 			inames[inum], currpid, proctab[currpid].prname);
 	else
-		kprintf("exception %d currpid %d (%s)\n", inum, currpid, 
+		kprintf("exception %d currpid %d (%s)\n", inum, currpid,
 			proctab[currpid].prname);
 #ifdef REGDUMP
 	kprintf("eflags %X ", *sp--);

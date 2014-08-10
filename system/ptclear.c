@@ -3,9 +3,9 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  _ptclear  --  Used by ptdelete and ptreset to clear or reset a port
- *			(internal function assumes interrupts disabled
- *			 and arguments have been checked for validity)
+ *  _ptclear  -  Used by ptdelete and ptreset to clear or reset a port
+ *		   (internal function assumes interrupts disabled and
+ *		   arguments have been checked for validity)
  *------------------------------------------------------------------------
  */
 void	_ptclear(

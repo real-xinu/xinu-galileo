@@ -6,7 +6,7 @@
  */
 /* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
 
-/** 
+/**
  * Place a character into first n characters.
  * @param s memory to place character into
  * @param c character to place

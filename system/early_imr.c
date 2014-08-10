@@ -49,7 +49,7 @@
 
 #define IMR_WRITE_ENABLE_ALL	(0xFFFFFFFF)
 #define IMR_READ_ENABLE_ALL	(0xBFFFFFFF)
-#define IMR_BASE_ADDR		(0x0000) 
+#define IMR_BASE_ADDR		(0x0000)
 #define IMR_LOCK_BIT		(0x80000000)
 
 /* Mask of the last 2 bit of IMR address [23:2] */
@@ -81,8 +81,8 @@ static uint32 sb_pcidev;
  */
 void intel_cln_early_sb_read_reg(cln_sb_id id, unsigned char cmd, unsigned char reg, uint32 *data)
 {
-	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) | 
-		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)| 
+	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) |
+		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)|
 		  ((reg << INTEL_CLN_SB_REG_SHIFT) & 0xFF00)|
 		  INTEL_CLN_SB_BYTEEN;
 
@@ -107,8 +107,8 @@ void intel_cln_early_sb_read_reg(cln_sb_id id, unsigned char cmd, unsigned char 
  */
 void intel_cln_early_sb_write_reg(cln_sb_id id, unsigned char cmd, unsigned char reg, uint32 data)
 {
-	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) | 
-		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)| 
+	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) |
+		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)|
 		  ((reg << INTEL_CLN_SB_REG_SHIFT) & 0xFF00)|
 		  INTEL_CLN_SB_BYTEEN;
 
@@ -159,12 +159,12 @@ static void cln_remove_imr(unsigned char reg_l, unsigned char reg_h, unsigned ch
 	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, reg_l, IMR_BASE_ADDR);
 }
 
-/** 
+/**
  * cln_remove_imr_grub
  *
  * remove imr protection from grub,
- * set imr rw masks to default 
- */  
+ * set imr rw masks to default
+ */
 static void cln_remove_imr_grub(void)
 {
 	cln_remove_imr(DRAM_IMR0L, DRAM_IMR0H, DRAM_IMR0RM, DRAM_IMR0WM);
@@ -181,12 +181,12 @@ static void cln_remove_imr_boot_params(void)
 	cln_remove_imr(DRAM_IMR1L, DRAM_IMR1H, DRAM_IMR1RM, DRAM_IMR1WM);
 }
 
-/** 
+/**
  * cln_remove_imr_bzimage
  *
  * remove imr protection from bzImage,
- * set imr rw masks to default 
- */  
+ * set imr rw masks to default
+ */
 static void cln_remove_imr_bzimage(void)
 {
 	cln_remove_imr(DRAM_IMR7L, DRAM_IMR7H, DRAM_IMR7RM, DRAM_IMR7WM);
@@ -194,7 +194,7 @@ static void cln_remove_imr_bzimage(void)
 
 void remove_irm_protections()
 {
-	uint32 tmp_addr; 
+	uint32 tmp_addr;
 
 	if (intel_cln_early_sb_probe() != 0) {
 		kprintf("%s() error probing for IRM device\n", __FUNCTION__);

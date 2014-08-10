@@ -14,7 +14,7 @@ int32	ethmcast_add	(
 	int16	mcast_count;
 
 	struct eth_q_csreg *csrptr = (struct eth_q_csreg *)ethptr->csr;
-        
+
 	/*Set the Pass all multicast bit in MAC Frame Filter Register */
 
 	csrptr->macff |= 0x00000010;

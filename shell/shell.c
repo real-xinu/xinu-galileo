@@ -36,7 +36,7 @@ const	struct	cmdent	cmdtab[] = {
 uint32	ncmd = sizeof(cmdtab) / sizeof(struct cmdent);
 
 /************************************************************************/
-/* shell  -  provide an interactive user interface that executes	*/
+/* shell  -  Provide an interactive user interface that executes	*/
 /*	     commands.  Each command begins with a command name, has	*/
 /*	     a set of optional arguments, has optional input or		*/
 /*	     output redirection, and an optional specification for	*/

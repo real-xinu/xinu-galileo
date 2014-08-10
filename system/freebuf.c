@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  freebuf  --  Free a buffer that was allocated from a pool by getbuf
+ *  freebuf  -  Free a buffer that was allocated from a pool by getbuf
  *------------------------------------------------------------------------
  */
 syscall	freebuf(

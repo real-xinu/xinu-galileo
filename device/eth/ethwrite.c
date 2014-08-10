@@ -56,7 +56,7 @@ devcall	ethwrite	(
 
 	/* Initialize the descriptor */
 
-	descptr->ctrlstat |= 
+	descptr->ctrlstat |=
 		(ETH_QUARK_TDCS_OWN | /* The desc is owned by DMA	*/
 		 ETH_QUARK_TDCS_IC  | /* Interrupt after transfer	*/
 		 ETH_QUARK_TDCS_LS  | /* Last segment of packet		*/

@@ -81,13 +81,13 @@ void	pdump(struct  netpacket *pptr)
 					ntohs(pptr->net_iplen) + ETH_HDR_LEN);
 			
 			kprintf("(");
-			kprintf("tos 0x%01x, ttl %d, id %d, offset %d ", 
-					pptr->net_iptos, 
+			kprintf("tos 0x%01x, ttl %d, id %d, offset %d ",
+					pptr->net_iptos,
 					pptr->net_ipttl,
 					ntohs(pptr->net_ipid),
 					(ntohs(pptr->net_ipfrag) & 0x1fff));
 
-			kprintf("flags "); 
+			kprintf("flags ");
 			if (ntohs(pptr->net_ipfrag) & 0x4000)
 				kprintf("[DF], ");
 			else if (ntohs(pptr->net_ipfrag) & 0x2000)
@@ -95,7 +95,7 @@ void	pdump(struct  netpacket *pptr)
 			else
 				kprintf("[none], ");
 
-			kprintf("[ip checksum %s], ", 
+			kprintf("[ip checksum %s], ",
 					ipcksum(pptr) == 0 ? "ok" : "fail");
 
 			if (pptr->net_ipproto == IP_UDP) {
@@ -105,12 +105,12 @@ void	pdump(struct  netpacket *pptr)
 				kprintf("\t%d.%d.%d.%d > ",
 						(ntohl(pptr->net_ipsrc)>>24)&0xff,
 						(ntohl(pptr->net_ipsrc)>>16)&0xff,
-						(ntohl(pptr->net_ipsrc)>>8)&0xff, 
+						(ntohl(pptr->net_ipsrc)>>8)&0xff,
 						(ntohl(pptr->net_ipsrc)&0xff));
 				kprintf("%d.%d.%d.%d: ",
 						(ntohl(pptr->net_ipdst)>>24)&0xff,
 						(ntohl(pptr->net_ipdst)>>16)&0xff,
-						(ntohl(pptr->net_ipdst)>>8)&0xff, 
+						(ntohl(pptr->net_ipdst)>>8)&0xff,
 						(ntohl(pptr->net_ipdst)&0xff));
 				kprintf("[udp checksum none] ");
 				kprintf("UDP, src port %d, dst port %d, length %d\n",
@@ -125,12 +125,12 @@ void	pdump(struct  netpacket *pptr)
 				kprintf("\t%d.%d.%d.%d > ",
 						(ntohl(pptr->net_ipsrc)>>24)&0xff,
 						(ntohl(pptr->net_ipsrc)>>16)&0xff,
-						(ntohl(pptr->net_ipsrc)>>8)&0xff, 
+						(ntohl(pptr->net_ipsrc)>>8)&0xff,
 						(ntohl(pptr->net_ipsrc)&0xff));
 				kprintf("%d.%d.%d.%d: ",
 						(ntohl(pptr->net_ipdst)>>24)&0xff,
 						(ntohl(pptr->net_ipdst)>>16)&0xff,
-						(ntohl(pptr->net_ipdst)>>8)&0xff, 
+						(ntohl(pptr->net_ipdst)>>8)&0xff,
 						(ntohl(pptr->net_ipdst)&0xff));
 
 				if (pptr->net_ictype == ICMP_ECHOREQST)
@@ -236,13 +236,13 @@ void	pdumph(struct  netpacket *pptr)
 					pptr->net_iplen + ETH_HDR_LEN);
 			
 			kprintf("(");
-			kprintf("tos 0x%01x, ttl %d, id %d, offset %d ", 
-					pptr->net_iptos, 
+			kprintf("tos 0x%01x, ttl %d, id %d, offset %d ",
+					pptr->net_iptos,
 					pptr->net_ipttl,
 					pptr->net_ipid,
 					pptr->net_ipfrag & 0x1fff);
 
-			kprintf("flags "); 
+			kprintf("flags ");
 			if (pptr->net_ipfrag & 0x4000)
 				kprintf("[DF], ");
 			else if (pptr->net_ipfrag & 0x2000)
@@ -250,7 +250,7 @@ void	pdumph(struct  netpacket *pptr)
 			else
 				kprintf("[none], ");
 
-			kprintf("[ip checksum %s], ", 
+			kprintf("[ip checksum %s], ",
 					ipcksum(pptr) == 0 ? "ok" : "fail");
 
 			if (pptr->net_ipproto == IP_UDP) {
@@ -260,12 +260,12 @@ void	pdumph(struct  netpacket *pptr)
 				kprintf("\t%d.%d.%d.%d > ",
 						(pptr->net_ipsrc>>24)&0xff,
 						(pptr->net_ipsrc>>16)&0xff,
-						(pptr->net_ipsrc>>8)&0xff, 
+						(pptr->net_ipsrc>>8)&0xff,
 						(pptr->net_ipsrc&0xff));
 				kprintf("%d.%d.%d.%d: ",
 						(pptr->net_ipdst>>24)&0xff,
 						(pptr->net_ipdst>>16)&0xff,
-						(pptr->net_ipdst>>8)&0xff, 
+						(pptr->net_ipdst>>8)&0xff,
 						(pptr->net_ipdst&0xff));
 				kprintf("[udp checksum none] ");
 				kprintf("UDP, src port %d, dst port %d, length %d\n",
@@ -280,12 +280,12 @@ void	pdumph(struct  netpacket *pptr)
 				kprintf("\t%d.%d.%d.%d > ",
 						(pptr->net_ipsrc>>24)&0xff,
 						(pptr->net_ipsrc>>16)&0xff,
-						(pptr->net_ipsrc>>8)&0xff, 
+						(pptr->net_ipsrc>>8)&0xff,
 						(pptr->net_ipsrc&0xff));
 				kprintf("%d.%d.%d.%d: ",
 						(pptr->net_ipsrc>>24)&0xff,
 						(pptr->net_ipsrc>>16)&0xff,
-						(pptr->net_ipsrc>>8)&0xff, 
+						(pptr->net_ipsrc>>8)&0xff,
 						(pptr->net_ipsrc&0xff));
 
 				if (pptr->net_ictype == ICMP_ECHOREQST)

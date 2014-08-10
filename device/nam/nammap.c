@@ -6,68 +6,68 @@ status	namcpy(char *, char *, int32);
 did32	namrepl(char *, char[]);
 
 /*------------------------------------------------------------------------
- *  nammap  -  using namespace, map name to new name and new device 
+ *  nammap  -  Using namespace, map name to new name and new device
  *------------------------------------------------------------------------
  */
 devcall	nammap(
-	 char	*name,			/* a name to map		*/
-	 char	newname[NM_MAXLEN],	/* buffer for mapped name	*/
+	 char	*name,			/* The name to map		*/
+	 char	newname[NM_MAXLEN],	/* Buffer for mapped name	*/
 	 did32 namdev			/* ID of the namespace device	*/
 	)
 {
-	did32	newdev;			/* device descriptor to return	*/
-	char	tmpname[NM_MAXLEN];	/* temporary buffer for name	*/
-	int32	iter;			/* number of iterations		*/
+	did32	newdev;			/* Device descriptor to return	*/
+	char	tmpname[NM_MAXLEN];	/* Temporary buffer for name	*/
+	int32	iter;			/* Number of iterations		*/
 
-	/* place original name in temporary buffer and null terminate */
+	/* Place original name in temporary buffer and null terminate */
 
 	if (namcpy(tmpname, name, NM_MAXLEN) == SYSERR) {
 		return SYSERR;
 	}
 
-	/* repeatedly substitute the name prefix until a non-namespace	*/
-	/* device is reached or an iteration limit is exceeded		*/
+	/* Repeatedly substitute the name prefix until a non-namespace	*/
+	/*   device is reached or an iteration limit is exceeded	*/
 
 	for (iter=0; iter<nnames ; iter++) {
 		newdev = namrepl(tmpname, newname);
 		if (newdev != namdev) {
                         namcpy(tmpname, newname, NM_MAXLEN);
-			return newdev;	/* either valid ID or SYSERR	*/
+			return newdev;	/* Either valid ID or SYSERR	*/
 		}
 	}
 	return SYSERR;
 }
 
 /*------------------------------------------------------------------------
- *  namrepl  -  use the name table to perform prefix substitution
+ *  namrepl  -  Use the name table to perform prefix substitution
  *------------------------------------------------------------------------
  */
 did32	namrepl(
-	 char	*name,			/* original name		*/
-	 char	newname[NM_MAXLEN]	/* buffer for mapped name	*/
+	 char	*name,			/* Original name		*/
+	 char	newname[NM_MAXLEN]	/* Buffer for mapped name	*/
 	)
 {
-	int32	i;			/* iterate through name table	*/
-	char	*pptr;			/* walks through a prefix	*/
-	char	*rptr;			/* walks through a replacement	*/
-	char	*optr;			/* walks through original name	*/
-        char    *nptr;                  /* walks through new name       */
-	char	olen;			/* length of original name	*/
-					/*  including the NULL byte	*/
-	int32	plen;			/* length of a prefix string	*/
-					/*  *not* including NULL byte	*/
-	int32	rlen;			/* length of replacment string	*/
-	int32	remain;			/* bytes in name beyond prefix	*/
-	struct	nmentry	*namptr;	/* pointer to a table entry	*/
+	int32	i;			/* Iterate through name table	*/
+	char	*pptr;			/* Walks through a prefix	*/
+	char	*rptr;			/* Walks through a replacement	*/
+	char	*optr;			/* Walks through original name	*/
+        char    *nptr;                  /* Walks through new name       */
+	char	olen;			/* Length of original name	*/
+					/*   including the NULL byte	*/
+	int32	plen;			/* Length of a prefix string	*/
+					/*   *not* including NULL byte	*/
+	int32	rlen;			/* Length of replacment string	*/
+	int32	remain;			/* Bytes in name beyond prefix	*/
+	struct	nmentry	*namptr;	/* Pointer to a table entry	*/
 
-	/* search name table for first prefix that matches */
+	/* Search name table for first prefix that matches */
 
 	for (i=0; i<nnames; i++) {
 		namptr = &nametab[i];
-		optr = name;		/* start at beginning of name	*/
-		pptr = namptr->nprefix;	/* start at beginning of prefix	*/
+		optr = name;		/* Start at beginning of name	*/
+		pptr = namptr->nprefix;	/* Start at beginning of prefix	*/
 		
-		/* compare prefix to string and count prefix size */
+		/* Compare prefix to string and count prefix size */
 
 		for (plen=0; *pptr != NULLCH ; plen++) {
 			if (*pptr != *optr) {
@@ -76,7 +76,7 @@ did32	namrepl(
 			pptr++;
 			optr++;
 		}
-		if (*pptr != NULLCH) {	/* prefix does not match */
+		if (*pptr != NULLCH) {	/* Prefix does not match */
 			continue;
 		}
 
@@ -92,8 +92,8 @@ did32	namrepl(
 			return (did32)SYSERR;
 		}
 
-		/* place replacement string followed by remainder of */
-		/* original name (and null) into the new name buffer */
+		/* Place replacement string followed by remainder of	*/
+		/*   original name (and null) into the new name buffer	*/
 
 		
                 nptr = newname;
@@ -110,18 +110,18 @@ did32	namrepl(
 }
 
 /*------------------------------------------------------------------------
- *  namcpy  -  copy a name from one buffer to another, checking length
+ *  namcpy  -  Copy a name from one buffer to another, checking length
  *------------------------------------------------------------------------
  */
 status	namcpy(
-	 char		*newname,	/* buffer to hold copy		*/
-	 char		*oldname,	/* buffer containing name	*/
-    	 int32		buflen		/* size of buffer for copy	*/
+	 char		*newname,	/* Buffer to hold copy		*/
+	 char		*oldname,	/* Buffer containing name	*/
+    	 int32		buflen		/* Size of buffer for copy	*/
 	)
 {
-        char    *nptr;                  /* point to new name            */
-        char    *optr;                  /* point to old name            */
-	int32	cnt;			/* count of characters copied	*/
+        char    *nptr;                  /* Point to new name            */
+        char    *optr;                  /* Point to old name            */
+	int32	cnt;			/* Count of characters copied	*/
 
         nptr = newname;
         optr = oldname;
@@ -131,5 +131,5 @@ status	namcpy(
 			return OK;
 		}
 	}
-	return SYSERR;		/* buffer filled before copy completed	*/
+	return SYSERR;		/* Buffer filled before copy completed	*/
 }

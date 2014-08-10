@@ -31,7 +31,7 @@ regAddress_MMConfig(
 	void	*retval;
 
 	retval = (void *)
-		(mmconfigBase + 
+		(mmconfigBase +
    		(bus * PCIE_BYTES_PER_BUS) +
 		(device * PCIE_BYTES_PER_DEVICE) +
 		(function * PCIE_BYTES_PER_FUNCTION) +
@@ -109,7 +109,7 @@ int find_pci_device(int deviceID, int vendorID, int index)
 	for (bus = 0; bus < PCI_MAX_BUSES; bus++) {
 		for (dev = 0; dev < PCI_DEVICES_PER_BUS; dev++) {
 			for (func = 0; func < PCI_FUNCTIONS_PER_DEVICE; func++) {
-				devfuncHdr = 
+				devfuncHdr =
 					regAddress_MMConfig(
 						MMCONFIG_BASE,
 						bus, dev, func, 0);
@@ -131,7 +131,7 @@ int find_pci_device(int deviceID, int vendorID, int index)
 		}
 	}
 	// The target device was not found.
-	return SYSERR; 
+	return SYSERR;
 }
 
 

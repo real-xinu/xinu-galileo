@@ -33,7 +33,7 @@ int fscanf(int dev, char *fmt, int args)
             (fmt, (int **)&args, getch, ungetch, dev, (int)(int)&buf));
 }
 
-/** 
+/**
  * Get a character from a device with pushback.
  * @param dev device to read from
  * @param abuf buffer for reading into

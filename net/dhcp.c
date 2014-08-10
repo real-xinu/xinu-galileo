@@ -3,15 +3,15 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * dhcp_get_opt_val  -	Retrieve a pointer to the value for a specified 
- *			  DHCP options key 
+ * dhcp_get_opt_val  -	Retrieve a pointer to the value for a specified
+ *			  DHCP options key
  *------------------------------------------------------------------------
  */
 char* 	dhcp_get_opt_val(
 	  const struct dhcpmsg* dmsg, 	/* DHCP Message			*/
 	  uint32 dmsg_size, 		/* Size of DHCP Message		*/
 	  uint8 option_key		/* Option key to retrieve	*/
-	) 
+	)
 {
 	unsigned char* opt_tmp;
 	unsigned char* eom;
@@ -27,7 +27,7 @@ char* 	dhcp_get_opt_val(
 
 			/* Offset past the option value and the size 	*/
 
-			return (char*)(opt_tmp+2);  
+			return (char*)(opt_tmp+2);
 		}
 		opt_tmp++;	/* Move to length octet */
 		opt_tmp += *(uint8*)opt_tmp + 1;
@@ -39,7 +39,7 @@ char* 	dhcp_get_opt_val(
 }
 
 /*------------------------------------------------------------------------
- * dhcp_bld_bootp_msg  -  Set the common fields for all DHCP messages 
+ * dhcp_bld_bootp_msg  -  Set the common fields for all DHCP messages
  *------------------------------------------------------------------------
  */
 void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
@@ -68,10 +68,10 @@ void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
 }
 
 /*------------------------------------------------------------------------
- * dhcp_bld_disc  -  handcraft a DHCP Discover message in dmsg 
+ * dhcp_bld_disc  -  handcraft a DHCP Discover message in dmsg
  *------------------------------------------------------------------------
  */
-int32 	dhcp_bld_disc(struct dhcpmsg* dmsg) 
+int32 	dhcp_bld_disc(struct dhcpmsg* dmsg)
 {
 	uint32  j = 0;
 
@@ -91,14 +91,14 @@ int32 	dhcp_bld_disc(struct dhcpmsg* dmsg)
 }
 
 /*------------------------------------------------------------------------
- * dhcp_bld_req - handcraft a DHCP request message in dmsg 
+ * dhcp_bld_req - handcraft a DHCP request message in dmsg
  *------------------------------------------------------------------------
  */
 int32 	dhcp_bld_req(
 	  struct dhcpmsg* dmsg,		/* DHCP message to build	*/
 	  const struct dhcpmsg* dmsg_offer, /* DHCP offer message	*/
 	  uint32 dsmg_offer_size	/* Size of DHCP offer message	*/
-	) 
+	)
 {
 	uint32  j = 0;
 	uint32* server_ip;        	/* Take the DHCP server IP addr	*/
@@ -244,7 +244,7 @@ uint32	getlocalip(void)
 							~NetData.ipmask;
 			NetData.ipvalid = TRUE;
 			udp_release(slot);
-			   
+
 			/* Retrieve the boot server IP */
 			if(dot2ip((char*)dmsg_rvc.sname,
 					    &NetData.bootserver) != OK) {

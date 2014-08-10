@@ -1,7 +1,7 @@
 /* tftp.h - definitions for trivial file transfer protocol */
 
 /* TFTP Packet Op codes */
-#define TFTP_RRQ   1   /* Read Request    */  
+#define TFTP_RRQ   1   /* Read Request    */
 #define TFTP_WRQ   2   /* Write Request   */
 #define TFTP_DATA  3   /* Data Packet     */
 #define TFTP_ACK   4   /* Acknowledgement */

@@ -35,7 +35,7 @@ uint32 crc_table[] = {
  * crc32 - Computes the CRC32 checksum of the given data
  *------------------------------------------------------------------------
  */
-uint32 crc32(byte* data, uint32 data_size) 
+uint32 crc32(byte* data, uint32 data_size)
 {
 	uint32 i, crc = 0;
 
@@ -54,7 +54,7 @@ uint32 crc32(byte* data, uint32 data_size)
  *   - Ensures the header contains the correct pad
  *------------------------------------------------------------------------
  */
-status validate_xinuheader(const struct xboot_header* boot_hdr) 
+status validate_xinuheader(const struct xboot_header* boot_hdr)
 {
 	int i;
 
@@ -145,7 +145,7 @@ status validate_xinu_loadaddress(uint32 load_address, uint32 image_size)
 }
 
 /*------------------------------------------------------------------------
- * xboot - Xinu boot main function 
+ * xboot - Xinu boot main function
  *    - Obtains an IP address over DHCP and retrieves a boot image from
  *      the boot server
  *------------------------------------------------------------------------
@@ -155,7 +155,7 @@ int32 main(void)
 	struct  xboot_header boot_hdr; /* Xboot header on the Xinu image */
 	uint32  size;                  /* Size downloaded from TFTP server */
 	char*   tftp_buffers[2];       /* Pointers to buffers used for downloading the Xinu image */
-	uint32  tftp_buffer_sizes[2];  /* Buffer sizes for TFTP buffers */ 
+	uint32  tftp_buffer_sizes[2];  /* Buffer sizes for TFTP buffers */
 
 	kprintf("\n\n###########################################################\n\n");
 			

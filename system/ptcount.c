@@ -3,12 +3,12 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  ptcount  --  Return the count of messages currently waiting in a port
- *			(a non-negative count K means the port contains
- *			 K messages,  including messages from senders that
- *			 are blocked waiting to send a message; a count of
- *			 negative K means a port is empty and K processes
- *			 are blocked waiting to receive a message)
+ *  ptcount  -  Return the count of messages currently waiting in a port
+ *		  (a non-negative count K means the port contains K
+ *		   K messages,  including messages from senders that
+ *		   are blocked waiting to send a message; a count of
+ *		   negative K means a port is empty and K processes
+ *		   are blocked waiting to receive a message)
  *------------------------------------------------------------------------
  */
 int32	ptcount(

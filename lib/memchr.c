@@ -6,7 +6,7 @@
  */
 /* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
 
-/** 
+/**
  * Returns a pointer to the location in  memory at which which a particular
  * character appears.
  * @param *cs string to search

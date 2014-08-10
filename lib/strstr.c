@@ -6,7 +6,7 @@
  */
 /* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
 
-/** 
+/**
  * Returns a pointer to the location in a string at which a particular
  * string appears.
  * @param cs string to search

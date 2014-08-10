@@ -3,8 +3,8 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- *  semcount  --  Return the count of a semaphore (because any integer is
- *			possible, return of SYSERR may be ambiguous)
+ *  semcount  -  Return the count of a semaphore (because any integer is
+ *		   possible, return of SYSERR may be ambiguous)
  *------------------------------------------------------------------------
  */
 syscall semcount(

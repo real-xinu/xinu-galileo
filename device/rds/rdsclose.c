@@ -58,4 +58,3 @@ devcall	rdsclose (
 	rdptr->rd_state = RD_FREE;
 	return OK;
 }
-
