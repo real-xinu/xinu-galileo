@@ -132,6 +132,7 @@ configure:
 	@(cd $(TOPDIR)/config; make install)
 	
 xboot_configure:
+	@rm -f $(BLDDIRS)/conf.o
 	@(cd $(TOPDIR)/config; make xboot_install)
 
 clean:
