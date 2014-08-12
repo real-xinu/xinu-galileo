@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Generate a new version string to be printed at startup
+#
+# Use is:   mkvers_xboot platform_name
+
+VERS_NUM_FILE=.xboot_vers_num
+
+case $# in
+    1)	PLAT="$1"
+	;;
+    *)	echo 'use is:  mkvers_xboot platform_name' >&2
+	exit 1
+	;;
+esac
+		
+if test -s $VERS_NUM_FILE; then
+	OLD_VERS=`cat $VERS_NUM_FILE`
+	VERS=`expr $OLD_VERS + 1`
+else
+	VERS=1
+fi
+echo $VERS > $VERS_NUM_FILE
+echo "Xboot for $PLAT -- version #$VERS  `date`"
