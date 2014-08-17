@@ -102,6 +102,8 @@ _Xint0:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$0
 	jmp	Xtrap
 
@@ -110,6 +112,8 @@ _Xint1:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$1
 	jmp	Xtrap
 
@@ -118,6 +122,8 @@ _Xint2:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$2
 	jmp	Xtrap
 
@@ -126,6 +132,8 @@ _Xint3:
 	pushl	%ebp			/*    instruction)		*/
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$3
 	jmp	Xtrap
 
@@ -134,6 +142,8 @@ _Xint4:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$4
 	jmp	Xtrap
 
@@ -142,6 +152,8 @@ _Xint5:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$5
 	jmp	Xtrap
 
@@ -150,6 +162,8 @@ _Xint6:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$6
 	jmp	Xtrap
 
@@ -158,6 +172,8 @@ _Xint7:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$7
 	jmp	Xtrap
 
@@ -166,6 +182,8 @@ _Xint8:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$8
 	jmp	Xtrap
 	
@@ -174,6 +192,8 @@ _Xint9:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$9
 	jmp	Xtrap
 
@@ -182,6 +202,8 @@ _Xint10:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$10
 	jmp	Xtrap
 
@@ -190,6 +212,8 @@ _Xint11:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$11
 	jmp	Xtrap
 
@@ -198,6 +222,8 @@ _Xint12:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$12
 	jmp	Xtrap
 
@@ -206,6 +232,8 @@ _Xint13:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$13
 	jmp	Xtrap
 
@@ -214,6 +242,8 @@ _Xint14:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$14
 	jmp	Xtrap
 
@@ -222,6 +252,8 @@ _Xint15:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$15
 	jmp	Xtrap
 
@@ -230,6 +262,8 @@ _Xint16:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$16
 	jmp	Xtrap
 
@@ -238,6 +272,8 @@ _Xint17:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$17
 	jmp	Xtrap
 
@@ -246,6 +282,8 @@ _Xint18:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$18
 	jmp	Xtrap
 
@@ -254,6 +292,8 @@ _Xint19:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$19
 	jmp	Xtrap
 
@@ -262,7 +302,9 @@ _Xint20:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
-	pushl	$1
+	movl	%esp, %eax
+	pushl	%eax
+	pushl	$20
 	jmp	Xtrap
 
 	.globl  _Xint21			/* (reserved)			*/
@@ -270,6 +312,8 @@ _Xint21:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$21
 	jmp	Xtrap
 
@@ -278,6 +322,8 @@ _Xint22:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$22
 	jmp	Xtrap
 
@@ -286,6 +332,8 @@ _Xint23:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$23
 	jmp	Xtrap
 
@@ -294,6 +342,8 @@ _Xint24:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$24
 	jmp	Xtrap
 
@@ -302,6 +352,8 @@ _Xint25:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$25
 	jmp	Xtrap
 
@@ -310,6 +362,8 @@ _Xint26:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$26
 	jmp	Xtrap
 
@@ -318,6 +372,8 @@ _Xint27:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$27
 	jmp	Xtrap
 
@@ -326,6 +382,8 @@ _Xint28:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$28
 	jmp	Xtrap
 
@@ -334,6 +392,8 @@ _Xint29:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$29
 	jmp	Xtrap
 
@@ -342,6 +402,8 @@ _Xint30:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$30
 	jmp	Xtrap
 
@@ -350,6 +412,8 @@ _Xint31:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$31
 	jmp	Xtrap
 
@@ -358,6 +422,8 @@ _Xint32:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$32
 	jmp	Xtrap
 
@@ -366,6 +432,8 @@ _Xint33:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$33
 	jmp	Xtrap
 	
@@ -374,6 +442,8 @@ _Xint34:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$34
 	jmp	Xtrap
 
@@ -382,6 +452,8 @@ _Xint35:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$35
 	jmp	Xtrap
 
@@ -390,6 +462,8 @@ _Xint36:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$36
 	jmp	Xtrap
 
@@ -398,6 +472,8 @@ _Xint37:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$37
 	jmp	Xtrap
 
@@ -406,6 +482,8 @@ _Xint38:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$38
 	jmp	Xtrap
 
@@ -414,6 +492,8 @@ _Xint39:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$39
 	jmp	Xtrap
 
@@ -422,6 +502,8 @@ _Xint40:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$40
 	jmp	Xtrap
 
@@ -430,6 +512,8 @@ _Xint41:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$41
 	jmp	Xtrap
 
@@ -438,6 +522,8 @@ _Xint42:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$42
 	jmp	Xtrap
 
@@ -446,6 +532,8 @@ _Xint43:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$43
 	jmp	Xtrap
 
@@ -454,6 +542,8 @@ _Xint44:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$44
 	jmp	Xtrap
 
@@ -462,6 +552,8 @@ _Xint45:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$45
 	jmp	Xtrap
 
@@ -470,6 +562,8 @@ _Xint46:
 	pushl	%ebp
 	movl	%esp,%ebp
 	pushal
+	movl	%esp, %eax
+	pushl	%eax
 	pushl	$46
 	jmp	Xtrap
 

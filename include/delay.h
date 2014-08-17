@@ -5,14 +5,10 @@
  */
 #define	DELAY(n)                                	\
 {                                               	\
-	extern	int cpudelay;				\
-	register int i;					\
-	register long N = (((n)<<4) >> cpudelay);	\
+	register int i = 0;				\
 							\
-	for (i=0;i<=4;i++) {				\
-		N = (((n) << 4) >> cpudelay);		\
-		while (--N > 0) ;			\
-	}						\
+	while(i < 100)					\
+		i++;					\
 }
 
 /*

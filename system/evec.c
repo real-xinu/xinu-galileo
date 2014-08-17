@@ -144,40 +144,56 @@ char *inames[] = {
 	"coprocessor error"
 };
 
-static long *fp;
 /*------------------------------------------------------------------------
  * trap  -  print debugging info when a trap occurrs
- * Note: Needs work
  *------------------------------------------------------------------------
 */
-#define REGDUMP
-
-void trap(int inum)
+void	trap (
+	int	inum,	/* Interrupt number	*/
+	long	*sp	/* Saved stack pointer	*/
+	)
 {
-	long		*sp;
-	intmask 	mask;
+	intmask mask;	/* Saved interrupt mask	*/
+	long	*regs;	/* Pointer to saved regs*/
+
+	/* Disable interrupts */
 
 	mask = disable();
-	kprintf("TRAP\n");
-	asm("movl	%ebp,fp");
-	sp = fp + 15;  /* Skip eflags/CS/eip/ebp/regs/trap#/Xtrap/ebp	*/
+
+	/* Get the location of saved registers */
+
+	regs = sp;
+
+	/* Print the trap message */
+
 	kprintf("Xinu trap!\n");
-	if (inum < 16)
+	if (inum < 16) {
 		kprintf("exception %d (%s) currpid %d (%s)\n", inum,
 			inames[inum], currpid, proctab[currpid].prname);
-	else
+	}
+	else {
 		kprintf("exception %d currpid %d (%s)\n", inum, currpid,
 			proctab[currpid].prname);
-#ifdef REGDUMP
-	kprintf("eflags %X ", *sp--);
-	sp--;	/* Skip OLD CS */
-	kprintf("eip %X ", *sp);
-	sp--;
+	}
+
+	/* Adjust stack pointer to get debugging information 	*/
+	/* 8 registers and 1 %ebp pushed in Xint		*/
+
+	sp = regs + 1 + 8;
+
+	/* Print the debugging information related to interrupt	*/
+
 	if (inum == 8 || (inum >= 10 && inum <= 14)) {
 		kprintf("error code %08x (%u)\n", *sp, *sp);
-		sp--;
+		sp++;
 	}
-	sp--;	/* Skip FP for Xint call */
+	kprintf("CS %X eip %X\n", *(sp + 1), *sp);
+	kprintf("eflags %X\n", *(sp + 2));
+
+	/* Dump the register values */
+
+	sp = regs + 7;
+
 	kprintf("register dump:\n");
 	kprintf("eax %08X (%u)\n", *sp, *sp);
 	sp--;
@@ -190,16 +206,11 @@ void trap(int inum)
 	kprintf("esp %08X (%u)\n", *sp, *sp);
 	sp--;
 	kprintf("ebp %08X (%u)\n", *sp, *sp);
-	fp = sp;
 	sp--;
 	kprintf("esi %08X (%u)\n", *sp, *sp);
 	sp--;
 	kprintf("edi %08X (%u)\n", *sp, *sp);
 	sp--;
-#endif // REGDUMP
-#ifdef STKTRACE
-	stacktrace(currpid);
-#endif // STKTRACE
 
 	panic("Trap processing complete...\n");
 	restore(mask);

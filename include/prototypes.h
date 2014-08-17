@@ -103,7 +103,7 @@ void remove_irm_protections();
 /* in file evec.c */
 extern	int32	initevec(void);
 extern	int32	set_evec(uint32, uint32);
-extern	void	trap(int32);
+extern	void	trap(int32, long *);
 
 /* in file exception.c */
 extern  void exception(int32, int32*);

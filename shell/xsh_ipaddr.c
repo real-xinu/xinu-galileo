@@ -25,7 +25,7 @@ shellcmd xsh_ipaddr(int nargs, char *args[]) {
 		printf("Description:\n");
 		printf("\tDisplays IP address information\n");
 		printf("Options:\n");
-		printf("\t-f\tforce a new DHCP request\n");
+		printf("\t-f\tforce a new DHCP request");
 		printf("\t--help\tdisplay this help and exit\n");
 		return OK;
 	}
@@ -48,14 +48,9 @@ shellcmd xsh_ipaddr(int nargs, char *args[]) {
 			return 1;
 		}
 		NetData.ipvalid = FALSE;
-		ipaddr = getlocalip();
-		if((int32)ipaddr == SYSERR) {
-			fprintf(stderr, "Cannot get IP address using DHCP\n");
-			return 1;
-		}
+		getlocalip();
 	}
 
-	printf("\n");
 
 	/* IP unicast address in dotted decimal and hex */
 
@@ -122,6 +117,8 @@ shellcmd xsh_ipaddr(int nargs, char *args[]) {
 	0xff & NetData.ethbcast[4],
 	0xff & NetData.ethbcast[5]);
 
-	printf("\n");
+
+
+
 	return OK;
 }
