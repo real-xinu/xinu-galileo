@@ -31,6 +31,14 @@ ifeq ($(TGT),xboot)
 	VERSIONFILE	=	xboot_version
 	LDSCRIPT	=	ld.script.xboot
 	MKVERS		=	$(TOPDIR)/compile/bin/mkvers_xboot
+	REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  main.c 	\
+					initialize.c			\
+				-s $(TOPDIR)/lib			\
+				-s $(TOPDIR)/device/tty			\
+				-s $(TOPDIR)/device/nam			\
+				-s $(TOPDIR)/device/eth			\
+				-s $(TOPDIR)/net  'arp_dump*'  		\
+					'dhcp_dump*'  pxe.c
 else
 	TGT		=	xinu
 	DEPSFILE	=	.deps
@@ -38,6 +46,19 @@ else
 	VERSIONFILE	=	version
 	LDSCRIPT	=	ld.script
 	MKVERS		=	$(TOPDIR)/compile/bin/mkvers
+	REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  xboot.c 	\
+					xboot_initialize.c  xbootjmp.S 	\
+				-s $(TOPDIR)/lib			\
+				-s $(TOPDIR)/device/tty			\
+				-s $(TOPDIR)/device/nam			\
+				-s $(TOPDIR)/device/eth			\
+				-s $(TOPDIR)/device/rds			\
+				-s $(TOPDIR)/device/ram			\
+				-s $(TOPDIR)/device/lfs			\
+				-s $(TOPDIR)/device/rfs			\
+				-s $(TOPDIR)/net  'arp_dump*'  		\
+					'dhcp_dump*'  pxe.c		\
+				-s $(TOPDIR)/shell  'xsh_rdstest*'
 endif
 
 INCLUDE		=	-I$(TOPDIR)/include
@@ -154,44 +175,18 @@ clean:
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
-
-.defs:
-	@touch .defs
-	@make rebuild
 	
-.xboot_defs:
-	@touch .xboot_defs
-	make xboot_rebuild
+$(DEFSFILE):
+	@touch $(DEFSFILE)
+	make rebuild
 
 $(DEPSFILE):
 	@touch $(DEPSFILE)
 	@make depend
 
 rebuild: $(CONFC)
-	@echo Rebuilding the .defs file
-	@$(BUILDMAKE)							\
-		-s $(TOPDIR)/system  debug.c  xboot.c 			\
-			xboot_initialize.c  xbootjmp.S 			\
-		-s $(TOPDIR)/lib					\
-		-s $(TOPDIR)/device/tty					\
-		-s $(TOPDIR)/device/nam					\
-		-s $(TOPDIR)/device/eth					\
-		-s $(TOPDIR)/device/rds					\
-		-s $(TOPDIR)/device/ram					\
-		-s $(TOPDIR)/device/lfs					\
-		-s $(TOPDIR)/device/rfs					\
-		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'  pxe.c	\
-		-s $(TOPDIR)/shell  'xsh_rdstest*' > .defs
-		
-xboot_rebuild: $(CONFC)
-	@echo Rebuilding the .xboot_defs file
-	@$(BUILDMAKE)							\
-		-s $(TOPDIR)/system  debug.c  main.c  initialize.c	\
-		-s $(TOPDIR)/lib					\
-		-s $(TOPDIR)/device/tty					\
-		-s $(TOPDIR)/device/nam					\
-		-s $(TOPDIR)/device/eth					\
-		-s $(TOPDIR)/net  'arp_dump*'  'dhcp_dump*'  pxe.c > .xboot_defs
+	@echo Rebuilding the $(DEFSFILE) file
+	@$(BUILDMAKE) $(REBUILDFLAGS) > $(DEFSFILE)
 
 defclean:
 	rm -f $(DEFSFILE)
