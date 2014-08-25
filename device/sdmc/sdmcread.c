@@ -25,7 +25,7 @@ devcall sdmcread_nodma (
 		return SYSERR;
 	}
 	
-	csrptr->nrm_int_status_en = 0x1FF; 
+	csrptr->nrm_int_status_en = 0x1FF;
 	csrptr->err_int_stat_en = 0x7FF;
 	
 	csrptr->blk_size = 0x00000200;
@@ -89,7 +89,7 @@ devcall sdmcread_dma (
 		return SYSERR;
 	}
 	
-	csrptr->nrm_int_status_en = 0x1FF; 
+	csrptr->nrm_int_status_en = 0x1FF;
 	csrptr->err_int_stat_en = 0x7FF;
 	csrptr->err_int_stat_en &= ~(SDMC_ERR_INT_DATA_TIMEOUT_ERR);
 	
