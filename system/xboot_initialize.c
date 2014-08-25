@@ -39,7 +39,7 @@ pid32	currpid;		/* ID of currently executing process	*/
  * such as kprintf.
  *------------------------------------------------------------------------
  */
- 
+
 void	nulluser()
 {	
 	/* Initialize the system */
