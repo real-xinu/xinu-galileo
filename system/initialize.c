@@ -93,7 +93,7 @@ void	nulluser()
 
 /*------------------------------------------------------------------------
  *
- * sysinit  -  Intialize all Xinu data structures and devices
+ * sysinit  -  Initialize all Xinu data structures and devices
  *
  *------------------------------------------------------------------------
  */

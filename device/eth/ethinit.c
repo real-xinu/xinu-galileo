@@ -21,7 +21,7 @@ uint16	eth_phy_read	(
 
 	/* Prepare the GMII address register for read transaction */
 
-	csrptr->gmiiar = 
+	csrptr->gmiiar =
 		(1 << 11)		| /* Physical Layer Address = 1	*/
 		(regnum << 6)		| /* PHY Register Number	*/
 		(ETH_QUARK_GMIIAR_CR)	| /* GMII Clock Range 100-150MHz*/
@@ -63,7 +63,7 @@ void	eth_phy_write	(
 
 	/* Prepare the GMII address register for write transaction */
 
-	csrptr->gmiiar = 
+	csrptr->gmiiar =
 		(1 << 11)		| /* Physical Layer Address = 1	*/
 		(regnum << 6)		| /* PHY Register Number	*/
 		(ETH_QUARK_GMIIAR_CR)	| /* GMII Clock Range 100-150MHz*/

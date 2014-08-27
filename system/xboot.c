@@ -52,7 +52,7 @@ uint32 crc32(
 	for (i = 0; i < data_size; i++) {
 		crc = (crc >> 4) ^ crc_table[(crc ^
 			(data[i] >> 0)) & 0x0F];  /* lower nibble */
-		crc = (crc >> 4) ^ crc_table[(crc ^ 
+		crc = (crc >> 4) ^ crc_table[(crc ^
 			(data[i] >> 4)) & 0x0F];  /* upper nibble */
 	}
 	
@@ -73,14 +73,14 @@ status validate_xinuheader(
 	int i;
 
 	/* Sanity checking on xboot header signature*/
-	if(memcmp((void*)boot_hdr->xboot_sig1, 
-		(void*)XBOOT_SIGNATURE, 
+	if(memcmp((void*)boot_hdr->xboot_sig1,
+		(void*)XBOOT_SIGNATURE,
 		sizeof(boot_hdr->xboot_sig1)) != 0) {
 		kprintf("[XBOOT] Xinu header signature: Bad sig 1\n");
 		return SYSERR;
 	}
-	if(memcmp((void*)boot_hdr->xboot_sig2, 
-		(void*)XBOOT_SIGNATURE, 
+	if(memcmp((void*)boot_hdr->xboot_sig2,
+		(void*)XBOOT_SIGNATURE,
 		sizeof(boot_hdr->xboot_sig2)) != 0) {
 		kprintf("[XBOOT] Xinu header signature: Bad sig 2\n");
 		return SYSERR;
@@ -96,7 +96,7 @@ status validate_xinuheader(
 	
 	/* Sanity checking on header version */
 	if(boot_hdr->xboot_hdr_ver != XBOOT_VERSION) {
-		kprintf("[XBOOT] Xinu header image not valid: %d\n", 
+		kprintf("[XBOOT] Xinu header image not valid: %d\n",
 			boot_hdr->xboot_hdr_ver);
 		return SYSERR;
 	}
@@ -148,7 +148,7 @@ status validate_xinu_loadaddress(
 		uint32	type;   /* Type of the mmap block - Type = 1 	*/
 				/*	is usable RAM block 		*/
 
-		addr = *(mmap_addr + 1); 	/* Base address of block*/ 
+		addr = *(mmap_addr + 1); 	/* Base address of block*/
 						/*	is at offset 1	*/
 		len  = *(mmap_addr + 3); 	/* Length of block is at*/
 						/*	offset 3	*/
@@ -159,7 +159,7 @@ status validate_xinu_loadaddress(
 		if(type != 1 && len > 0) { 	/* not usable check if 	*/
 						/*	address is in 	*/
 						/*	Xinu load space	*/
-			if(addr >= load_address	&& addr <= (load_address + 
+			if(addr >= load_address	&& addr <= (load_address +
 				image_size - 1)) {
 				kprintf("[XBOOT] Xinu load address %08X");
 				kprintf(" - in protected memory\n",
@@ -169,7 +169,7 @@ status validate_xinu_loadaddress(
 		}
 		
 		/* Go to the next mmap block */
-		mmap_addr = (uint32 *)((uint32)mmap_addr + 
+		mmap_addr = (uint32 *)((uint32)mmap_addr +
 			(*mmap_addr) + 4);
 	}
 	
@@ -216,8 +216,8 @@ int32 main(void)
 	
 	/* Retrieve the xboot header from the boot server */
 	kprintf("[XBOOT] Retrieving Xinu boot header...\n");
-	size = tftpget(NetData.bootserver, NetData.bootfile, 
-		(char*)&boot_hdr, sizeof(struct xboot_hdr), 
+	size = tftpget(NetData.bootserver, NetData.bootfile,
+		(char*)&boot_hdr, sizeof(struct xboot_hdr),
 		TFTP_NON_VERBOSE);
 	if(size == SYSERR) {
 		kprintf("[XBOOT] Load Xinu boot header failed\n");
@@ -225,11 +225,11 @@ int32 main(void)
 	}
 	
 	kprintf("[XBOOT] Xinu Boot Info:\n");
-	kprintf("[XBOOT] Load address: 0x%08X\n", 
+	kprintf("[XBOOT] Load address: 0x%08X\n",
 		boot_hdr.xboot_load_addr);
-	kprintf("[XBOOT] Branch Address: 0x%08X\n", 
+	kprintf("[XBOOT] Branch Address: 0x%08X\n",
 		boot_hdr.xboot_branch_addr);
-	kprintf("[XBOOT] Image Size: 0x%08X\n", 
+	kprintf("[XBOOT] Image Size: 0x%08X\n",
 		boot_hdr.xboot_file_size);
 	
 	/* Validate the Xinu header (xboot header and load address) */
@@ -237,7 +237,7 @@ int32 main(void)
 		kprintf("[XBOOT] Error: xboot header is not valid\n");
 		return SYSERR;
 	}
-	if(OK != validate_xinu_loadaddress(boot_hdr.xboot_load_addr, 
+	if(OK != validate_xinu_loadaddress(boot_hdr.xboot_load_addr,
 		boot_hdr.xboot_file_size)) {
 		return SYSERR;
 	}
@@ -250,7 +250,7 @@ int32 main(void)
 	tftp_buffers[1] = (char*)boot_hdr.xboot_load_addr;
 	tftp_buffer_sizes[1] = boot_hdr.xboot_file_size;
 	
-	size = tftpget_mb(NetData.bootserver, NetData.bootfile, 
+	size = tftpget_mb(NetData.bootserver, NetData.bootfile,
 		tftp_buffers, tftp_buffer_sizes, 2, TFTP_NON_VERBOSE);
 	if(size == SYSERR) {
 		kprintf("[XBOOT] Unable to load Xinu from boot server\n");
@@ -258,7 +258,7 @@ int32 main(void)
 	}
 	
 	kprintf("[XBOOT] Xinu loaded, validating image...\n");
-	uint32 checksum = crc32((byte*)boot_hdr.xboot_load_addr, 
+	uint32 checksum = crc32((byte*)boot_hdr.xboot_load_addr,
 		boot_hdr.xboot_file_size);
 	if(checksum != boot_hdr.xinu_crc32) {
 		kprintf("[XBOOT] Xinu image - CRC failure %08X != %08X\n",

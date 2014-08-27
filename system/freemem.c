@@ -38,7 +38,7 @@ syscall	freemem(
 		top = (uint32) prev + prev->mlength;
 	}
 
-	/* Insure new block does not overlap previous or next blocks	*/
+	/* Ensure new block does not overlap previous or next blocks	*/
 
 	if (((prev != &memlist) && (uint32) block < top)
 	    || ((next != NULL)	&& (uint32) block+nbytes>(uint32)next)) {

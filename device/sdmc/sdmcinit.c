@@ -39,13 +39,13 @@ devcall	sdmcinit (
 	csrptr = (struct sdmc_csreg *)devptr->dvcsr;
 	
 	/* Enable and register for card insertion and removal interrupts */
-	csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN  | SDMC_CRD_INT_STAT_EN; 
+	csrptr->nrm_int_status_en = SDMC_CRD_INS_STAT_EN | SDMC_CRD_RMV_STAT_EN  | SDMC_CRD_INT_STAT_EN;
 	csrptr->nrm_int_sig_en = SDMC_CRD_INS_SIG_EN | SDMC_CRD_RMV_SIG_EN  | SDMC_CRD_INT_SIG_EN;
 	csrptr->err_int_stat_en = 0;
 	csrptr->err_int_sig_en = 0;
 		
 	/*
-	csrptr->nrm_int_status_en = 0x1FF; 
+	csrptr->nrm_int_status_en = 0x1FF;
 	csrptr->nrm_int_sig_en = 0x1FF;
 	
 	csrptr->err_int_stat_en = 0x7FF;

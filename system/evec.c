@@ -170,8 +170,7 @@ void	trap (
 	if (inum < 16) {
 		kprintf("exception %d (%s) currpid %d (%s)\n", inum,
 			inames[inum], currpid, proctab[currpid].prname);
-	}
-	else {
+	} else {
 		kprintf("exception %d currpid %d (%s)\n", inum, currpid,
 			proctab[currpid].prname);
 	}

@@ -17,7 +17,7 @@
 
 #define	ARP_TIMEOUT	300		/* Retry timer in milliseconds	*/
 
-/* state of an ARP cache entry */
+/* State of an ARP cache entry */
 
 #define	AR_FREE		0		/* Slot is unused		*/
 #define	AR_PENDING	1		/* Resolution in progress	*/

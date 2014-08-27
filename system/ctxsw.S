@@ -29,8 +29,8 @@ ctxsw:
 		/* Restore new seg. registers here, if multiple allowed */
 
 		popal			/* Restore general registers	*/
-		movl	4(%esp),%ebp	/*  pick up ebp before restoring*/
-					/*  interrupts			*/
+		movl	4(%esp),%ebp	/* Pick up ebp before restoring	*/
+					/*   interrupts			*/
 		popfl			/* Restore interrupt mask	*/
 		add	$4,%esp		/* Skip saved value of ebp	*/
 		ret			/* Return to new process	*/
