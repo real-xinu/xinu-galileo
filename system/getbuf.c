@@ -1,4 +1,4 @@
-/* getbuf.c - getbuf, nbgetbuf */
+/* getbuf.c - getbuf */
 
 #include <xinu.h>
 
@@ -40,36 +40,4 @@ char    *getbuf(
 	bufptr = (struct bpentry *)(sizeof(bpid32) + (char *)bufptr);
 	restore(mask);
 	return (char *)bufptr;
-}
-
-/*------------------------------------------------------------------------
- * nbgetbuf - A non-blocking version of getbuf
- *------------------------------------------------------------------------
- */
-char	*nbgetbuf(
-          bpid32        poolid          /* Index of pool in buftab       */
-	)
-{
-	intmask	mask;
-	char	*buf;
-
-	mask = disable();
-
-	/* Check arguments */
-
-	if ( (poolid < 0  ||  poolid >= nbpools) ) {
-		restore(mask);
-		return (char *)SYSERR;
-
-	}
-
-	/* If the call will block, return an error */
-
-	if (semcount(buftab[poolid].bpsem) <= 0) {
-		restore(mask);
-		return (char *)SYSERR;
-	}
-	buf = getbuf(poolid);
-	restore(mask);
-	return buf;
 }
