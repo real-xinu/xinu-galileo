@@ -67,7 +67,7 @@ pid32	create(
 	a = (uint32 *)(&nargs + 1);	/* Start of args		*/
 	a += nargs -1;			/* Last argument		*/
 	for ( ; nargs > 0 ; nargs--)	/* Machine dependent; copy args	*/
-		*--saddr = *a--;	/*  onto created process' stack	*/
+		*--saddr = *a--;	/*   onto created process' stack*/
 	*--saddr = (long)INITRET;	/* Push on return address	*/
 
 	/* The following entries on the stack must match what ctxsw	*/
@@ -75,14 +75,14 @@ pid32	create(
 	/*   ebp, interrupt mask, flags, registerss, and an old SP	*/
 
 	*--saddr = (long)funcaddr;	/* Make the stack look like it's*/
-					/*  half-way through a call to	*/
-					/*  ctxsw that "returns" to the	*/
-					/*  new process			*/
+					/*   half-way through a call to	*/
+					/*   ctxsw that "returns" to the*/
+					/*   new process		*/
 	*--saddr = savsp;		/* This will be register ebp	*/
-					/*  for process exit		*/
+					/*   for process exit		*/
 	savsp = (uint32) saddr;		/* Start of frame for ctxsw	*/
 	*--saddr = 0x00000200;		/* New process runs with	*/
-					/*  interrupts enabled		*/
+					/*   interrupts enabled		*/
 
 	/* Basically, the following emulates an x86 "pushal" instruction*/
 
@@ -108,7 +108,7 @@ local	pid32	newpid(void)
 {
 	uint32	i;			/* Iterate through all processes*/
 	static	pid32 nextpid = 1;	/* Position in table to try or	*/
-					/*  one beyond end of table	*/
+					/*   one beyond end of table	*/
 
 	/* Check all NPROC slots */
 
