@@ -8,6 +8,10 @@ process	main(void)
 	/* Start the network */
 
 	netstart();
+	
+	
+	
+	return OK;
 
 	kprintf("\n...creating a shell\n");
 	recvclr();

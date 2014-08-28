@@ -194,28 +194,19 @@ int32 main(void)
 	uint32  tftp_buffer_sizes[2]; 	/* Buffer sizes for TFTP 	*/
 					/*	buffers 		*/
 
-	kprintf("###########################################################\n\n");
-			
-	kprintf("[XBOOT] starting the network...\n");
-	kprintf("[XBOOT] initializing network stack...\n");
+	/* Initialize the network stack */
 	net_init();
 	
-	/* Delay because Ethernet driver doesn't work without it */
-	sleepms(800);
-	
 	/* Force system to use DHCP to obtain an address */
-	kprintf("[XBOOT] using dhcp to obtain an IP address...\n");
 	uint32 ipaddr = getlocalip();
 	if (ipaddr == SYSERR) {
 		kprintf("[XBOOT] Could not obtain an IP address\n");
 		return SYSERR;
 	}
-	kprintf("[XBOOT] IP address is %d.%d.%d.%d   (0x%08x)\n",
-		(ipaddr>>24)&0xff, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff,
-		ipaddr&0xff,ipaddr);
+	
+	kprintf("[XBOOT] Loading Xinu...\n");
 	
 	/* Retrieve the xboot header from the boot server */
-	kprintf("[XBOOT] Retrieving Xinu boot header...\n");
 	size = tftpget(NetData.bootserver, NetData.bootfile,
 		(char*)&boot_hdr, sizeof(struct xboot_hdr),
 		TFTP_NON_VERBOSE);
@@ -223,14 +214,6 @@ int32 main(void)
 		kprintf("[XBOOT] Load Xinu boot header failed\n");
 		return SYSERR;
 	}
-	
-	kprintf("[XBOOT] Xinu Boot Info:\n");
-	kprintf("[XBOOT] Load address: 0x%08X\n",
-		boot_hdr.xboot_load_addr);
-	kprintf("[XBOOT] Branch Address: 0x%08X\n",
-		boot_hdr.xboot_branch_addr);
-	kprintf("[XBOOT] Image Size: 0x%08X\n",
-		boot_hdr.xboot_file_size);
 	
 	/* Validate the Xinu header (xboot header and load address) */
 	if(OK != validate_xinuheader(&boot_hdr)) {
@@ -243,7 +226,6 @@ int32 main(void)
 	}
 	
 	/* Retrieve the Xinu image from the boot server */
-	kprintf("[XBOOT] Loading Xinu...\n");
 	tftp_buffers[0] = (char*)&boot_hdr;
 	tftp_buffer_sizes[0] = sizeof(struct xboot_hdr);
 	
@@ -257,7 +239,6 @@ int32 main(void)
 		return SYSERR;
 	}
 	
-	kprintf("[XBOOT] Xinu loaded, validating image...\n");
 	uint32 checksum = crc32((byte*)boot_hdr.xboot_load_addr,
 		boot_hdr.xboot_file_size);
 	if(checksum != boot_hdr.xinu_crc32) {
@@ -265,8 +246,6 @@ int32 main(void)
 			checksum, boot_hdr.xinu_crc32);
 		return SYSERR;
 	}
-	kprintf("[XBOOT] Xinu image checksum: %08X\n", checksum);
-	kprintf("[XBOOT] Branching to Xinu image...\n");
 	
 	xbootjmp((void*)boot_hdr.xboot_branch_addr);
 	
