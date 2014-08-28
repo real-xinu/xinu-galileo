@@ -7,9 +7,8 @@
 {                                               	\
 	register int i = 0;				\
 							\
-	while(i < 100)					\
-		i++;					\
-}
+	while(i < (n * 100)) i++;			\
+}							\
 
 /*
  * Delay units are in milli-seconds.

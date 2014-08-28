@@ -121,18 +121,18 @@ int32	eth_phy_reset	(
 			if((++retries) > ETH_QUARK_MAX_RETRIES)
 				return SYSERR;
 		}
-
-		/* Wait for the Link to be Up */
-
-		retries = 0;
-		while((eth_phy_read(csrptr, 1) & 0x0004) == 0) {
-			DELAY(ETH_QUARK_INIT_DELAY);
-			if((++retries) > ETH_QUARK_MAX_RETRIES)
-				return SYSERR;
-		}
-	} else { /* No auto-negotiation capability */
-		/* Note: we should set link speed to 100 Mbps */
 	}
+
+	/* Wait for the Link to be Up */
+
+	retries = 0;
+	while((eth_phy_read(csrptr, 1) & 0x0004) == 0) {
+		DELAY(ETH_QUARK_INIT_DELAY);
+		if((++retries) > ETH_QUARK_MAX_RETRIES)
+			return SYSERR;
+	}
+
+	DELAY(ETH_QUARK_INIT_DELAY);
 
 	kprintf("Ethernet Link is Up\n");
 
@@ -154,6 +154,7 @@ int32	ethinit (
 	struct	netpacket *pktptr;		/* Pointer to a packet	*/
 	void	*temptr;			/* Temp. pointer	*/
 	uint32	retries;		 	/* Retry count for reset*/
+	int32	retval;
 	int32	i;
 
 	ethptr = &ethertab[devptr->dvminor];
@@ -163,6 +164,12 @@ int32	ethinit (
 
 	/* Enable CSR Memory Space, Enable Bus Master */
 	pci_write_config_word(ethptr->pcidev, 0x4, 0x0006);
+
+	/* Reset the PHY */
+	retval = eth_phy_reset(csrptr);
+	if(retval == SYSERR) {
+		return SYSERR;
+	}
 
 	/* Reset the Ethernet MAC */
 	csrptr->bmr |= ETH_QUARK_BMR_SWR;
@@ -177,9 +184,6 @@ int32	ethinit (
 
 	/* Transmit Store and Forward */
 	csrptr->omr |= ETH_QUARK_OMR_TSF;
-
-	/* Reset the Ethernet PHY */
-	eth_phy_reset(csrptr);
 
 	/* Set the interrupt handler */
 	set_evec(devptr->dvirq, (uint32)devptr->dvintr);
