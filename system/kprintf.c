@@ -8,51 +8,58 @@
  *------------------------------------------------------------------------
  */
 
-// teshack - temporary shim to enable kprintf via Quark memory-mapped 16550s
-#define XMTRDY	0x00000020
-static void *pclnuart = (void *) 0x9000b000;// 0x8010f000;
-static inline unsigned int readl(const volatile void *addr)
-{
-	return *(const volatile unsigned int *) addr;
-}
-static inline void writel(unsigned int b, volatile void *addr)
-{
-	*(volatile unsigned int *) addr = b;
-}
+#define QUARK_CONS_PORT		1		/* Index of console UART */
+#define QUARK_CONS_BAR_INDEX	0		/* Index of console's MMIO 
+						   base address register */
 
-syscall kputc(
-	  byte	c			/* Character to write		*/
-	)
+/**
+ *  console_init()
+ *
+ * Initialize the serial console.  The serial console is on the 
+ * second memory-mapped 16550 UART device. 
+ */
+int console_init(void)
 {
-	unsigned char   	status;
-	unsigned int		inreg = UART_LSR << 2;
+	int	status;
+	int	pciDev;
 
-	if (pclnuart == NULL) {
-		return -1;
+	pciDev = find_pci_device(INTEL_QUARK_UART_PCI_DID,
+				 INTEL_QUARK_UART_PCI_VID,
+				 QUARK_CONS_PORT);
+	if (pciDev < 0) {
+		/* Error finding console device */
+		return	pciDev;
 	}
+	/* Store the console device CSR base address into the console device's
+	   device table entry. */
+	status = pci_get_dev_mmio_base_addr(pciDev, QUARK_CONS_BAR_INDEX,
+					   &devtab[CONSOLE].dvcsr);
+	return status;
+}
+
+syscall kputc(byte c)	/* Character to write	*/
+{
+	struct	dentry	*devptr;
+	volatile struct uart_csreg *regptr;
+
+	devptr = (struct dentry *) &devtab[CONSOLE];
+	regptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Repeatedly poll the device until it becomes nonbusy */
-	while ( (readl(pclnuart + inreg) & UART_LSR_THRE) == 0 ) {
+	while ((regptr->lsr & UART_LSR_THRE) == 0) {
 		;
 	}
 
-	while (1) {
-		status = readl(pclnuart + inreg);
-		if (status & XMTRDY) {
-			break;
-        }
-	}
-
 	/* Write the character */
-	writel(c, pclnuart + (UART_TX << 2));
+	regptr->buffer = c;
 
 	/* Honor CRLF - when writing NEWLINE also send CARRIAGE RETURN	*/
 	if (c == '\n') {
 		/* Poll until transmitter queue is empty */
-		while ( (readl(pclnuart + inreg) & UART_LSR_THRE) == 0 ) {
+		while ((regptr->lsr & UART_LSR_THRE) == 0) {
 			;
 		}
-		writel('\r', pclnuart + (UART_TX << 2));
+		regptr->buffer = '\r';
 	}
 	return OK;
 }

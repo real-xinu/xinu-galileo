@@ -20,6 +20,17 @@
 #define PCI_BUS_SHIFT			16
 #define PCI_DEV_SHIFT			3
 
+/* Definitions of PCI base address register (bar) bits:*/
+#define PCI_BAR_REGION_TYPE_IO_MASK	1		// 0 = memory space, 1 = I/O space
+#define PCI_BAR_LOCATABLE_1MB_MASK	2		// 1 = Must be < 1MB
+#define PCI_BAR_LOCATABLE_64B_MASK	4		// 1 = Any 64-bit physical address
+#define PCI_BAR_LOCATABLE_PREFETCH	8		// 1 = Prefetchable
+#define PCI_BAR_BASE_ADDRESS_MASK	0xfffffff0	// Base physical address of MMIO region
+
+#ifndef offsetof
+#define offsetof(type, member) ((int)((unsigned int)&((type *)0)->member))
+#endif
+
 // Define the layout of PCI config headers (type 0).
 struct __attribute__ ((__packed__)) pci_config_header {
 	//		PCI header field		// Byte offset
@@ -56,9 +67,10 @@ extern int find_pci_device(int32, int32, int32);
 extern struct eth_pd*	eth_txring;
 extern struct eth_pd*	eth_rxring;
 
-extern    int pci_read_config_byte(uint32, int, unsigned char *);
-extern    int pci_read_config_word(uint32, int, uint16 *);
-extern    int pci_read_config_dword(uint32, int, uint32 *);
-extern    int pci_write_config_byte(uint32, int, unsigned char);
-extern    int pci_write_config_word(uint32, int, uint16);
-extern    int pci_write_config_dword(uint32, int, uint32);
+extern int pci_read_config_byte(uint32, int, unsigned char *);
+extern int pci_read_config_word(uint32, int, uint16 *);
+extern int pci_read_config_dword(uint32, int, uint32 *);
+extern int pci_write_config_byte(uint32, int, unsigned char);
+extern int pci_write_config_word(uint32, int, uint16);
+extern int pci_write_config_dword(uint32, int, uint32);
+extern int pci_get_dev_mmio_base_addr(uint32, int, void **);

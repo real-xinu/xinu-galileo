@@ -97,8 +97,11 @@ extern  devcall ethread(struct dentry *, char *, int32);
 /* in file ethwrite.c */
 extern 	devcall ethwrite(struct dentry *, char *buf, int32);
 
+/* in file kprintf.c */
+extern int console_init(void);
+
 /* in file early_imr.c */
-void remove_irm_protections();
+extern int remove_irm_protections(void);
 
 /* in file evec.c */
 extern	int32	initevec(void);

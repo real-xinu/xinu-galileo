@@ -83,11 +83,7 @@ struct	uart_csreg
 
 /* Line status bits */
 
-#define	UART_LSR	5	/* Input" Line Status Register		*/
-
 #define UART_LSR_DR	0x01	/* Data ready				*/
 #define	UART_LSR_BI	0x10	/* Break interrupt indicator		*/
 #define UART_LSR_THRE	0x20	/* Transmit-hold-register empty		*/
 #define UART_LSR_TEMT	0x40	/* Transmitter empty			*/
-
-#define	UART_TX		0	/* offset of transmit buffer		*/

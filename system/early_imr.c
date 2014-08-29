@@ -9,14 +9,6 @@
  * of the License.
  */
 
-/*
- * This file implements a simple binding to provide early isolated memory region
- * support (IMR) - with the primary goal of encapsulating kernel decompress
- * target area inside of an IMR before decompression takes place. To that end we
- * do some very very early PCI accesses here - required in order to waggle the
- * side-band bits associated with IMR support
- */
-
 #include <xinu.h>
 
 #define INTEL_CLN_SB_CMD_ADDR	(0x000000D0)
@@ -192,19 +184,19 @@ static void cln_remove_imr_bzimage(void)
 	cln_remove_imr(DRAM_IMR7L, DRAM_IMR7H, DRAM_IMR7RM, DRAM_IMR7WM);
 }
 
-void remove_irm_protections()
+int remove_irm_protections(void)
 {
 	uint32 tmp_addr;
 
 	if (intel_cln_early_sb_probe() != 0) {
 		kprintf("%s() error probing for IRM device\n", __FUNCTION__);
 		/* Critial error - bail out */
-		return;
+		return SYSERR;
 	}
 
 	intel_cln_early_sb_read_reg(SB_ID_ESRAM, CFG_READ_OPCODE, DRAM_IMR3L, &tmp_addr);
 	if (tmp_addr & IMR_LOCK_BIT) {
-		return;
+		return SYSERR;
 	}
 
 	if (tmp_addr) {
@@ -217,4 +209,5 @@ void remove_irm_protections()
 	cln_remove_imr_grub();
 
 	//kprintf("%s() complete\n", __FUNCTION__);
+	return OK;
 }
