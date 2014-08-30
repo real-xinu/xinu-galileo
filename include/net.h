@@ -33,7 +33,7 @@ struct	netpacket	{
 	  uint16	net_udpdport;	/* UDP destination protocol port*/
 	  uint16	net_udplen;	/* UDP total length		*/
 	  uint16	net_udpcksum;	/* UDP checksum			*/
-	  byte		net_udpdata[1500-28];/* UDP payload (1500-above) */
+	  byte		net_udpdata[1500-28];/* UDP payload (1500-above)*/
 	 };
 	 struct {
 	  byte		net_ictype;	/* ICMP message type		*/
