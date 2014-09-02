@@ -3,15 +3,15 @@
 #include <xinu.h>
 #include <stdio.h>
 
+extern uint32 nsaddr;
+
 process	main(void)
 {
 	/* Start the network */
 
 	netstart();
-	
-	
-	
-	return OK;
+
+	nsaddr = 0x800a0c10;
 
 	kprintf("\n...creating a shell\n");
 	recvclr();
