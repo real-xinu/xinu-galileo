@@ -61,7 +61,7 @@ extern	struct	ttycblk	ttytab[];
 /* Characters with meaning to the tty driver */
 
 #define	TY_BACKSP	'\b'		/* Backspace character		*/
-#define	TY_BACKSP2	'\017'		/* Alternate backspace char.	*/
+#define	TY_BACKSP2	'\177'		/* Alternate backspace char.	*/
 #define	TY_BELL		'\07'		/* Character for audible beep	*/
 #define	TY_EOFCH	'\04'		/* Control-D is EOF on input	*/
 #define	TY_BLANK	' '		/* Blank			*/
