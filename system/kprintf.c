@@ -9,14 +9,14 @@
  */
 
 #define QUARK_CONS_PORT		1		/* Index of console UART */
-#define QUARK_CONS_BAR_INDEX	0		/* Index of console's MMIO 
+#define QUARK_CONS_BAR_INDEX	0		/* Index of console's MMIO
 						   base address register */
 
 /**
  *  console_init()
  *
- * Initialize the serial console.  The serial console is on the 
- * second memory-mapped 16550 UART device. 
+ * Initialize the serial console.  The serial console is on the
+ * second memory-mapped 16550 UART device.
  */
 int console_init(void)
 {

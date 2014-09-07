@@ -34,7 +34,8 @@ devcall	ttyinit(
 	typtr->tyecrlf = TRUE;			/* Echo CRLF for NEWLINE*/
 	typtr->tyicrlf = TRUE;			/* Map CR to NEWLINE	*/
 	typtr->tyierase = TRUE;			/* Do erasing backspace	*/
-	typtr->tyierasec = TY_BACKSP;		/* Erase char is ^H	*/
+	typtr->tyierasec = TY_BACKSP;		/* Primary erase char	*/
+	typtr->tyierasec = TY_BACKSP2;		/* Alternate erase char	*/
 	typtr->tyeof = TRUE;			/* Honor eof on input	*/
 	typtr->tyeofch = TY_EOFCH;		/* End-of-file character*/
 	typtr->tyikill = TRUE;			/* Allow line kill	*/

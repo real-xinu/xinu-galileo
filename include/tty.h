@@ -42,7 +42,8 @@ struct	ttycblk	{			/* Tty line control block	*/
 	bool8	tyecrlf;		/* Echo CR-LF for newline?	*/
 	bool8	tyicrlf;		/* Map '\r' to '\n' on input?	*/
 	bool8	tyierase;		/* Honor erase character?	*/
-	char	tyierasec;		/* Erase character (backspace)	*/
+	char	tyierasec;		/* Primary erase character	*/
+	char	tyierasec2;		/* Alternate erase character	*/
 	bool8	tyeof;			/* Honor EOF character?		*/
 	char	tyeofch;		/* EOF character (usually ^D)	*/
 	bool8	tyikill;		/* Honor line kill character?	*/
@@ -60,6 +61,7 @@ extern	struct	ttycblk	ttytab[];
 /* Characters with meaning to the tty driver */
 
 #define	TY_BACKSP	'\b'		/* Backspace character		*/
+#define	TY_BACKSP2	'\177'		/* Alternate backspace char.	*/
 #define	TY_BELL		'\07'		/* Character for audible beep	*/
 #define	TY_EOFCH	'\04'		/* Control-D is EOF on input	*/
 #define	TY_BLANK	' '		/* Blank			*/
