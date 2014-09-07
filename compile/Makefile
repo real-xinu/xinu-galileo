@@ -16,50 +16,31 @@ TOPDIR		=	..
 CC		=	${COMPILER_ROOT}gcc
 LD		=	${COMPILER_ROOT}ld
 OBJCOPY		=	${COMPILER_ROOT}objcopy
-XINU		=	$(TOPDIR)/compile/xinu
-XBOOT		=	$(TOPDIR)/compile/xboot
+XINU		=	$(TOPDIR)/compile/xinu.elf
 XINUBIN		=	$(TOPDIR)/compile/xinu.bin
-XINUXBIN	=	$(TOPDIR)/compile/xinu.xbin
+XINUXBIN	=	$(TOPDIR)/compile/xinu
 MAKEXBIN 	=	$(TOPDIR)/compile/bin/buildxbin
 BUILDMAKE	=	$(TOPDIR)/compile/bin/build-make
 
 MAKEDEP		=	$(CC) -M -MG
 
-ifeq ($(TGT),xboot)
-	DEPSFILE	=	.xboot_deps
-	DEFSFILE	=	.xboot_defs
-	VERSIONFILE	=	xboot_version
-	LDSCRIPT	=	ld.script.xboot
-	MKVERS		=	$(TOPDIR)/compile/bin/mkvers_xboot
-	REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  main.c 	\
-					initialize.c			\
-				-s $(TOPDIR)/lib			\
-				-s $(TOPDIR)/device/tty			\
-				-s $(TOPDIR)/device/nam			\
-				-s $(TOPDIR)/device/eth			\
-				-s $(TOPDIR)/net  'arp_dump*'  		\
-					'dhcp_dump*'  pxe.c
-else
-	TGT		=	xinu
-	DEPSFILE	=	.deps
-	DEFSFILE	=	.defs
-	VERSIONFILE	=	version
-	LDSCRIPT	=	ld.script
-	MKVERS		=	$(TOPDIR)/compile/bin/mkvers
-	REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  xboot.c 	\
-					xboot_initialize.c  xbootjmp.S 	\
-				-s $(TOPDIR)/lib			\
-				-s $(TOPDIR)/device/tty			\
-				-s $(TOPDIR)/device/nam			\
-				-s $(TOPDIR)/device/eth			\
-				-s $(TOPDIR)/device/rds			\
-				-s $(TOPDIR)/device/ram			\
-				-s $(TOPDIR)/device/lfs			\
-				-s $(TOPDIR)/device/rfs			\
-				-s $(TOPDIR)/net  'arp_dump*'  		\
-					'dhcp_dump*'  pxe.c		\
-				-s $(TOPDIR)/shell  'xsh_rdstest*'
-endif
+DEPSFILE	=	.deps
+DEFSFILE	=	.defs
+VERSIONFILE	=	version
+LDSCRIPT	=	ld.script
+MKVERS		=	$(TOPDIR)/compile/bin/mkvers
+REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c 	\
+			-s $(TOPDIR)/lib			\
+			-s $(TOPDIR)/device/tty			\
+			-s $(TOPDIR)/device/nam			\
+			-s $(TOPDIR)/device/eth			\
+			-s $(TOPDIR)/device/rds			\
+			-s $(TOPDIR)/device/ram			\
+			-s $(TOPDIR)/device/lfs			\
+			-s $(TOPDIR)/device/rfs			\
+			-s $(TOPDIR)/net  'arp_dump*'  		\
+				'dhcp_dump*'  pxe.c		\
+			-s $(TOPDIR)/shell  'xsh_rdstest*'
 
 INCLUDE		=	-I$(TOPDIR)/include
 DEFS		= 	-DBSDURG -DVERSION=\""`cat $(VERSIONFILE)`"\"
@@ -71,7 +52,7 @@ SFLAGS  = ${INCLUDE}
 # Loader flags
 LDFLAGS = -dn -m elf_i386 -Map xinu.map -T $(LDSCRIPT)
 
-all:	$(TGT)
+all:	xinu
 
 #--------------------------------------------------------------------------------
 # Handle generation of a new version string when initialize is recompiled
@@ -123,13 +104,7 @@ xinu:	Makefile $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD_LIST)
 	@objcopy -O binary $(XINU) $(XINUBIN)
 	@echo;echo 'Building $(XINUXBIN)'
 	@$(MAKEXBIN) $(XINUBIN) $(XINUXBIN)
-	@echo
-
-xboot:	Makefile $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) xboot_configure $(LD_LIST)
-	@echo;echo 'Loading object files to produce GRUB bootable xboot'
-	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XBOOT)
-	@rm -f $(TOPDIR)/system/conf.c
-	@rm -f $(TOPDIR)/system/conf.h
+	@rm -f $(XINUBIN)
 	@echo
 
 $(BLDDIRS): 
@@ -153,12 +128,6 @@ configure:
 	@echo forcing a rebuild of conf.h and conf.c
 	@make newversion
 	@(cd $(TOPDIR)/config; make install)
-	
-xboot_configure:
-	@rm -f $(BLDDIRS)/conf.o
-	@echo forcing a rebuild of conf.h and conf.c
-	@make newversion
-	@(cd $(TOPDIR)/config; make xboot_install)
 
 clean:
 	@echo removing .o files
@@ -168,20 +137,20 @@ clean:
 	@(cd $(TOPDIR)/config; make clean)
 	@echo removing xinu ...
 	@rm -f $(XINU)
-	@rm -f $(XINUBIN)
 	@rm -f $(XINUXBIN)
-	@rm -f $(XBOOT)
 
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
 	
 $(DEFSFILE):
-	@touch $(DEFSFILE)
-	make rebuild
+	@rm -f $(DEFSFILE)
+	@echo "" > $(DEFSFILE)
+	@make rebuild
 
 $(DEPSFILE):
-	@touch $(DEPSFILE)
+	@rm -f $(DEPSFILE)
+	@echo "" > $(DEPSFILE)
 	@make depend
 
 rebuild: $(CONFC)
@@ -190,7 +159,7 @@ rebuild: $(CONFC)
 
 defclean:
 	rm -f $(DEFSFILE)
-	touch $(DEFSFILE)
+	echo "" > $(DEFSFILE)
 
 depend: $(DEFSFILE)
 	@echo;echo Making all dependencies in $(DEPSFILE)
@@ -199,6 +168,6 @@ depend: $(DEFSFILE)
 
 depclean:
 	rm -f $(DEPSFILE)
-	touch $(DEPSFILE)
+	echo "" > $(DEPSFILE)
 
 -include $(DEPSFILE)

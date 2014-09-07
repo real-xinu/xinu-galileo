@@ -4,11 +4,8 @@
 xinu
 xinu.bin
 xinu.xbin
-xboot
 .defs
 .deps
 .jed_100
 .vers_num
-.xboot_vers_num
 version
-xboot_version
