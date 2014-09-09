@@ -26,10 +26,10 @@
 #define DRAM_IMR0H		(0x41)  /* IMR0RL address */
 #define DRAM_IMR0RM		(0x42)  /* IMR0RM address */
 #define DRAM_IMR0WM		(0x43)  /* IMR0WM address */
-#define DRAM_IMR1L              (0x44)  /* IMR1L address */
-#define DRAM_IMR1H              (0x45)  /* IMR1H address */
-#define DRAM_IMR1RM             (0x46)  /* IMR1RM address */
-#define DRAM_IMR1WM             (0x47)  /* IMR1WM address */
+#define DRAM_IMR1L		(0x44)  /* IMR1L address */
+#define DRAM_IMR1H		(0x45)  /* IMR1H address */
+#define DRAM_IMR1RM		(0x46)  /* IMR1RM address */
+#define DRAM_IMR1WM		(0x47)  /* IMR1WM address */
 #define DRAM_IMR3L		(0x4C)  /* IMR3L address */
 #define DRAM_IMR3H		(0x4D)  /* IMR3H address */
 #define DRAM_IMR3RM		(0x4E)  /* IMR3RM address */
@@ -47,9 +47,9 @@
 /* Mask of the last 2 bit of IMR address [23:2] */
 #define IMR_MASK		(0xFFFFFC)
 /* Mask that enables IMR access for Non-SMM Core, Core Snoops Only.*/
-#define IMR_SNOOP_NON_SMM_ENABLE        (0x40000001)
+#define IMR_SNOOP_NON_SMM_ENABLE (0x40000001)
 /* Mask that enables IMR access for Non-SMM Core Only.*/
-#define IMR_NON_SMM_ENABLE              (0x00000001)
+#define IMR_NON_SMM_ENABLE	(0x00000001)
 
 typedef enum {
 	SB_ID_HUNIT = 0x03,
@@ -71,7 +71,8 @@ static uint32 sb_pcidev;
  * command - can be different read op-code types - which is why we don't
  * hard-code this value directly into msg
  */
-void intel_cln_early_sb_read_reg(cln_sb_id id, unsigned char cmd, unsigned char reg, uint32 *data)
+void intel_cln_early_sb_read_reg(cln_sb_id id, unsigned char cmd,
+				 unsigned char reg, uint32 *data)
 {
 	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) |
 		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)|
@@ -97,7 +98,8 @@ void intel_cln_early_sb_read_reg(cln_sb_id id, unsigned char cmd, unsigned char 
  *
  * Utility function to allow thread-safe write of side-band
  */
-void intel_cln_early_sb_write_reg(cln_sb_id id, unsigned char cmd, unsigned char reg, uint32 data)
+void intel_cln_early_sb_write_reg(cln_sb_id id, unsigned char cmd,
+				  unsigned char reg, uint32 data)
 {
 	uint32 msg = (cmd << INTEL_CLN_SB_MCR_SHIFT) |
 		  ((id << INTEL_CLN_SB_PORT_SHIFT) & 0xFF0000)|
@@ -126,14 +128,14 @@ static int intel_cln_early_sb_probe(void)
 {
 	int	sb_dev;
 
-	sb_dev = find_pci_device(PCI_DEVICE_ID_CLANTON_SB, PCI_VENDOR_ID_INTEL, 0);
+	sb_dev = find_pci_device(PCI_DEVICE_ID_CLANTON_SB,
+				 PCI_VENDOR_ID_INTEL, 0);
 	if (sb_dev < 0) {
 		kprintf("%s(): error finding PCI device DID 0x%x\n",
 			__FUNCTION__, PCI_DEVICE_ID_CLANTON_SB);
 		// Reflect the error.
 		return sb_dev;
 	}
-	//kprintf("%s(): found PCI device DID 0x%x sb_dev 0x%x\n", __FUNCTION__, PCI_DEVICE_ID_CLANTON_SB, sb_dev);
 	return 0;
 }
 
@@ -143,12 +145,17 @@ static int intel_cln_early_sb_probe(void)
  * write default values to reg to set imr free
  *
  */
-static void cln_remove_imr(unsigned char reg_l, unsigned char reg_h, unsigned char reg_rm, unsigned char reg_wm)
+static void cln_remove_imr(unsigned char reg_l, unsigned char reg_h,
+			   unsigned char reg_rm, unsigned char reg_wm)
 {
-	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, reg_rm, IMR_READ_ENABLE_ALL);
-	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, reg_wm, IMR_WRITE_ENABLE_ALL);
-	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, reg_h, IMR_BASE_ADDR);
-	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, reg_l, IMR_BASE_ADDR);
+	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+				     reg_rm, IMR_READ_ENABLE_ALL);
+	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+				     reg_wm, IMR_WRITE_ENABLE_ALL);
+	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+				     reg_h, IMR_BASE_ADDR);
+	intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+				     reg_l, IMR_BASE_ADDR);
 }
 
 /**
@@ -194,20 +201,23 @@ int remove_irm_protections(void)
 		return SYSERR;
 	}
 
-	intel_cln_early_sb_read_reg(SB_ID_ESRAM, CFG_READ_OPCODE, DRAM_IMR3L, &tmp_addr);
+	intel_cln_early_sb_read_reg(SB_ID_ESRAM, CFG_READ_OPCODE,
+				    DRAM_IMR3L, &tmp_addr);
 	if (tmp_addr & IMR_LOCK_BIT) {
 		return SYSERR;
 	}
 
 	if (tmp_addr) {
-		intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, DRAM_IMR3RM, IMR_READ_ENABLE_ALL);
-		intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE, DRAM_IMR3WM, IMR_WRITE_ENABLE_ALL);
+		intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+					     DRAM_IMR3RM, IMR_READ_ENABLE_ALL);
+		intel_cln_early_sb_write_reg(SB_ID_ESRAM, CFG_WRITE_OPCODE,
+					     DRAM_IMR3WM,
+					     IMR_WRITE_ENABLE_ALL);
 	}
 
 	cln_remove_imr_boot_params();
 	cln_remove_imr_bzimage();
 	cln_remove_imr_grub();
 
-	//kprintf("%s() complete\n", __FUNCTION__);
 	return OK;
 }
