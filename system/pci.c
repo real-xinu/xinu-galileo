@@ -4,7 +4,7 @@
 
 //
 // Base and length of memory-mapped PCI configuration space.
-// 
+//
 // These values are correct for Galileo and many other X86 platforms,
 // but may need to be changed for some platforms.  In the general case, BIOS
 // sets up MMConfig space and passes the base and length values to the OS via
