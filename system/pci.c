@@ -2,20 +2,20 @@
 
 #include <xinu.h>
 
-//
-// Base and length of memory-mapped PCI configuration space.
-//
-// These values are correct for Galileo and many other X86 platforms,
-// but may need to be changed for some platforms.  In the general case, BIOS
-// sets up MMConfig space and passes the base and length values to the OS via
-// ACPI tables.  For simplicity, Xinu avoids parsing ACPI.  Note: If these
-// values are in doubt, one easy way to determine the correct values is to
-// boot Linux and scan its dmesg log file, as follows:
-//	dmesg -s 30000000 | grep -i mmconfig
-//
+/*
+ * Base and length of memory-mapped PCI configuration space.
+ * 
+ * These values are correct for Galileo and many other X86 platforms,
+ * but may need to be changed for some platforms.  In the general case, BIOS
+ * sets up MMConfig space and passes the base and length values to the OS via
+ * ACPI tables.  For simplicity, Xinu avoids parsing ACPI.  Note: If these
+ * values are in doubt, one easy way to determine the correct values is to
+ * boot Linux and scan its dmesg log file, as follows:
+ * 	dmesg -s 30000000 | grep -i mmconfig
+ */
 
-#define MMCONFIG_BASE	0xe0000000	// Base of MMConfig space
-#define MMCONFIG_LEN	0x10000000	// Length of MMConfig space
+#define MMCONFIG_BASE	0xe0000000	/* Base of MMConfig space */
+#define MMCONFIG_LEN	0x10000000	/* Length of MMConfig space */
 
 /*------------------------------------------------------------------------
  * pci_init  -  Initialize the PCI bios structures
@@ -100,37 +100,43 @@ encodedPCIDevToFunction(unsigned int encodedDev)
 int find_pci_device(int32 deviceID, int32 vendorID, int32 index)
 {
 	int		count;
+	int		multifunction;
 	unsigned int	info;
 	unsigned int	bus, dev, func;
-	struct pci_config_header	*devfuncHdr;
+	struct pci_config_header *devfuncHdr;
 
-
-	// Traverse memory-mapped PCI configuration space looking for
-	// a match for the target device.
+	/* Traverse memory-mapped PCI configuration space looking for
+	   a match for the target device */
 	count = 0;
 	for (bus = 0; bus < PCI_MAX_BUSES; bus++) {
 		for (dev = 0; dev < PCI_DEVICES_PER_BUS; dev++) {
-			for (func = 0; func < PCI_FUNCTIONS_PER_DEVICE; func++) {
-				devfuncHdr = regAddress_MMConfig(MMCONFIG_BASE, bus, dev,
-								 func, 0);
+			for (func = 0; func < PCI_FUNCTIONS_PER_DEVICE;
+			     func++) {
+				devfuncHdr = regAddress_MMConfig(MMCONFIG_BASE,
+						bus, dev, func, 0);
 				if ((devfuncHdr->vendorID == vendorID) &&
-				    (devfuncHdr->deviceID == deviceID)) {
-					if (index == count++) {
-						// Match: return the matching PCI Bus:Device:Function
-						// encoded into an unsigned int.
-						info = encodePCIDevice(bus, dev, func);
-						return info;
-					}
+				    (devfuncHdr->deviceID == deviceID) &&
+				    (index == count++)) {
+					/* Match: return the matching
+					   PCI Bus:Device:Function
+					   encoded into an unsigned int. */
+					info = encodePCIDevice(bus, dev, func);
+					return info;
 				}
-				// Evaluate sub-functions only if the device is multi-function
-				if (func == 0 &&
-				    ((devfuncHdr->headerType & PCI_HDR_TYPE_MULTIFUNCTION) == 0)) {
-					break; // Inner for loop.
+				/* Evaluate sub-functions only if the device
+				   is multi-function */
+				if (func == 0) {
+					multifunction = 
+						devfuncHdr->headerType &
+						PCI_HDR_TYPE_MULTIFUNCTION;
+					if (!multifunction) {
+						break; /* Inner for loop. */
+					}
 				}
 			}
 		}
 	}
-	// The target device was not found.
+	/* The target device was not found. */
 	return SYSERR;
 }
 
@@ -219,8 +225,8 @@ int pci_get_dev_mmio_base_addr(uint32 encodedDev, int barIndex,
 	unsigned int	bar_value;
 	int		status;
 
-        /* Determine the value of the target PCI device's MMIO base address
-           register */
+	/* Determine the value of the target PCI device's MMIO base address
+	   register */
 	bar_value = 0;
 	status = pci_read_config_dword(encodedDev,
 					offsetof(struct pci_config_header,
