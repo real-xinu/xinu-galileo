@@ -12,11 +12,16 @@ interrupt	ethhandler(void)
 	struct	eth_q_csreg *csrptr;	/* Pointer to Ethernet CRSs	*/
 	struct	eth_q_tx_desc *tdescptr;/* Pointer to tx descriptor	*/
 	struct	eth_q_rx_desc *rdescptr;/* Pointer to rx descriptor	*/
+	volatile uint32	sr;		/* Copy of status register	*/
 	uint32	count;			/* Variable used to count pkts	*/
 
 	ethptr = &ethertab[devtab[ETHER0].dvminor];
 
 	csrptr = (struct eth_q_csreg *)ethptr->csr;
+
+	/* Copy the status register into a local variable */
+
+	sr = csrptr->sr;
 
 	/* If there is no interrupt pending, return */
 
@@ -24,20 +29,22 @@ interrupt	ethhandler(void)
 		return;
 	}
 
+	/* Acknowledge the interrupt */
+
+	csrptr->sr = sr;
+
 	/* Check status register to figure out the source of interrupt */
 
-	if (csrptr->sr & ETH_QUARK_SR_TI) { /* Transmit interrupt */
-
-		/* Acknowledge the transmit interrupt */
-
-		csrptr->sr = ETH_QUARK_SR_TI;
+	if (sr & ETH_QUARK_SR_TI) { /* Transmit interrupt */
 
 		/* Pointer to the head of transmit desc ring */
 
 		tdescptr = (struct eth_q_tx_desc *)ethptr->txRing +
 							ethptr->txHead;
 
-		count = 0;	/* Start packet count at zero */
+		/* Start packet count at zero */
+
+		count = 0;
 
 		/* Repeat until we process all the descriptor slots */
 
@@ -50,6 +57,7 @@ interrupt	ethhandler(void)
 			}
 
 			/* Descriptor was processed; increment count	*/
+
 			count++;
 
 			/* Go to the next descriptor */
@@ -69,14 +77,10 @@ interrupt	ethhandler(void)
 		/* 'count' packets were processed by DMA, and slots are	*/
 		/* now free; signal the semaphore accordingly		*/
 
-		csrptr->sr = ETH_QUARK_SR_NIS;
 		signaln(ethptr->osem, count);
-		return;
-	} else if(csrptr->sr & ETH_QUARK_SR_RI) { /* Receive interrupt	*/
 
-		/* Acknowledge the interrupt */
-
-		csrptr->sr = ETH_QUARK_SR_RI;
+	}
+	if(sr & ETH_QUARK_SR_RI) { /* Receive interrupt	*/
 
 		/* Get the pointer to the tail of the receive desc list */
 
@@ -118,10 +122,6 @@ interrupt	ethhandler(void)
 
 		signaln(ethptr->isem, count);
 	}
-
-	/* Acknowledge the normal interrupt summary */
-
-	csrptr->sr = ETH_QUARK_SR_NIS;
 
 	return;
 }
