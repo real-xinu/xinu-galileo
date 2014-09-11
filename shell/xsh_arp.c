@@ -11,8 +11,6 @@ static	void	arp_dmp();
  */
 shellcmd xsh_arp(int nargs, char *args[])
 {
-	char	ch;			/* character from arg string	*/
-
 	/* For argument '--help', emit help about the 'arp' command	*/
 
 	if (nargs == 2 && strncmp(args[1], "--help", 7) == 0) {

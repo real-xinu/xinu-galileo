@@ -1,6 +1,7 @@
 /* dns.c - dns_qa, dns_bldq, dns_geta, dns_getrname */
 
 #include <xinu.h>
+#include <string.h>
 #include <dns.h>
 
 uint32	nsaddr;
@@ -49,7 +50,7 @@ uint32	dns_qa	(
 	rpkt = (struct dnspkt *)getmem(sizeof(struct dnspkt));
 	if((int32)rpkt == SYSERR) {
 		udp_release(slot);
-		freemem(qpkt, sizeof(struct dnspkt));
+		freemem((char*)qpkt, sizeof(struct dnspkt));
 		return (uint32)SYSERR;
 	}
 
@@ -67,15 +68,16 @@ uint32	dns_qa	(
 		kprintf("%x ", qpkt->data[i]);
 	}*/
 
+	ipaddr = (uint32)SYSERR;
 	for(i = 0; i < 3; i++) {
 
 		/* Send the Query message */
 
-		udp_send(slot, qpkt, 12 + qlen);
+		udp_send(slot, (char*)qpkt, 12 + qlen);
 
 		/* Wait for the response */
 
-		rlen = udp_recv(slot, rpkt, 512, 3000);
+		rlen = udp_recv(slot, (char*)rpkt, 512, 3000);
 		if(rlen == SYSERR) {
 			continue;
 		}
@@ -117,7 +119,7 @@ uint32	dns_bldq (
 
 	dlen = strlen(dname);
 
-	llptr = data++;
+	llptr = (byte*)(data++);
 	*llptr = 0;
 	qlen = 1;
 	for(i = 0; i < dlen; i++) {
@@ -130,7 +132,7 @@ uint32	dns_bldq (
 			*llptr = *llptr + 1;
 		}
 		else {
-			llptr = data++;
+			llptr = (byte*)(data++);
 			*llptr = 0;
 		}
 		qlen++;

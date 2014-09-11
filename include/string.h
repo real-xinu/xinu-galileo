@@ -7,3 +7,4 @@ extern	char	*strchr(const char *, int32);
 extern	char	*strrchr(const char *, int32);
 extern	char	*strstr(const char *, const char *);
 extern	int32	strnlen(const char *, uint32);
+extern	int	strlen(char *str);

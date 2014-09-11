@@ -58,6 +58,9 @@ extern	void	ctxsw(void *, void *);
 
 extern	uint32	getlocalip(void);
 
+/* in file dns.c */
+extern	uint32	dns_qa(char *);
+
 /* in file dot2ip.c */
 
 extern	uint32	dot2ip(char *, uint32 *);
