@@ -4,6 +4,7 @@
 xinu
 xinu.bin
 xinu.xbin
+xinu.elf
 .defs
 .deps
 .jed_100
