@@ -31,13 +31,24 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define NAMESPACE   3       /* type nam      */
 #define RDISK       4       /* type rds      */
 #define RAM0        5       /* type ram      */
-#define LFILESYS    6       /* type lfs      */
-#define LFILE0      7       /* type lfl      */
-#define LFILE1      8       /* type lfl      */
-#define LFILE2      9       /* type lfl      */
-#define LFILE3      10       /* type lfl      */
-#define LFILE4      11       /* type lfl      */
-#define LFILE5      12       /* type lfl      */
+#define RFILESYS    6       /* type rfs      */
+#define RFILE0      7       /* type rfl      */
+#define RFILE1      8       /* type rfl      */
+#define RFILE2      9       /* type rfl      */
+#define RFILE3      10       /* type rfl      */
+#define RFILE4      11       /* type rfl      */
+#define RFILE5      12       /* type rfl      */
+#define RFILE6      13       /* type rfl      */
+#define RFILE7      14       /* type rfl      */
+#define RFILE8      15       /* type rfl      */
+#define RFILE9      16       /* type rfl      */
+#define LFILESYS    17       /* type lfs      */
+#define LFILE0      18       /* type lfl      */
+#define LFILE1      19       /* type lfl      */
+#define LFILE2      20       /* type lfl      */
+#define LFILE3      21       /* type lfl      */
+#define LFILE4      22       /* type lfl      */
+#define LFILE5      23       /* type lfl      */
 
 /* Control block sizes */
 
@@ -46,12 +57,14 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	Neth	1
 #define	Nrds	1
 #define	Nram	1
+#define	Nrfs	1
+#define	Nrfl	10
 #define	Nlfs	1
 #define	Nlfl	6
 #define	Nnam	1
 
 #define DEVMAXNAME 24
-#define NDEVS 13
+#define NDEVS 24
 
 
 /* Configuration and Size Constants */

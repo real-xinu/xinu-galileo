@@ -489,7 +489,7 @@ extern	devcall	rflinit(struct dentry *);
 extern	devcall	rflputc(struct dentry *, char );
 
 /* in file rflread.c */
-extern	devcall	rflRead(struct dentry *, char *, int32 );
+extern	devcall	rflread(struct dentry *, char *, int32 );
 
 /* in file rflseek.c */
 extern	devcall	rflseek(struct dentry *, uint32 );

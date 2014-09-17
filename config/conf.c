@@ -61,50 +61,127 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
 	  (void *)0x0, (void *)ionull, 0 },
 
+/* RFILESYS is rfs */
+	{ 6, 0, "RFILESYS",
+	  (void *)rfsinit, (void *)rfsopen, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)rfscontrol,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE0 is rfl */
+	{ 7, 0, "RFILE0",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE1 is rfl */
+	{ 8, 1, "RFILE1",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE2 is rfl */
+	{ 9, 2, "RFILE2",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE3 is rfl */
+	{ 10, 3, "RFILE3",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE4 is rfl */
+	{ 11, 4, "RFILE4",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE5 is rfl */
+	{ 12, 5, "RFILE5",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE6 is rfl */
+	{ 13, 6, "RFILE6",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE7 is rfl */
+	{ 14, 7, "RFILE7",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE8 is rfl */
+	{ 15, 8, "RFILE8",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* RFILE9 is rfl */
+	{ 16, 9, "RFILE9",
+	  (void *)rflinit, (void *)ioerr, (void *)rflclose,
+	  (void *)rflread, (void *)rflwrite, (void *)rflseek,
+	  (void *)rflgetc, (void *)rflputc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
 /* LFILESYS is lfs */
-	{ 6, 0, "LFILESYS",
+	{ 17, 0, "LFILESYS",
 	  (void *)lfsinit, (void *)lfsopen, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE0 is lfl */
-	{ 7, 0, "LFILE0",
+	{ 18, 0, "LFILE0",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE1 is lfl */
-	{ 8, 1, "LFILE1",
+	{ 19, 1, "LFILE1",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE2 is lfl */
-	{ 9, 2, "LFILE2",
+	{ 20, 2, "LFILE2",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE3 is lfl */
-	{ 10, 3, "LFILE3",
+	{ 21, 3, "LFILE3",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE4 is lfl */
-	{ 11, 4, "LFILE4",
+	{ 22, 4, "LFILE4",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LFILE5 is lfl */
-	{ 12, 5, "LFILE5",
+	{ 23, 5, "LFILE5",
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,

@@ -66,6 +66,22 @@ sdmc:
 		-intr sdmcdispatch
 */
 
+/* type of a remote file system device */
+rfs:
+	on udp
+		-i rfsinit	-o rfsopen	-c ioerr
+		-r ioerr	-g ioerr	-p ioerr
+		-w ioerr	-s ioerr	-n rfscontrol
+		-intr ionull
+
+/* type of a remote file pseudo-device */
+rfl:
+	on rfs
+		-i rflinit	-o ioerr	-c rflclose
+		-r rflread	-g rflgetc	-p rflputc
+		-w rflwrite	-s rflseek	-n ioerr
+		-intr ionull
+
 /* type of a local file system master device */
 lfs:
 	on ram
@@ -112,7 +128,24 @@ nam:
    
    /* Define a ram disk device */
    RAM0 is ram on mem
-   
+
+   /* Define the remote file system device */
+
+   RFILESYS is rfs on udp
+
+   /* Define remote file pseudo-devices */
+
+   RFILE0 is rfl on rfs
+   RFILE1 is rfl on rfs
+   RFILE2 is rfl on rfs
+   RFILE3 is rfl on rfs
+   RFILE4 is rfl on rfs
+   RFILE5 is rfl on rfs
+   RFILE6 is rfl on rfs
+   RFILE7 is rfl on rfs
+   RFILE8 is rfl on rfs
+   RFILE9 is rfl on rfs
+
    /* Define the local file system master device (one per system) */
 
    LFILESYS is lfs on ram
