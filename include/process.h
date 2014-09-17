@@ -47,7 +47,7 @@ struct procent {		/* Entry in the process table		*/
 	char	*prstkbase;	/* Base of run time stack		*/
 	uint32	prstklen;	/* Stack length in bytes		*/
 	char	prname[PNMLEN];	/* Process name				*/
-	uint32	prsem;		/* Semaphore on which process waits	*/
+	sid32	prsem;		/* Semaphore on which process waits	*/
 	pid32	prparent;	/* ID of the creating process		*/
 	umsg32	prmsg;		/* Message sent to this process		*/
 	bool8	prhasmsg;	/* Nonzero iff msg is valid		*/
