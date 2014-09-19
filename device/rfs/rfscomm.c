@@ -56,7 +56,6 @@ int32	rfscomm (
 			rlen, RF_TIMEOUT);
 
 		if (retval == TIMEOUT) {
-			kprintf("rfscomm: timeout\n");
 			continue;
 		} else if (retval == SYSERR) {
 			kprintf("Error reading remote file reply\n");
@@ -66,7 +65,6 @@ int32	rfscomm (
 		/* Verify that sequence in reply matches request */
 
 		if (ntohl(reply->rf_seq) != seq) {
-			kprintf("rfscomm: sequence error\n");
 			continue;
 		}
 
@@ -74,7 +72,6 @@ int32	rfscomm (
 
 		rtype = ntohs(reply->rf_type);
 		if (rtype != ( ntohs(msg->rf_type) | RF_MSG_RESPONSE) ) {
-			kprintf("rfscomm: type error\n");
 			continue;
 		}
 
