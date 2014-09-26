@@ -4,8 +4,6 @@
 
 local	int newpid();
 
-#define	roundew(x)	( (x+3)& ~0x3)
-
 /*------------------------------------------------------------------------
  *  create  -  Create a process to start running a function on x86
  *------------------------------------------------------------------------
@@ -30,7 +28,7 @@ pid32	create(
 	mask = disable();
 	if (ssize < MINSTK)
 		ssize = MINSTK;
-	ssize = (uint32) roundew(ssize);
+	ssize = (uint32) roundmb(ssize);
 	if (((saddr = (uint32 *)getstk(ssize)) ==
 	    (uint32 *)SYSERR ) ||
 	    (pid=newpid()) == SYSERR || priority < 1 ) {
