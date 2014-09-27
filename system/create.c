@@ -69,7 +69,7 @@ pid32	create(
 
 	/* The following entries on the stack must match what ctxsw	*/
 	/*   expects a saved process state to contain: ret address,	*/
-	/*   ebp, interrupt mask, flags, registerss, and an old SP	*/
+	/*   ebp, interrupt mask, flags, registers, and an old SP	*/
 
 	*--saddr = (long)funcaddr;	/* Make the stack look like it's*/
 					/*   half-way through a call to	*/
