@@ -100,6 +100,9 @@ extern  devcall ethread(struct dentry *, char *, int32);
 /* in file ethwrite.c */
 extern 	devcall ethwrite(struct dentry *, char *buf, int32);
 
+/* in file exit.c */
+extern	void	exit(void);
+
 /* in file kprintf.c */
 extern int console_init(void);
 
