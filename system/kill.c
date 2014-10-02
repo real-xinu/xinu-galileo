@@ -25,7 +25,7 @@ syscall	kill(
 		xdone();
 	}
 
-	/* Close descriptors used by shell programs */
+	send(prptr->prparent, pid);
 	for (i=0; i<3; i++) {
 		close(prptr->prdesc[i]);
 	}
