@@ -139,6 +139,7 @@ void	meminit(void) {
 		memptr->mnext = next_memptr;
 		memptr = memptr->mnext;
 		memptr->mlength = next_block_length;
+		memlist.mlength += next_block_length;
 
 		/* Move to the next mmap block */
 		mmap_addr = (struct mbmregion*)((uint8*)mmap_addr + mmap_addr->size + 4);
