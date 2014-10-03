@@ -20,7 +20,6 @@
 #include <rdisksys.h>
 #include <lfilesys.h>
 #include <ether.h>
-#include <gpio.h>
 #include <net.h>
 #include <ip.h>
 #include <arp.h>
