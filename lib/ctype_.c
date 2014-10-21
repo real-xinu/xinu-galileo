@@ -1,13 +1,11 @@
-/**
- * @file ctype_.c
- * @provides _ctype_.
- *
- * $Id: ctype_.c 2072 2009-09-21 22:26:50Z brylow $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* ctype_.c - _ctype_ */
 
 #include	<ctype.h>
 
+/*------------------------------------------------------------------------
+ *  _ctype_  -  Provides _ctype_.
+ *------------------------------------------------------------------------
+ */
 const char _ctype_[] = {
     0,
     _C, _C, _C, _C, _C, _C, _C, _C,

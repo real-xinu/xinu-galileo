@@ -1,10 +1,4 @@
-/**
- * @file doscan.c
- * @provides _doscan, _innum, _instr, _getccl.
- *
- * $Id: doscan.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* doscan.c - _doscan, _innum, _instr, _getccl */
 
 /* Character look-ahead to be implemented as: ch=control(unit,TTY_IOC_NEXTC) */
 
@@ -37,18 +31,18 @@ char _sctab[128] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/**
- * Scan and recognize input according to a format
- * @param *fmt format string for the scanf
- * @param **argp arguments to scanf
- * @param getch function to unget a character
- * @param ungetch function to unget a character
- * @param arg1 1st argument to getch/ungetch
- * @param arg2 2nd argument to getch/ungetch
+/*------------------------------------------------------------------------
+ *  _doscan  -  Scan and recognize input according to a format.
+ *------------------------------------------------------------------------
  */
-int _doscan(register char *fmt, register int **argp,
-            int (*getch) (int, int), int (*ungetch) (int, int),
-            int arg1, int arg2)
+int		_doscan(
+		  register char	*fmt,				/* format str for scanf		*/
+		  register int	**argp,				/* arguments to scanf		*/
+          int			(*getch)(int, int),	/* function to get char		*/
+		  int			(*ungetch)(int, int),/* function to unget char	*/
+          int			arg1,				/* 1st arg to getch/ungetch */
+		  int			arg2				/* 2nd arg to getch/ungetch */
+		)
 {
     register int ch;
     int nmatch, len, ch1;
@@ -152,9 +146,21 @@ int _doscan(register char *fmt, register int **argp,
     }
 }
 
-static int _innum(int **ptr, int type, int len, int size,
-                  int (*getch) (int, int), int (*ungetch) (int, int),
-                  int arg1, int arg2, int *eofptr)
+/*------------------------------------------------------------------------
+ *  _innum  -  DOCUMENT
+ *------------------------------------------------------------------------
+ */
+static int		_innum(
+				  int		**ptr,
+				  int		type,
+				  int		len,
+				  int		size,
+                  int		(*getch)(int, int),
+				  int		(*ungetch)(int, int),
+                  int		arg1,
+				  int		arg2,
+				  int		*eofptr
+				)
 {
     extern double atof(char *p);
     register char *np;
@@ -273,9 +279,20 @@ static int _innum(int **ptr, int type, int len, int size,
     return 1;
 }
 
-static int _instr(register char *ptr, int type, int len,
-                  int (*getch) (int, int), int (*ungetch) (int, int),
-                  int arg1, int arg2, int *eofptr)
+/*------------------------------------------------------------------------
+ *  _instr  -  DOCUMENT
+ *------------------------------------------------------------------------
+ */
+static int		_instr(
+				  register char		*ptr,
+				  int				type,
+				  int				len,
+                  int				(*getch)(int, int),
+				  int				(*ungetch)(int, int),
+                  int				arg1,
+				  int				arg2,
+				  int				*eofptr
+				)
 {
     register unsigned int ch;
     register char *optr;
@@ -343,7 +360,13 @@ static int _instr(register char *ptr, int type, int len,
     return 0;
 }
 
-static char *_getccl(char *s)
+/*------------------------------------------------------------------------
+ *  _getccl  -  DOCUMENT
+ *------------------------------------------------------------------------
+ */
+static char		*_getccl(
+				  char		*s
+				)
 {
     int c, t;
 

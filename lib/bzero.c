@@ -1,17 +1,13 @@
-/**
- * @file bzero.c
- * @provides bzero.
- *
- * $Id: bzero.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* bzero.c - bzero */
 
-/**
- * Clears a block of characters to 0s
- * @param *p pointer to start of block
- * @param len length of the block
+/*------------------------------------------------------------------------
+ *  bzero  -  Clears a block of characters to 0s.
+ *------------------------------------------------------------------------
  */
-void bzero(void *p, int len)
+void	bzero(
+		  void		*p,
+		  int		len
+		)
 {
     int n;
     char *pch = (char *)p;

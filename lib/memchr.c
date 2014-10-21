@@ -1,20 +1,16 @@
-/**
- * @file memchr.c
- * @provides memchr.
- *
- * $Id: memchr.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* memchr.c - memchr */
 
-/**
- * Returns a pointer to the location in  memory at which which a particular
- * character appears.
- * @param *cs string to search
- * @param c character to locate
- * @param n number of bytes to search
- * @return the pointer in the string, NULL if character not found
+/*------------------------------------------------------------------------
+ *  memchr  -  Return a pointer to the lecation in memory at which
+ *			   a particular character appears.
+ *			   Return the pointer in the string, NULL if char not found.
+ *------------------------------------------------------------------------
  */
-void *memchr(const void *cs, int c, int n)
+void		*memchr(
+			  const void	*cs,		/* string to search				*/
+			  int			c,			/* character to locate			*/
+			  int			n			/* number of bytes to search	*/
+			)
 {
     char *cp = (char *)cs;
 

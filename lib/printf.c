@@ -1,4 +1,4 @@
-/* printf.c */
+/* printf.c - printf*/
 
 #include <xinu.h>
 #include <stdio.h>
@@ -6,7 +6,14 @@
 
 extern void _fdoprnt(char *, va_list, int (*)(did32, char), int);
 
-int printf(const char *fmt, ...)
+/*------------------------------------------------------------------------
+ *  printf  -  DOCUMENT
+ *------------------------------------------------------------------------
+ */
+int		printf(
+		  const char		*fmt,
+		  ...
+		)
 {
     va_list ap;
     syscall putc(did32, char);

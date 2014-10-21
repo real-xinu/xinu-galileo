@@ -1,19 +1,15 @@
-/**
- * @file memcpy.c
- * @provides memcpy.
- *
- * $Id: memcpy.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* memcpy.c - memcpy */
 
-/**
- * Memory copy, copy a location in memory from src to dst.
- * @param s destination location
- * @param ct source location
- * @param n amount of data (in bytes) to copy
- * @return pointer to destination
+/*------------------------------------------------------------------------
+ *  memcpy  -  Copy a location in memory from src to dst.
+ *			   Return pointer to destination.
+ *------------------------------------------------------------------------
  */
-void *memcpy(void *s, const void *ct, int n)
+void		*memcpy(
+			  void			*s,		/* destination location				*/
+			  const void	*ct,	/* source location					*/
+			  int			n		/* amount of data (in bytes) to copy*/
+			)
 {
     register int i;
     char *dst = (char *)s;

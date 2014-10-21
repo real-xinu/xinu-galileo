@@ -6,16 +6,20 @@
  */
 /* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
 
+/* fgetc.c - fgetc */
+
 extern int getc(int);
 
 #define EOF      (-2)
 
-/**
- * Read a character from a device (file)
- * @param dev device to read from
- * @return character read, EOF if error
+/*------------------------------------------------------------------------
+ *  fgetc  -  Read a character from a device (file).
+ *			  Return character read, EOF if error.
+ *------------------------------------------------------------------------
  */
-int fgetc(int dev)
+int		fgetc(
+		  int		dev
+		)
 {
     int result = (int)getc(dev);
 

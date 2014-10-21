@@ -1,20 +1,16 @@
-/**
- * @file memcmp.c
- * @provides memcmp.
- *
- * $Id: memcmp.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* memcmp.c - memcmp */
 
-/**
- * Compare memory (ISO C89).
- * Assumes memory locations are same length
- * @param s1 first memory location
- * @param s2 second memory location
- * @param n length to compare
- * @return s1>s2: >0  s1==s2: 0  s1<s2: <0
+/*------------------------------------------------------------------------
+ *  memcmp  -  Compare memory (ISO C89).
+ *			   Assumes memory locations are same length.
+ *			   Return s1>s2: >0		s1==s2: 0		s1<s2: <0
+ *------------------------------------------------------------------------
  */
-int memcmp(const void *s1, const void *s2, int n)
+int		memcmp(
+		  const void		*s1,		/* first memory location		*/
+		  const void		*s2,		/* second memory location		*/
+		  int				n			/* length to compare			*/
+		)
 {
     const unsigned char *c1;
     const unsigned char *c2;

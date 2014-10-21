@@ -1,9 +1,15 @@
-/* getchar.c */
+/* getchar.c - getchar */
 
 #include <xinu.h>
 #include <stdio.h>
 
-int getchar(void)
+/*------------------------------------------------------------------------
+ *  getchar  -  DOCUMENT
+ *------------------------------------------------------------------------
+ */
+int		getchar(
+		  void
+		)
 {
     return fgetc(stdin);
 }

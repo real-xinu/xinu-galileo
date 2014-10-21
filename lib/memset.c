@@ -1,19 +1,15 @@
-/**
- * @file memset.c
- * @provides memset.
- *
- * $Id: memset.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* memset.c - memset */
 
-/**
- * Place a character into first n characters.
- * @param s memory to place character into
- * @param c character to place
- * @param n number of times to place character
- * @return the pointer to memory
+/*------------------------------------------------------------------------
+ *  memset  -  Place a character into first n characters.
+ *			   Return the pointer to memory.
+ *------------------------------------------------------------------------
  */
-void *memset(void *s, int c, int n)
+void		*memset(
+			  void		*s,			/* memory to place character into	*/
+			  int		c,			/* character to place				*/
+			  int		n			/* number of times to place char	*/
+			)
 {
     register int i;
     char *cp = (char *)s;

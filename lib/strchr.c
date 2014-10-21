@@ -1,19 +1,15 @@
-/**
- * @file strchr.c
- * @provides strchr.
- *
- * $Id: strchr.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* strchr.c - strchr */
 
-/**
- * Returns a pointer to the location in a string at which which a particular
- * character appears.
- * @param *s string to search
- * @param c character to locate
- * @return the pointer in the string, NULL if character not found
+/*------------------------------------------------------------------------
+ *  strchr  -  Returns a pointer to the location in a string at which
+ *			   a particular character appears.
+ *			   Return the pointer in the string, NULL if char not found.
+ *------------------------------------------------------------------------
  */
-char *strchr(const char *s, int c)
+char		*strchr(
+			  const char		*s,		/* string to search				*/
+			  int				c		/* character to locate			*/
+			)
 {
     for (; *s != '\0'; s++)
     {

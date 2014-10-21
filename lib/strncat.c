@@ -1,20 +1,16 @@
-/**
- * @file strncat.c
- * @provides strncat.
- *
- * $Id: strncat.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* strncat.c - strncat */
 
-/**
- * Concatenate s2 on the end of s1.  S1's space must be large enough.
- * At most n characters are moved.
- * @param *s1 first string
- * @param *s2 second string
- * @param n length to concatenate
- * @return s1
+/*------------------------------------------------------------------------
+ *  strncat  -  Concatenate s2 on the end of s1.
+ *				S1's space must be large enough.
+ *				At most n characters are moved.
+ *------------------------------------------------------------------------
  */
-char *strncat(char *s1, const char *s2, int n)
+char		*strncat(
+			  char			*s1,		/* first string					*/
+			  const char	*s2,		/* second string				*/
+			  int			n			/* length to concatenate		*/
+			)
 {
     char *os1;
 

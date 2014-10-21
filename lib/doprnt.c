@@ -1,10 +1,4 @@
-/**
- * @file doprnt.c
- * @provides  _doprnt, _prtl2, _prtl8, _prtl10, _prtX16, _prtl16.
- *
- * $Id: doprnt.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* dprnt.c - _doprnt, _prtl2, _prtl8, _prtl10, _prtX16, _prtl16 */
 
 #include <stdarg.h>
 
@@ -17,15 +11,17 @@ static void _prtX16(long num, char *str);
 static void _prtl16(long num, char *str);
 static void _prtl2(long num, char *str);
 
-/**
- * Format and write output using 'func' to write characters. (Patched
- * for Sun3 by Shawn Ostermann.)  All arguments passed as 4 bytes, long==int.
- * @param *fmt format string
- * @param ap list of values
- * @param *func character output function
- * @param farg argument for character output function
+/*------------------------------------------------------------------------
+ *  _doprnt  -  Format and write output using 'func' to write characters.
+ *				(Patched for Sun3 by Shawn Ostermann.)
+ *				All arguments passed as 4 bytes, long==int.
+ *------------------------------------------------------------------------
  */
-void _doprnt(char *fmt, va_list ap, int (*func) (int))
+void	_doprnt(
+		  char			*fmt,
+		  va_list		ap,
+		  int			(*func)(int)
+		)
 {
     int c;
     int i;
@@ -271,12 +267,14 @@ void _doprnt(char *fmt, va_list ap, int (*func) (int))
 
 }
 
-/**
- * Prints
- * @param num
- * @param *str
+/*------------------------------------------------------------------------
+ *  _prtl10  -  Converts long to base 10 string.
+ *------------------------------------------------------------------------
  */
-static void _prtl10(long num, char *str)
+static void		_prtl10(
+				  long		num, 
+				  char		*str
+				)
 {
     int i;
     char temp[11];
@@ -294,12 +292,14 @@ static void _prtl10(long num, char *str)
         *str++ = temp[i--];
 }
 
-/**
- * Prints
- * @param num
- * @param *str
+/*------------------------------------------------------------------------
+ *  _prtl8  -  Converts long to base 8 string.
+ *------------------------------------------------------------------------
  */
-static void _prtl8(long num, char *str)
+static void		_prtl8(
+				  long		num,
+				  char		*str
+				)
 {
     int i;
     char temp[12];
@@ -318,12 +318,14 @@ static void _prtl8(long num, char *str)
         *str++ = temp[i--];
 }
 
-/**
- * Prints
- * @param num
- * @param *str
+/*------------------------------------------------------------------------
+ *  _prtl16  -  Converts long to lowercase hex string.
+ *------------------------------------------------------------------------
  */
-static void _prtl16(long num, char *str)
+static void		_prtl16(
+				  long		num,
+				  char		*str
+				)
 {
     int i;
     char temp[9];
@@ -341,12 +343,14 @@ static void _prtl16(long num, char *str)
         *str++ = temp[i--];
 }
 
-/**
- * Prints
- * @param num
- * @param *str
+/*------------------------------------------------------------------------
+ *  _prtX16  -  Converts long to uppercase hex string.
+ *------------------------------------------------------------------------
  */
-static void _prtX16(long num, char *str)
+static void		_prtX16(
+				  long		num,
+				  char		*str
+				)
 {
     int i;
     char temp[9];
@@ -364,12 +368,14 @@ static void _prtX16(long num, char *str)
         *str++ = temp[i--];
 }
 
-/**
- * Prints
- * @param num
- * @param *str
+/*------------------------------------------------------------------------
+ *  _prtl2  -  Converts long to binary string.
+ *------------------------------------------------------------------------
  */
-static void _prtl2(long num, char *str)
+static void		_prtl2(
+				  long		num,
+				  char		*str
+				)
 {
     int i;
     char temp[35];

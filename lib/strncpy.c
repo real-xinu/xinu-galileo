@@ -1,19 +1,16 @@
-/**
- * @file strncpy.c
- * @provides strncpy.
- *
- * $Id: strncpy.c 2020 2009-08-13 17:50:08Z mschul $
- */
-/* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
+/* strncpy.c - strncpy */
 
-/**
- * Copy string s2 to s1, truncating or null-padding to always copy n bytes.
- * @param s1 first string
- * @param s2 second string
- * @param n length of s2 to copy
- * @return s1
+/*------------------------------------------------------------------------
+ *  strncpy  -  Copy string s2 to s1, truncating or null-padding
+ *				to always copy n bytes.
+ *				Return s1.
+ *------------------------------------------------------------------------
  */
-char *strncpy(char *s1, const char *s2, int n)
+char		*strncpy(
+			  char			*s1,		/* first string					*/
+			  const char	*s2,		/* second string				*/
+			  int			n			/* length of s2 to copy			*/
+			)
 {
     register int i;
     register char *os1;
