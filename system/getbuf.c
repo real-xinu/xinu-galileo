@@ -7,7 +7,7 @@
  *------------------------------------------------------------------------
  */
 char    *getbuf(
-          bpid32        poolid          /* Index of pool in buftab       */
+          bpid32        poolid          /* Index of pool in buftab	*/
         )
 {
 	intmask	mask;			/* Saved interrupt mask		*/

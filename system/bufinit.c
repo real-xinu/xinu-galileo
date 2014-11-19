@@ -2,7 +2,7 @@
 
 #include <xinu.h>
 
-struct	bpentry	buftab[NBPOOLS];		/* Buffer pool table		*/
+struct	bpentry	buftab[NBPOOLS];		/* Buffer pool table	*/
 bpid32	nbpools;
 
 /*------------------------------------------------------------------------
