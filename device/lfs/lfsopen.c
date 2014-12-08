@@ -158,7 +158,7 @@ devcall	lfsopen (
 
 	to = lfptr->lfname;
 	from = name;
-	while ( (*to = *from++) != NULLCH ) {
+	while ( (*to++ = *from++) != NULLCH ) {
 		;
 	}
 
