@@ -130,7 +130,6 @@ void	_doprnt(
             if (larg < 0)
             {
                 sign = '-';
-                larg = -larg;
             }
             _prtl10(larg, str);
             break;
@@ -280,8 +279,9 @@ static void		_prtl10(
     char temp[11];
 
     temp[0] = '\0';
-    for (i = 1; i <= 10; i++)
-    {
+    temp[1] = ((num<0) ? -(num%10) : (num%10)) + '0';
+    num /= (num<0) ? -10 : 10;
+    for (i = 2; i <= 10; i++) {
         temp[i] = num % 10 + '0';
         num /= 10;
     }
