@@ -114,6 +114,7 @@ devcall	rdsread (
 
 				bptr->rd_next = rdptr->rd_free;
 				rdptr->rd_free = bptr;
+				break;
 			}
 			cptr = cptr->rd_next;
 		}
