@@ -132,7 +132,7 @@ int32	eth_phy_reset	(
 			return SYSERR;
 	}
 
-	DELAY(ETH_QUARK_INIT_DELAY);
+	DELAY(100000);
 
 	kprintf("Ethernet Link is Up\n");
 
