@@ -1,0 +1,96 @@
+1 Check SYN sequence to see why we (apparently) send an
+  extra SYN+ACK before declaring the connection open.
+
+2 Find out why passive open sends a reset for all incoming
+  connections, even if they match a TCB.
+
+3 Find out why the interface 0 networking intput queue
+   fills when everthying is idle.  Is there a deadlock?
+   Do we absolutely need a separate TCP input process?
+
+4 Convert API from using devices to tcp_register, tcp_send,
+  and tcp_recv
+
+5 Add a MSS value the the TCB, which will allow small MSS
+  on the radio network interface and 1500 on the Ethernet
+  interface.  Arrange to inlcude the MSS in each SYN.  The
+  option takes 4 bytes:
+
+	-------------------------------
+       |   2   |   4   |  max seg size |
+	-------------------------------
+
+----------------------------------------------------------------------------
+                Status Report
+                -------------
+
+The good news is that I was successful in:
+
+   - Opening a TCP connection
+
+   - Transferring data
+
+   - Closing a connection and recognizing when the
+     other side closes the connection
+
+   - Serially reusing TCP (e.g., make a connection
+     and use it, close the connection, and then
+     open another connection to the same or different
+     destination
+
+   - Sending a RESET for an illegal incoming TCP packet
+
+   - Testing it by sending an http GET request to a
+     standard web server and receiving the correct
+     response.
+
+The bad news:
+
+  - This is a simplified version that does not handle
+    some details, such as out--of-order packets (it
+    merely waits for the retransmission).
+
+  - It's not well-integrated into the forwarding code.
+    For example, TCP code has separate structures for
+    Ethernet/IP/TCP headers, whereas the forwarding
+    code uses a fixed packet format that combines all
+    of them.  We'll probably need to change to a more
+    flexible approach for both IPv6 an TCP.
+
+  - There *appears* to be an extra SYN+ACK during
+    connection open (it works, but I don't see why).
+
+  - Passive open (for a server) doesn't work quite
+    right (incoming connection requests receive a
+    RESET).
+
+  - After TCP runs for a while, the raw intput queue
+    for interface 0 fills, even though no TCP is totally
+    idle.  The original code has a TCP input process
+    that I tried to eliminate.  So, maybe that's the
+    problem and we need a sparate process.
+
+  - The API uses Xinu devices (open a master TCP device
+    to get the descriptor for a slave device, read and
+    write data to the slave, and close the slave).  We
+    will need to convert the API to tcp_register, tcp_send,
+    and tcp_recv.
+
+  - There is a single constant for MSS.  We need to
+    have a per-TCB value.  We also need to modify the
+    code to send the MSS option in the SYN request.
+    It's not hard because option only takes 4 bytes:
+
+	-------------------------------
+       |   2   |   4   |  max seg size |
+	-------------------------------
+
+    But... sending the option increases the TCP
+    header size on some packets, which means we cannot
+    use a fixed packet format (see above).
+
+  - The send and receive data buffers as well as the
+    packet buffers are far to large for our zigbee
+    design (e.g., each connection has 128K of data
+    buffers, which uses all the memory we have). :-)
+----------------------------------------------------------------------------

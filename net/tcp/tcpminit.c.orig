@@ -1,0 +1,36 @@
+/* tcpminit.c  -  tcpminit */
+
+#include <xinu.h>
+
+struct	tcpcontrol	Tcp;
+
+#ifndef	TCP
+#define	TCP		1
+#endif
+
+/*------------------------------------------------------------------------
+ *  tcpminit.c  -  Initialize the TCP master device
+ *------------------------------------------------------------------------
+ */
+int32	tcpminit(
+	  struct dentry	*pdev		/* Ptr to a device table entry	*/
+	)
+{
+
+	/* Initialize values in the Tcp strcuture */
+
+	Tcp.tcpdev = TCP;
+	Tcp.tcpmutex = semcreate (1);
+	Tcp.tcpnextport = 33000;
+
+	/* Create a message queue for TCP */
+
+	if (mqready == 0) {
+		tminit();
+		mqinit();
+	}
+	Tcp.tcpcmdq = mqcreate (10);
+
+	resume (create ((int *)tcp_out, 512, 80, "tcp_out", 0, NULL));
+	return OK;
+}

@@ -1,0 +1,89 @@
+                      Adding TCP To The Design
+                      ------ --- -- --- ------
+
+TCP is divided into two major pieces:
+
+  Input          - the input side is invoked when a segment arrives
+  Timed events   - the timed event side is invoked when a timer
+                     expires and action must be taken
+
+
+The possible timed events are:
+
+   1. Send - new data is available in the output buffer for transmission
+
+   2. Send a delayed ACK - an ACK should be sent (rather than sending the
+                           ACK immediately when a segment arrives, TCP
+                           delays sending the ACK)
+
+   3. Retransmit - a retransmission timer has expired and a segment must
+                           be retransmitted
+
+   4. TCB expiration - a connection has closed and after a timeout, the
+                           information about the connection must be removed
+
+Notes:
+
+* Because events occur at specified times that may not correspond to
+  the arrival of an incoming segment or outgoing data, a separate process
+  will be needed to handle events.
+
+* The paradigm for output is to have the application place data in the
+  output buffer and schedule a "Send" event; the TCP process handle
+  transmission and retransmission.
+
+* TCP allows multiple connection to be used simultaneously.  Information
+  about a connection is kept in a TCP Control Block (TCB); The Xinu
+  implementation uses an array of TCBs.
+
+* Each event specifies three items: a time at which the even should
+  occur, a TCB to which the event corresponds, and an event type (one
+  of the four above).
+
+* Events can be cancelled, and we expect events to be cancelled often (e.g.,
+  the event calling for retransmission of a segment is cancelled if an ACK
+  arrives for the segment).
+
+* Millisecond granularity is needed for event timing.
+
+
+Implementations:
+
+There are two possible approaches.
+
+  1. A conventional Xinu process manages a list of events and uses
+     receive-with-timeout, recvtime(), to block until the next timed
+     event occurs or a message arrives changing the events.  For example,
+     suppose the TCP process is currently sleeping until a retransmission
+     event should occur.  If a segment arrives, the input side can cancel
+     the retransmission event (i.e., remove it from the event queue) and
+     send a message to the TCP process.  When it receives a message, the
+     process wakes up, examines the queue, and goes to sleep until the
+     next event should occur.  The process can organize events on an
+     internal delta list, but will need to compute how much time elapses
+     for each event and update the head of the delta list manually.
+     Computation is tricky because recvtime() does not return the residual
+     sleep time if a message arrives before the timeout expires.  So,
+     to manage timing, the TCP process must record the exact time it
+     went to sleep.  When a message awakens it before the timer expires,
+     the process subtracts the time it went to sleep from the current
+     time and updates the delta list accordingly.  To insure millisecond
+     accuracy, the process should store a pair of values (s, m), where
+     s is the clock value that measures seconds and m is a value between
+     0 and 999 that measures milliseconds.  The clock interrupt code
+     already keeps both values, so it's only a matter of using global
+     variables to access the timestamp.
+
+  2. We could make the delta list of TCP events known to the operating
+     system by modifying the clock interrupt handler to decrement the
+     counter in the TCP delta list.  We also arrange for the clock
+     interrupt handler to call the TCP event function when the counter
+     reaches zero.
+
+Approach 1 keeps TCP independent of Xinu, but may require slightly more
+code and will not be quite as efficient as approach 2.  Approach 2 has
+the drawbacks of the TCP event code at interrupt time (which means there
+are prohibitions on using blocking primitives).  In particular, if a
+write() call to the Ethernet or Radio devices can block, approach 2
+will be unacceptable.
+
