@@ -6,6 +6,7 @@
 
 #define	IP_ICMP		1		/* ICMP protocol type for IP 	*/
 #define	IP_UDP		17		/* UDP protocol type for IP 	*/
+#define IP_TCP		6		/* TCP protocol type for IP	*/
 
 #define	IP_ASIZE	4		/* Bytes in an IP address	*/
 #define	IP_HDR_LEN	20		/* Bytes in an IP header	*/
@@ -13,6 +14,7 @@
 
 #define	IP_OQSIZ	8		/* Size of IP output queue	*/
 
+#define IP_HLEN(x)	(20)
 /* Queue of outgoing IP packets waiting for ipout process */
 
 struct	iqentry	{

@@ -91,8 +91,8 @@ interrupt	ethhandler(void)
 
 		/* Repeat until we have received		*/
 		/* maximum no. packets that can fit in queue 	*/
-
-		while(count <= ethptr->rxRingSize) {
+		resched_cntl(DEFER_START);
+		while((int32)semcount(ethptr->isem) < (int32)ethptr->rxRingSize) {
 
 			/* If the descriptor is owned by the DMA, stop */
 
@@ -102,6 +102,7 @@ interrupt	ethhandler(void)
 
 			/* Descriptor was processed; increment count	*/
 			count++;
+			signal(ethptr->isem);
 
 			/* Go to the next descriptor */
 
@@ -116,11 +117,14 @@ interrupt	ethhandler(void)
 							ethptr->rxRing;
 			}
 		}
-
+		resched_cntl(DEFER_STOP);
 		/* 'count' packets were received and are available,	*/
 		/*   so signal the semaphore accordingly		*/
 
-		signaln(ethptr->isem, count);
+		//signaln(ethptr->isem, count);
+		/*if(semcount(ethptr->isem) > 32) {
+			panic("Ethernet input sem greater than 32");
+		}*/
 	}
 
 	return;

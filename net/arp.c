@@ -77,6 +77,7 @@ status	arp_resolve (
 		/*	only one process can be	waiting at a time	*/
 
 		if (arptr->arstate == AR_PENDING) {
+			kprintf("arp_resolve: error1\n");
 			restore(mask);
 			return SYSERR;
 		}
@@ -87,6 +88,7 @@ status	arp_resolve (
 
 	slot = arp_alloc();
 	if (slot == SYSERR) {
+		kprintf("arp_resolve: error2\n");
 		restore(mask);
 		return SYSERR;
 	}
@@ -128,6 +130,7 @@ status	arp_resolve (
 		if (msg == TIMEOUT) {
 			continue;
 		} else if (msg == SYSERR) {
+			kprintf("arp_resolve: error3\n");
 			restore(mask);
 			return SYSERR;
 		} else {	/* entry is resolved */
@@ -138,6 +141,7 @@ status	arp_resolve (
 	/* If no response, return TIMEOUT */
 
 	if (msg == TIMEOUT) {
+		kprintf("arp_resolve: error4\n");
 		arptr->arstate = AR_FREE;   /* Invalidate cache entry */
 		restore(mask);
 		return TIMEOUT;

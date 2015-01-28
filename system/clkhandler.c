@@ -35,6 +35,10 @@ void	clkhandler()
 		}
 	}
 
+	if((--(*tmnext)) == 0) {
+		tmfire();
+	}
+
 	/* Decrement the preemption counter, and reschedule when the */
 	/*   remaining time reaches zero			     */
 

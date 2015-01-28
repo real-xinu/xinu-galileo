@@ -19,7 +19,13 @@ void	ip_in(
 	/* Verify checksum */
 
 	if (ipcksum(pktptr) != 0) {
-		kprintf("IP header checksum failed\n\r");
+		kprintf("IP header checksum failed %x\n\r", pktptr->net_ipcksum);
+		//kprintf("IP checksum: %x\n", ipcksum(pktptr));
+		ip_hton(pktptr);
+		kprintf("IP checksum %x\n", ipcksum(pktptr));
+		//tcp_ntoh(pktptr);
+		pdumph(pktptr);
+		panic("!");
 		freebuf((char *)pktptr);
 		return;
 	}
@@ -44,6 +50,10 @@ void	ip_in(
 	    case IP_UDP:
 		/* Skipping UDP checksum for now */
 		udp_ntoh(pktptr);
+		break;
+
+	    case IP_TCP:
+	    	tcp_ntoh(pktptr);
 		break;
 
 	    case IP_ICMP:
@@ -157,7 +167,7 @@ status	ip_send(
 		nxthop = NetData.iprouter;
 
 	}
-
+	//kprintf("ip_send: nxthop = %x\n", nxthop);
 	if (nxthop == 0) {	/* Dest. invalid or no default route	*/
 		freebuf((char *)pktptr);
 		return SYSERR;
@@ -167,6 +177,7 @@ status	ip_send(
 
 	retval = arp_resolve(nxthop, pktptr->net_ethdst);
 	if (retval != OK) {
+		kprintf("ip_send: arp_resolve failed\n");
 		freebuf((char *)pktptr);
 		return SYSERR;
 	}
@@ -193,6 +204,10 @@ void	ip_local(
 
 	    case IP_UDP:
 		udp_in(pktptr);
+		return;
+
+	    case IP_TCP:
+	    	tcp_in(pktptr);
 		return;
 
 	    case IP_ICMP:
@@ -248,6 +263,12 @@ status	ip_out(
 			pktptr->net_iccksum = 0xffff & htons(cksum);
 			break;
 
+	    case IP_TCP:
+	    		tcp_hton(pktptr);
+			cksum = tcpcksum(pktptr);
+			pktptr->net_tcpcksum = htons(cksum) & 0xffff;
+			break;
+
 	    default:
 			break;
 	}
@@ -267,7 +288,7 @@ status	ip_out(
 	eth_hton(pktptr);
 
 	/* Send packet over the Ethernet */
-
+	//kprintf("sending packet\n");
 	retval = write(ETHER0, (char*)pktptr, pktlen);
 	freebuf((char *)pktptr);
 

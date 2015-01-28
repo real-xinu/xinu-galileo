@@ -304,8 +304,30 @@ void	pdumph(struct  netpacket *pptr)
 					"OK":"failed");
 				break;
 			}
-			else
+			else if(pptr->net_ipproto == IP_TCP) {
+				kprintf("proto TCP (%d), length %d\n", pptr->net_ipproto,
+								pptr->net_iplen);
+				kprintf("\t%d.%d.%d.%d:%d > ",
+						(pptr->net_ipsrc>>24)&0xff,
+						(pptr->net_ipsrc>>16)&0xff,
+						(pptr->net_ipsrc>>8)&0xff,
+						(pptr->net_ipsrc)&0xff,
+						(pptr->net_tcpsport));
+				kprintf("\t%d.%d.%d.%d:%d ",
+						(pptr->net_ipdst>>24)&0xff,
+						(pptr->net_ipdst>>16)&0xff,
+						(pptr->net_ipdst>>8)&0xff,
+						(pptr->net_ipdst)&0xff,
+						(pptr->net_tcpdport));
+				kprintf("seq %x, ack seq %x ", pptr->net_tcpseq, pptr->net_tcpack);
+				kprintf("code %x ", pptr->net_tcpcode);
+				kprintf("wnd %d\n", pptr->net_tcpwindow);
 				break;
+			}
+			else {
+				break;
+			}
+
 		default:
 			kprintf("unknown\n");
 			break;

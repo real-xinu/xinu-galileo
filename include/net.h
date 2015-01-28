@@ -43,6 +43,17 @@ struct	netpacket	{
 	  uint16	net_icseq;	/* ICMP sequence number		*/
 	  byte		net_icdata[1500-28];/* ICMP payload (1500-above)*/
 	 };
+	 struct {
+	  uint16	net_tcpsport;	/* TCP Source port		*/
+	  uint16	net_tcpdport;	/* TCP destination port		*/
+	  int32		net_tcpseq;	/* TCP sequence no.		*/
+	  int32		net_tcpack;	/* TCP acknowledgement sequence	*/
+	  uint16	net_tcpcode;	/* TCP flags			*/
+	  uint16	net_tcpwindow;	/* TCP receiver window		*/
+	  uint16	net_tcpcksum;	/* TCP checksum			*/
+	  uint16	net_tcpurgptr;	/* TCP urgent pointer		*/
+	  byte		net_tcpdata[1500-40];/* TCP payload		*/
+	 };
 	};
 };
 #pragma pack()
