@@ -13,7 +13,7 @@
 
 /* Shell banner (assumes VT100) */
 
-#define	SHELL_BAN0	"\033[1;31m"
+#define	SHELL_BAN0	"\033[31;1m"
 #define SHELL_BAN1      "------------------------------------------"
 #define SHELL_BAN2      "   __    __   _____    _   _    _    _    "
 #define SHELL_BAN3      "   \\ \\  / /  |__ __|  | \\ | |  | |  | |   "
@@ -22,7 +22,7 @@
 #define SHELL_BAN6      "   / /  \\ \\  |     |  | | \\ |  \\  --  /   "
 #define SHELL_BAN7      "   --    --   -----    -   -     ----     "
 #define SHELL_BAN8      "------------------------------------------"
-#define	SHELL_BAN9	"\033[0;39m\n"
+#define	SHELL_BAN9	"\033[37;0m\033[40m\n"
 
 /* Messages shell displays for user */
 
