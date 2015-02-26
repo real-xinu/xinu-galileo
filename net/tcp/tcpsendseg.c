@@ -32,7 +32,7 @@ void	tcpsendseg(
 	pkt->net_tcpcode |= code;
 	if(pkt->net_tcpcode & TCPF_SYN) {
 		pkt->net_tcpcode += 0x1000;
-		data = pkt->net_tcpdata;
+		data = (char *)pkt->net_tcpdata;
 		data[0] = 2;
 		data[1] = 4;
 		*((uint16 *)&data[2]) = htons(1500-50);

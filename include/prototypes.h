@@ -614,6 +614,15 @@ extern	int32	tcp_init(void);
 /* in file tcp_out.c */
 extern	process	tcp_out(void);
 
+/* in file tcp_recv.c */
+extern	int32	tcp_recv(int32, char *, int32);
+
+/* in file tcp_register.c */
+extern	int32	tcp_register(uint32, uint16, int32);
+
+/* in file tcp_send.c */
+extern	int32	tcp_send(int32, char *, int32);
+
 /* in file tcpabort.c */
 extern	void	tcpabort(struct tcb *);
 
