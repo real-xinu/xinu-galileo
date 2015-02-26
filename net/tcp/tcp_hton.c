@@ -1,5 +1,3 @@
-
-
 /* tcp_hton.c  -  tcp_hton, tcp_ntoh */
 
 #include <xinu.h>

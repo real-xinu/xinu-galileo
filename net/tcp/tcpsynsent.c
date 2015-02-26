@@ -18,9 +18,14 @@ int32	tcpsynsent(
 		return SYSERR;
 	}
 
-	/* Move to SYN-RECEIVED state */
+	if((!(pkt->net_tcpcode & TCPF_ACK)) ||
+	   (pkt->net_tcpack != tcbptr->tcb_rnext)) {
+	   	return SYSERR;
+	}
 
-	tcbptr->tcb_state = TCB_SYNRCVD;
+	/* Move to ESTABLISHED state */
+
+	tcbptr->tcb_state = TCB_ESTD;
 
 	/* Set up parameters, such as the window size */
 

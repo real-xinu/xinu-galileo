@@ -76,8 +76,9 @@ void	tcpdisp(
 
 	/* Handle an incoming ACK */
 
-	if (pkt->net_tcpack < tcbptr->tcb_suna
-	    || pkt->net_tcpack > tcbptr->tcb_snext) {
+	if ((pkt->net_tcpcode & TCPF_ACK) &&
+	    (pkt->net_tcpack < tcbptr->tcb_suna
+	    || pkt->net_tcpack > tcbptr->tcb_snext)) {
 		if (state <= TCB_SYNRCVD) {
 			tcpreset (pkt);
 		} else {
