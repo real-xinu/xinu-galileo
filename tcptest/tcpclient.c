@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <string.h>
 
 int main() {
 
@@ -30,21 +31,19 @@ int main() {
 		return 1;
 	}
 	printf("connected!\n");
-/*	recv(sockfd, buf, 100, 0);
-	printf("Read from the server: %s\n", buf);
-	while(1) {
-		if(recv(sockfd, buf, 100, 0) == 0) {
-			close(sockfd);
-			break;
-		}
-	}*/
-	//send(sockfd, "Hello, tcpclient here!\n", 23, 0);
-	//close(sockfd);
-	char sendbuf[4*1024] = {0};
-	int i;
-	for(i = 0; i < (1024/4); i++) {
-		send(sockfd, sendbuf, 4*1024, 0);
-	}
+
+	char	name[50];
+	char	msg[20];
+
+	printf("Enter your name: ");
+	scanf("%s", name);
+
+	send(sockfd, name, 10, 0);
+	recv(sockfd, msg, 20, 0);
+	msg[19] = 0;
+	printf("%s\n", msg);
+
 	close(sockfd);
+
 	return 0;
 }

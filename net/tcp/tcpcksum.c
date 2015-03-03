@@ -69,7 +69,7 @@ uint16	tcpcksum(
 	/* Adjust the length to an even number for the computation */
 
 	if (len % 2) {
-		*( ((char *)pkt) + len ) = NULLCH;
+		*( ((char *)&pkt->net_tcpsport) + len ) = NULLCH;
 		len++;
 	}
 

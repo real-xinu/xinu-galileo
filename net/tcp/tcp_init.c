@@ -30,7 +30,7 @@ int32	tcp_init(void)
 		tcbptr->tcb_rblock = semcreate (0);
 		tcbptr->tcb_wblock = semcreate (0);
 
-		tcbptr->tcb_lq = mqcreate (5);
+		tcbptr->tcb_lq = mqcreate (15);
 
 		/* Start the refernce count at zero and mark the TCB free */
 

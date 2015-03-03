@@ -15,6 +15,46 @@ process	main(void)
 
 	nsaddr = 0x800a0c10;
 
+	tcp_init();
+
+	uint32	ipaddr;
+	dot2ip("128.10.135.32", &ipaddr);
+	kprintf("Server IP %x\n", ipaddr);
+
+	int32	slot = tcp_register(ipaddr, 12345, 1);
+	kprintf("slot = %d\n", slot);
+
+	char	name[] = "RajasK";
+	tcp_send(slot, name, 5);
+	char	msg[50] = {0};
+	tcp_recv(slot, msg, 50);
+	kprintf("%s\n", msg);
+
+	tcp_close(slot);
+
+	#if 0
+	int32	lslot = tcp_register(NetData.ipucast, 12345, 0);
+	int32	nslot, retval;
+	char	name[50];
+	char	msg[50];
+
+	while(TRUE) {
+		retval = tcp_recv(lslot, &nslot, 4);
+		if(retval == SYSERR) {
+			continue;
+		}
+
+		kprintf("New connection from: %x\n", tcbtab[nslot].tcb_rip);
+		retval = tcp_recv(nslot, name, 10);
+		name[retval] = 0;
+		memset(msg, 0, 50);
+		sprintf(msg, "Hello %s\n", name);
+		tcp_send(nslot, msg, strlen(msg));
+		//tcp_send(nslot, name, strlen(name));
+		kprintf("calling tcp_close\n");
+		tcp_close(nslot);
+	}
+
 	volatile tcpseq seq1 = 0x1b36e265;
 	volatile tcpseq seq2 = seq1;
 	volatile int32 datalen = 0, codelen = 1;
@@ -73,6 +113,7 @@ process	main(void)
 	}
 	//tcp_close(newslot);
 	tcp_close(slot);
+	#endif
 	kprintf("\n...creating a shell\n");
 	recvclr();
 	resume(shell_pid = create(shell, 8192, 50, "shell", 1, CONSOLE));

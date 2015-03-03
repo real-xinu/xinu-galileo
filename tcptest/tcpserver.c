@@ -19,7 +19,7 @@ int main() {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if(getaddrinfo(NULL, "12345", &hints, &res) == -1) {
+	if(getaddrinfo(NULL, "12348", &hints, &res) == -1) {
 		perror("getaddrinfo");
 		return 1;
 	}
@@ -40,8 +40,17 @@ int main() {
 
 		int new = accept(sockfd, &addr, &addrlen);
 		printf("new = %d\n", new);
+
+		char name[20]={0};
+		memset(name, 0, 20);
+		recv(new, name, 5, 0);
+		printf("Name received: %s\n", name);
+		char msg[50];
+		sprintf(msg, "Hello %s\n", name);
+		send(new, msg, strlen(msg), 0);
 		close(new);
 	}
 
+	close(sockfd);
 	return 0;
 }

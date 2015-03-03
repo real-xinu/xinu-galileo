@@ -19,9 +19,13 @@ int32	tcpsynsent(
 	}
 
 	if((!(pkt->net_tcpcode & TCPF_ACK)) ||
-	   (pkt->net_tcpack != tcbptr->tcb_rnext)) {
+	   (pkt->net_tcpack != tcbptr->tcb_snext)) {
 	   	return SYSERR;
 	}
+
+	/* Move past the SYN */
+
+	tcbptr->tcb_suna++;
 
 	/* Move to ESTABLISHED state */
 
@@ -37,6 +41,11 @@ int32	tcpsynsent(
 
 	tcpdata (tcbptr, pkt);
 	tcpack (tcbptr, TRUE);
+
+	if(tcbptr->tcb_readers) {
+		tcbptr->tcb_readers--;
+		signal(tcbptr->tcb_rblock);
+	}
 
 	return OK;
 }

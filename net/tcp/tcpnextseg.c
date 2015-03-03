@@ -12,7 +12,6 @@ int32	tcpnextseg(
 	)
 {
 	*offset = tcbptr->tcb_snext - tcbptr->tcb_suna;
-
 	if (tcbptr->tcb_sblen > *offset)
 		return (min (tcbptr->tcb_mss, tcbptr->tcb_sblen - *offset));
 
