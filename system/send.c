@@ -21,7 +21,7 @@ syscall	send(
 	}
 
 	prptr = &proctab[pid];
-	if ((prptr->prstate == PR_FREE) || prptr->prhasmsg) {
+	if (prptr->prhasmsg) {
 		restore(mask);
 		return SYSERR;
 	}
