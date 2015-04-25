@@ -90,11 +90,11 @@ devcall	rflread (
 
 	/* Copy data to application buffer and update file position */
 
-	for (i=0; i<htonl(resp.rf_len); i++) {
+	for (i=0; i<ntohl(resp.rf_len); i++) {
 		*buff++ = resp.rf_data[i];
 	}
-	rfptr->rfpos += htonl(resp.rf_len);
+	rfptr->rfpos += ntohl(resp.rf_len);
 
 	signal(Rf_data.rf_mutex);
-	return htonl(resp.rf_len);
+	return ntohl(resp.rf_len);
 }
