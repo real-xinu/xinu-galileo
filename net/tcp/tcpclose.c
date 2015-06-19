@@ -33,7 +33,8 @@ int32	tcp_close(
 	/* For an endpoint in the LISTEN state, close waiting children	*/
 
 	if (ptcb->tcb_state == TCB_LISTEN) {
-		while (ptcb->tcb_qlen--) {
+		while (ptcb->tcb_qlen > 0) {
+			ptcb->tcb_qlen--;
 			child = mqrecv (ptcb->tcb_lq);
 
 			/* Perhaps the child should abort rather than	*/
