@@ -40,8 +40,8 @@ void	ttyhandle_in (
 
 		/* Wrap buffer pointer	*/
 
-		if (typtr->tyotail >= &typtr->tyobuff[TY_OBUFLEN]) {
-			typtr->tyotail = typtr->tyobuff;
+		if (typtr->tyitail >= &typtr->tyibuff[TY_IBUFLEN]) {
+			typtr->tyitail = typtr->tyibuff;
 		}
 
 		/* Signal input semaphore and return */
@@ -156,7 +156,7 @@ void	ttyhandle_in (
 			}
 			*typtr->tyitail++ = ch;
 			signal(typtr->tyisem);
-			return;			
+			return;
 		}
 
 
