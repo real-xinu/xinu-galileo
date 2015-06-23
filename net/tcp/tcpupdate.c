@@ -47,6 +47,8 @@ int32	tcpupdate(
 				* tcbptr->tcb_mss
 				/ tcbptr->tcb_cwnd;
 		tcbptr->tcb_cwnd += adjust ? adjust : 1;
+		if (tcbptr->tcb_cwnd > tcbptr->tcb_rwnd)
+			tcbptr->tcb_cwnd = tcbptr->tcb_rwnd;
 		tcbptr->tcb_dupacks = 0;
 		tcbptr->tcb_rtocount = 0;
 	}
@@ -57,8 +59,8 @@ int32	tcpupdate(
 
 	/* Check for RTT measurement */
 
-	if (tcbptr->tcb_flags && TCBF_RTTPEND
-	    && SEQ_CMP(pkt->net_tcpack, tcbptr->tcb_rttseq) >= 0) {
+	if (tcbptr->tcb_flags & TCBF_RTTPEND
+			&& SEQ_CMP(pkt->net_tcpack, tcbptr->tcb_rttseq) >= 0) {
 		tcbptr->tcb_flags &= ~TCBF_RTTPEND;
 		tcprto (tcbptr);
 	}
