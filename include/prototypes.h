@@ -697,7 +697,7 @@ extern	int32	tcpupdate(struct tcb *, struct netpacket *);
 extern	int32	tcpwake(struct tcb *, int32);
 
 /* in file tcpxmit.c */
-extern	int32	tcpxmit(struct tcb *);
+extern	int32	tcpxmit(struct tcb *, tcpseq);
 
 /* in file timer.c */
 extern	void	tminit(void);

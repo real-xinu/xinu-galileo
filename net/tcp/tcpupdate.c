@@ -7,8 +7,8 @@
  *------------------------------------------------------------------------
  */
 int32	tcpupdate(
-	  struct tcb	*tcbptr,	/* Ptr to a TCB			*/
-	  struct netpacket *pkt		/* Ptr to a packet		*/
+	struct tcb	*tcbptr,		/* Ptr to a TCB			*/
+	struct netpacket *pkt		/* Ptr to a packet		*/
 	)
 {
 	int32		datalen;	/* Amount of data		*/

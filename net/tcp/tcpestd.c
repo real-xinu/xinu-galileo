@@ -26,7 +26,7 @@ int32	tcpestd(
 
 	/* Transmit a response immediately */
 
-	tcpxmit (tcbptr);
+	tcpxmit (tcbptr, tcbptr->tcb_snext);
 
 	return OK;
 }

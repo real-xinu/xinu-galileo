@@ -32,12 +32,12 @@ int32	tcpsynrcvd(
 
 	tcbptr->tcb_suna++;
 	if (tcpdata (tcbptr, pkt)) {
-		tcpxmit (tcbptr);
+		tcpxmit (tcbptr, tcbptr->tcb_snext);
 	}
 
 	/* Permit reading */
 
-	if (tcbptr->tcb_readers) {
+	if (tcbptr->tcb_readers > 0) {
 		tcbptr->tcb_readers--;
 		signal (tcbptr->tcb_rblock);
 	}

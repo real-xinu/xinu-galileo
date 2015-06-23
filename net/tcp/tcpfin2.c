@@ -22,7 +22,7 @@ int32	tcpfin2(
 		tcbptr->tcb_state = TCB_TWAIT;
 	}
 
-	tcpxmit (tcbptr);
+	tcpxmit (tcbptr, tcbptr->tcb_snext);
 
 	return OK;
 }

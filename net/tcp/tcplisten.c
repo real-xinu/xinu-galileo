@@ -72,7 +72,7 @@ int32	tcplisten(
 	signal (Tcp.tcpmutex);
 
 	tcbptr->tcb_qlen++;
-	if (tcbptr->tcb_readers) {
+	if (tcbptr->tcb_readers > 0) {
 		tcbptr->tcb_readers--;
 		signal (tcbptr->tcb_rblock);
 	}
@@ -89,13 +89,13 @@ int32	tcplisten(
 	pnewtcb->tcb_rnext = pnewtcb->tcb_rbseq = pkt->net_tcpseq + 1;
 	pnewtcb->tcb_rwnd = pnewtcb->tcb_ssthresh = pkt->net_tcpwindow;
 	pnewtcb->tcb_snext = pnewtcb->tcb_suna = pnewtcb->tcb_ssyn = 1;
-	kprintf("tcplisten: newtcb: rbseq %x, rnext %x\n", pnewtcb->tcb_rbseq, pnewtcb->tcb_rnext);
+	//kprintf("tcplisten: newtcb: rbseq %x, rnext %x\n", pnewtcb->tcb_rbseq, pnewtcb->tcb_rnext);
 	/* Handle any data in the segment (unexpected, but required) */
 
 	tcpdata (pnewtcb, pkt);
 
 	/* Can this deadlock? */
-	tcpxmit (pnewtcb);
+	tcpxmit (pnewtcb, pnewtcb->tcb_snext);
 
 	signal (pnewtcb->tcb_mutex);
 

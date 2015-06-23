@@ -50,7 +50,7 @@ process	tcp_out(void)
 
 		case TCBC_SEND:
 /*DEBUG*/ //kprintf("tcp_out: Command SEND\n");
-			tcpxmit (tcbptr);
+			tcpxmit (tcbptr, tcbptr->tcb_snext);
 			break;
 
 		/* Send a delayed ACK */
@@ -68,13 +68,12 @@ process	tcp_out(void)
 			tcbptr->tcb_ssthresh = max(tcbptr->tcb_snext
 						 - tcbptr->tcb_suna,
 						 tcbptr->tcb_mss);
-			tcbptr->tcb_snext = tcbptr->tcb_suna;
 			tcbptr->tcb_dupacks = 0;
 			tcbptr->tcb_rto <<= 1;
 			if (++tcbptr->tcb_rtocount > TCP_MAXRTO)
 				tcpabort (tcbptr);
 			else
-				tcpxmit (tcbptr);
+				tcpxmit (tcbptr, tcbptr->tcb_suna);
 			break;
 
 		/* TCB has expired, so mark it closed */

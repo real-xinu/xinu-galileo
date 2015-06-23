@@ -51,9 +51,9 @@ void	tcpdisp(
 	)
 {
 	int32		state;		/* state of the TCB		*/
-/*DEBUG*/ char *dnames[] = {"tcpnull","tcplisten","tcpsynsent","tcpsynrcvd",
-/*DEBUG*/	"tcpestd","tcpfin1","tcpfin2","tcpcwait","tcpclosing",
-/*DEBUG*/	"tcplastack","tcptwait"};
+/*DEBUG*///char *dnames[] = {"tcpnull","tcplisten","tcpsynsent","tcpsynrcvd",
+/*DEBUG*///	"tcpestd","tcpfin1","tcpfin2","tcpcwait","tcpclosing",
+/*DEBUG*///	"tcplastack","tcptwait"};
 
 	/* Obtain the state from the TCB */
 
@@ -84,7 +84,7 @@ void	tcpdisp(
 		} else {
 			tcpack (tcbptr, TRUE);
 		}
-		return; 
+		return;
 	}
 
 	/* Handle SYN */

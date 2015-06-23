@@ -42,7 +42,7 @@ void	tminit(void)
 	tmlock = semcreate (1);
 
 	/* Create the timer process */
-	
+
 	resume (create ((int *)timer, TMSTK, TMPRIO, TMNAME, 0, 0));
 }
 

@@ -46,7 +46,7 @@ int32	tcpfin1(
 		/* ACK arrived and ew move to FIN-WAIT2 */
 		tcbptr->tcb_state = TCB_FIN2;
 
-	tcpxmit (tcbptr);
+	tcpxmit (tcbptr, tcbptr->tcb_snext);
 
 	return OK;
 }
