@@ -31,6 +31,7 @@ int32	tcpwake(
 		while (tcbptr->tcb_writers > 0) {
 			signal (tcbptr->tcb_wblock);
 			tcbptr->tcb_writers--;
+		}
 	}
 
 	/* Return count */
