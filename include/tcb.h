@@ -86,7 +86,7 @@ struct tcb {
 	tcpseq		tcb_sfin;	/* Outgoing FIN seqno		*/
 	tcpseq		tcb_spush;	/* Send PSH seqno		*/
 	tcpseq		tcb_rttseq;	/* Seqno of RTT measurement	*/
-	int32		tcb_rtttime;	/* Time of RTT measurement	*/
+	uint32		tcb_rtttime;	/* Time of RTT measurement	*/
 	int32		tcb_cwnd;	/* JK88 cwnd			*/
 	int32		tcb_ssthresh;	/* JK88 ssthresh		*/
 	int32		tcb_dupacks;	/* Duplicate acks for suna	*/

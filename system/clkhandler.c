@@ -1,6 +1,7 @@
 /* clkhandler.c - clkhandler */
 
 #include <xinu.h>
+extern uint32 ctr1000;
 
 /*------------------------------------------------------------------------
  * clkhandler - high level clock interrupt handler
@@ -38,6 +39,9 @@ void	clkhandler()
 	if((--(*tmnext)) == 0) {
 		tmfire();
 	}
+
+	/* increment tcp timer */
+	ctr1000++;
 
 	/* Decrement the preemption counter, and reschedule when the */
 	/*   remaining time reaches zero			     */
