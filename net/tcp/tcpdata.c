@@ -21,6 +21,7 @@ int32	tcpdata(
 	tcpseq	endseq;			/* Ending sequence number after	*/
 					/*   new data that arrived	*/
 	char	*data;			/* Ptr used during data copy	*/
+	char	*wt;			/* Ptr used during data copy	*/
 
 	/* Compute the segment data size */
 
@@ -43,7 +44,6 @@ int32	tcpdata(
 	/* If the reader cannot read this, RST it */
 
 	if (tcbptr->tcb_flags & TCBF_RDDONE && datalen) {
-		//kprintf("tcpdata: error1\n");
 		tcpreset (pkt);
 		return SYSERR;
 	}
@@ -52,7 +52,6 @@ int32	tcpdata(
 
 	if (SEQ_CMP (pkt->net_tcpseq + datalen + codelen,
 		     tcbptr->tcb_rbseq) <= 0) {
-		//kprintf("tcpdata: error2, tcpseq %x, datalen %d, codelen %d, rbseq %x\n", pkt->net_tcpseq, datalen, codelen, tcbptr->tcb_rbseq);
 		tcbptr->tcb_flags |= TCBF_NEEDACK;
 		return SYSERR;
 	}
@@ -61,9 +60,6 @@ int32	tcpdata(
 
 	if (SEQ_CMP (pkt->net_tcpseq + datalen + codelen,
 		     tcbptr->tcb_rbseq + tcbptr->tcb_rbsize) > 0) {
-		//kprintf("tcpdata: error3, tcpseq %x, datalen %d, codelen %d, rbseq %x, rbsize %d\n", pkt->net_tcpseq, datalen, codelen, tcbptr->tcb_rbseq, tcbptr->tcb_rbsize);
-		//kprintf("%d\n", SEQ_CMP(pkt->net_tcpseq+datalen+codelen,tcbptr->tcb_rbseq+tcbptr->tcb_rbsize));
-		//kprintf("%d\n", SEQ_CMP(pkt->net_tcpseq+datalen+codelen,tcbptr->tcb_rbseq+tcbptr->tcb_rbsize) > 0);
 		tcbptr->tcb_flags |= TCBF_NEEDACK;
 		return SYSERR;
 	}
@@ -74,7 +70,6 @@ int32	tcpdata(
 		offset = tcbptr->tcb_rbseq - pkt->net_tcpseq;
 		datalen -= offset;
 	}
-
 	/* Move to start of new data in segment */
 
 	data = (char *)&pkt->net_tcpsport + TCP_HLEN(pkt) + offset;
@@ -82,11 +77,13 @@ int32	tcpdata(
 	/* Copy data from segment to TCB */
 
 	i = 0;
-	j = tcbptr->tcb_rbdata + pkt->net_tcpseq - tcbptr->tcb_rbseq + offset;
+	wt = tcbptr->tcb_rbdata + pkt->net_tcpseq - tcbptr->tcb_rbseq + offset;
+	if (wt >= tcbptr->tcb_rbend)
+		wt -= tcbptr->tcb_rbsize;
 	while (i < datalen) {
-		if (j >= tcbptr->tcb_rbsize)
-			j %= tcbptr->tcb_rbsize;
-		tcbptr->tcb_rbuf[j++] = data[i++];
+		if (wt >= tcbptr->tcb_rbend)
+			wt = tcbptr->tcb_rbuf;
+		*wt++ = data[i++];
 	}
 
 	/* compute the ending sequence number after the new data */
@@ -96,16 +93,15 @@ int32	tcpdata(
 	/* See if segment arrived in order */
 
 	if (SEQ_CMP (pkt->net_tcpseq + offset,
-		     tcbptr->tcb_rbseq + tcbptr->tcb_rblen) <= 0) {
+				tcbptr->tcb_rbseq + tcbptr->tcb_rblen) <= 0) {
 		/* Yes, the data is in order */
 		if (endseq - tcbptr->tcb_rbseq >= tcbptr->tcb_rblen) {
 			tcbptr->tcb_rblen = endseq - tcbptr->tcb_rbseq;
 
 			tcbptr->tcb_rnext = endseq + codelen;
-			//kprintf("tcpdata: tcp_rnext = %x\n", tcbptr->tcb_rnext);
 		}
 	} else {
-		//kprintf("tcpdata: out of order segment\n");
+		kprintf("tcpdata: out of order segment\n");
 		/* We should deal with out-of-order segments */
 	}
 
@@ -120,7 +116,7 @@ int32	tcpdata(
 
 	if (datalen || codelen) {
 		tcbptr->tcb_flags |= TCBF_NEEDACK;
-		if (tcbptr->tcb_readers) {
+		if (tcbptr->tcb_readers > 0) {
 			tcbptr->tcb_readers--;
 			signal (tcbptr->tcb_rblock);
 		}

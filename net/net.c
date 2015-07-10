@@ -55,11 +55,11 @@ void	net_init (void)
 
 	/* Create the IP output process */
 
-	resume(create(ipout, NETSTK, NETPRIO, "ipout", 0, NULL));
+	resume(create(ipout, NETSTK, NETOUTPRIO, "ipout", 0, NULL));
 
 	/* Create a network input process */
 
-	resume(create(netin, NETSTK, NETPRIO, "netin", 0, NULL));
+	resume(create(netin, NETSTK, NETINPRIO, "netin", 0, NULL));
 }
 
 
@@ -103,7 +103,7 @@ process	netin ()
 		    case ETH_IP:			/* Handle IP	*/
 			ip_in(pkt);
 			continue;
-	
+
 		    case ETH_IPv6:			/* Handle IPv6	*/
 			freebuf((char *)pkt);
 			continue;

@@ -81,7 +81,6 @@ int32	tcpxmit(
 		if ( ( (len + codelen) == 0 )
 				|| ( (pipe + len + codelen) > tcbptr->tcb_cwnd ) ) {
 			if (sent == 0) {
-				//kprintf("calling tcpack\n");
 				tcpack (tcbptr, FALSE);
 			}
 			return OK;

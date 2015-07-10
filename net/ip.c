@@ -230,7 +230,7 @@ status	ip_out(
 	)
 {
 	uint16	cksum;			/* Checksum in host byte order	*/
-	int32	len;			/* Length of ICMP message	*/	
+	int32	len;			/* Length of ICMP message	*/
 	int32	pktlen;			/* Length of entire packet	*/
 	int32	retval;			/* Value returned by write	*/
 
@@ -483,5 +483,5 @@ status	ip_enqueue(
 	}
 	signal(iptr->iqsem);
 	restore(mask);
-	return OK;	
+	return OK;
 }

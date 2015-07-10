@@ -22,7 +22,8 @@ void	tcbclear(
 	ptcb->tcb_rwnd = 0;
 	ptcb->tcb_rfin = 0;
 	ptcb->tcb_rbsize = 0;
-	ptcb->tcb_rbdata = 0;
+	ptcb->tcb_rbdata = NULL;
+	ptcb->tcb_rbend = NULL;
 	ptcb->tcb_rbseq = 0;
 	ptcb->tcb_rblen = 0;
 	ptcb->tcb_rbuf = NULL;

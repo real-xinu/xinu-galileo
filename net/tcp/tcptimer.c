@@ -13,7 +13,6 @@ void	tcptmset(
 	)
 {
 	/* Increment reference count for TCB */
-
 	tcbref (tcbptr);
 
 	/* Set the event */
@@ -32,7 +31,6 @@ void	tcptmdel(
 	)
 {
 	/* Delete the event */
-
 	if (tmdel (Tcp.tcpcmdq, TCBCMD(tcbptr, message)) == OK) {
 
 		/* Decrement the refernce count */

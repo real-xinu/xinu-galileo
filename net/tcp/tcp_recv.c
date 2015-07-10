@@ -7,16 +7,17 @@
  *------------------------------------------------------------------------
  */
 int32	tcp_recv(
-	int32	slot,	/* Slot in TCB Table	*/
-	char	*data,	/* Ptr to buffer	*/
-	int32	len	/* Size of buffer	*/
-	)
+		int32	slot,	/* Slot in TCB Table	*/
+		char	*data,	/* Ptr to buffer	*/
+		int32	len	/* Size of buffer	*/
+		)
 {
 	struct	tcb	*tcbptr;	/* Ptr to a TCB			*/
 	int32		i;		/* Iteratives through data	*/
 	int32		j;		/* Counter used during copy	*/
 	int32		curlen;		/* Amount of data available	*/
 	pid32		child;		/* Process ID of child		*/
+	char *		end;		/* addr of the ring buffer until data has to be copied */
 
 	if((slot < 0) || (slot >= Ntcp)) {
 		return SYSERR;
@@ -49,7 +50,7 @@ int32	tcp_recv(
 		/* Read on a passive socket acts like accept() */
 
 		while (tcbptr->tcb_qlen == 0
-		       && tcbptr->tcb_state != TCB_CLOSED) {
+				&& tcbptr->tcb_state != TCB_CLOSED) {
 			tcbptr->tcb_readers++;
 			signal (tcbptr->tcb_mutex);
 			wait (tcbptr->tcb_rblock);
@@ -82,11 +83,11 @@ int32	tcp_recv(
 		/* Handle read after FIN */
 
 		if ((tcbptr->tcb_flags & TCBF_FINSEEN)
-		    && tcbptr->tcb_rbseq == tcbptr->tcb_rfin)
+				&& tcbptr->tcb_rbseq == tcbptr->tcb_rfin)
 			break;
 
 		if (tcbptr->tcb_flags & TCBF_RDDONE
-		    && tcbptr->tcb_rblen == 0)
+				&& tcbptr->tcb_rblen == 0)
 			break;
 
 		/* A test is needed here: if another reader has already	*/
@@ -106,23 +107,25 @@ int32	tcp_recv(
 		curlen = min(len - i, tcbptr->tcb_rblen);
 		if (tcbptr->tcb_flags & TCBF_RPUSHOK)
 			curlen = min (curlen,
-				      tcbptr->tcb_rpush - tcbptr->tcb_rbseq);
+					tcbptr->tcb_rpush - tcbptr->tcb_rbseq);
 
 		/* Copy data to caller's buffer */
 
-		for (j = 0; j < curlen; j++) {
-			data[i++] = tcbptr->tcb_rbuf[(tcbptr->tcb_rbdata + j)
-				% tcbptr->tcb_rbsize];
+		end = tcbptr->tcb_rbdata + curlen;
+		if (end >= tcbptr->tcb_rbend)
+			end -= tcbptr->tcb_rbsize;
+		while (tcbptr->tcb_rbdata != end) {
+			data[i++] = *tcbptr->tcb_rbdata++;
+			if (tcbptr->tcb_rbdata >= tcbptr->tcb_rbend)
+				tcbptr->tcb_rbdata = tcbptr->tcb_rbuf;
 		}
-		tcbptr->tcb_rbdata = (tcbptr->tcb_rbdata + curlen)
-				% tcbptr->tcb_rbsize;
 		tcbptr->tcb_rbseq += curlen;
 		tcbptr->tcb_rblen -= curlen;
 
 		/* If data was pushed, reset PUSH flag */
 
 		if (tcbptr->tcb_flags & TCBF_RPUSHOK
-		    && tcbptr->tcb_rbseq == tcbptr->tcb_rpush) {
+				&& tcbptr->tcb_rbseq == tcbptr->tcb_rpush) {
 			tcbptr->tcb_flags &= ~TCBF_RPUSHOK;
 			break;
 		}

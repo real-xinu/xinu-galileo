@@ -92,6 +92,8 @@ int32	tcp_register (
 			return SYSERR;
 		}
 		tcbptr->tcb_rbsize = 65535;
+		tcbptr->tcb_rbdata = tcbptr->tcb_rbuf;
+		tcbptr->tcb_rbend = tcbptr->tcb_rbuf + tcbptr->tcb_rbsize;
 		tcbptr->tcb_sbuf = (char *)getmem (65535);
 		if (tcbptr->tcb_sbuf == (char *)SYSERR) {
 			freemem ((char *)tcbptr->tcb_rbuf, 65535);
@@ -117,7 +119,6 @@ int32	tcp_register (
 		tcbptr->tcb_lip = lip;
 
 		/* Assign next local port */
-
 
 		tcbptr->tcb_lport = Tcp.tcpnextport++;
 		if (Tcp.tcpnextport > 63000) {
@@ -153,7 +154,7 @@ int32	tcp_register (
 			    && tcbtab[i].tcb_lport == port) {
 
 				/* Duplicates prior connection */
- 
+
 				signal (Tcp.tcpmutex);
 				return SYSERR;
 			}

@@ -73,7 +73,8 @@ struct tcb {
 	tcpseq		tcb_rfin;	/* Receiver-side FIN seqno	*/
 	tcpseq		tcb_rpush;	/* Received PSH seqno		*/
 	int32		tcb_rbsize;	/* Receive buffer size		*/
-	int32		tcb_rbdata;	/* First data byte in buffer	*/
+	char *		tcb_rbdata;	/* First data byte in buffer	*/
+	char *		tcb_rbend;	/* End of the buffer	*/
 	tcpseq		tcb_rbseq;	/* Receive buffer 1st seqno	*/
 	int32		tcb_rblen;	/* Length of data in buffer	*/
 	char *		tcb_rbuf;	/* Receive buffer		*/
