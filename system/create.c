@@ -10,7 +10,7 @@ local	int newpid();
  */
 pid32	create(
 	  void		*funcaddr,	/* Address of the function	*/
-	  uint32	ssize,		/* Stack size in words		*/
+	  uint32	ssize,		/* Stack size in bytes		*/
 	  pri16		priority,	/* Process priority > 0		*/
 	  char		*name,		/* Name (for debugging)		*/
 	  uint32	nargs,		/* Number of args that follow	*/
