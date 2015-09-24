@@ -48,8 +48,6 @@ void	nulluser()
 	/* Initialize the system */
 		
 	sysinit();
-
-	kprintf("\n\r%s\n\n\r", VERSION);
 	
 	/* Output Xinu memory layout */
 	free_mem = 0;
@@ -106,6 +104,9 @@ static	void	sysinit()
 	/* Platform Specific Initialization */
 
 	platinit();
+	
+	
+	kprintf("\033[39;49m\n\r%s\n\n\r", VERSION);
 
 	/* Initialize the interrupt vectors */
 

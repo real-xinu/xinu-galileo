@@ -1,25 +1,37 @@
-/* rand.c - srand, rand */
+/* rand.c - rand, rand_r, srand */
 
-static unsigned long randx = 1;
+#include <stdlib.h>
+
+static unsigned int rand_seed = 1;
 
 /*------------------------------------------------------------------------
- *  srand  -  Sets the random seed.
+ *  rand  -  Calculates a uniform random number [0, RAND_MAX]
  *------------------------------------------------------------------------
  */
-void		srand(
-			  unsigned long		x			/* random seed				*/
-			)
+int		rand()
 {
-    randx = x;
+    return rand_r(&rand_seed);
 }
 
 /*------------------------------------------------------------------------
- *  rand  -  Generates a random long.
+ *  rand_r  -  Calculates a uniform random number [0, RAND_MAX]
  *------------------------------------------------------------------------
  */
-unsigned long		rand(
-					  void
-					)
+int		rand_r(
+			  unsigned int*		seedp
+			)
 {
-    return (((randx = randx * 1103515245 + 12345) >> 16) & 077777);
+	*seedp = 16807 * (*seedp) % (RAND_MAX + 1);
+    return (int)(*seedp);
+}
+
+/*------------------------------------------------------------------------
+ *  srand  -  Set the seed for rand
+ *------------------------------------------------------------------------
+ */
+void		srand(
+			  unsigned int		seed
+			)
+{
+    rand_seed = seed;
 }

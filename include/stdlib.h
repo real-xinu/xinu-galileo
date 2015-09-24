@@ -5,13 +5,15 @@
  */
 /* Embedded Xinu, Copyright (C) 2009.  All rights reserved. */
 
+#define RAND_MAX 2147483646
+
 int abs(int);
-int32 labs(int32);
+long labs(long);
 int atoi(char *);
-int32 atol(char *);
+long atol(char *);
 void bzero(void *, int);
 void qsort(char *, unsigned int, int, int (*)(void));
-uint32 rand(void);
+int rand(void);
 void srand(unsigned int);
 void *malloc(unsigned int nbytes);
 void free(void *pmem);
