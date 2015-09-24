@@ -4,12 +4,14 @@
 
 #define	MAXSTR	80
 #define NULL    0
+#define PRECISION 6
 
 static void _prtl10(long num, char *str);
 static void _prtl8(long num, char *str);
 static void _prtX16(long num, char *str);
 static void _prtl16(long num, char *str);
 static void _prtl2(long num, char *str);
+static void _prtdbl(double num, int precision, char *str);
 
 /*------------------------------------------------------------------------
  *  _doprnt  -  Format and write output using 'func' to write characters.
@@ -38,6 +40,7 @@ void	_doprnt(
     char sign;                  /* Set to '-' for negative decimals     */
     char digit1;                /* Offset to add to first numeric digit */
     long larg;
+    double darg;
 
     for (;;)
     {
@@ -132,6 +135,16 @@ void	_doprnt(
                 sign = '-';
             }
             _prtl10(larg, str);
+            break;
+            
+        case 'f':
+            darg = va_arg(ap, double);
+
+            if (darg < 0)
+            {
+                sign = '-';
+            }
+            _prtdbl(darg, PRECISION, str);
             break;
 
         case 'u':
@@ -271,7 +284,7 @@ void	_doprnt(
  *------------------------------------------------------------------------
  */
 static void		_prtl10(
-				  long		num,
+				  long		num, 
 				  char		*str
 				)
 {
@@ -391,4 +404,29 @@ static void		_prtl2(
         i++;
     while (i >= 0)
         *str++ = temp[i--];
+}
+
+/*------------------------------------------------------------------------
+ *  _prtdbl  -  Converts double to binary string.
+ *------------------------------------------------------------------------
+ */
+static void		_prtdbl(
+				  double	num,
+				  int		precision,
+				  char		*str
+				)
+{
+    int i,mp;
+    long w,p;
+ 
+	for(i = 0, mp = 1; i < precision; i++, mp *= 10);
+    
+    num = ((num<0) ? -(num) : (num));
+    w = (long)(num);
+    p = (long)(num * mp) - (long)(w * mp);
+    
+    _prtl10(w, str);
+    while(*str != '\0') { str++; }
+    *str++ = '.';
+    _prtl10(p, str);
 }
