@@ -1,9 +1,10 @@
 /*  main.c  - main */
 
 #include <xinu.h>
+#include <math.h>
 
 process	main(void)
-{
+{   
 	recvclr();
 	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
 
