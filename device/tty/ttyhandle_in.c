@@ -97,7 +97,7 @@ void	ttyhandle_in (
 		if (ch == typtr->tyikillc && typtr->tyikill) {
 			typtr->tyitail -= typtr->tyicursor;
 			if (typtr->tyitail < typtr->tyibuff) {
-				typtr->tyihead += TY_IBUFLEN;
+				typtr->tyitail += TY_IBUFLEN;
 			}
 			typtr->tyicursor = 0;
 			eputc(TY_RETURN, typtr, csrptr);
