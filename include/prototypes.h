@@ -567,8 +567,8 @@ extern	syscall	signal(sid32);
 extern	syscall	signaln(sid32, int32);
 
 /* in file sleep.c */
-extern	syscall	sleepms(uint32);
-extern	syscall	sleep(uint32);
+extern	syscall	sleepms(int32);
+extern	syscall	sleep(int32);
 
 /* in file start.S */
 extern	int32	inb(int32);
