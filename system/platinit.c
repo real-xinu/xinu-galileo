@@ -1,9 +1,25 @@
 /* platinit.c - platinit */
 #include <xinu.h>
 
-#define QUARK_CONS_PORT		1		/* Index of console UART */
+#define QUARK_CONS_PORT	1		/* Index of console UART */
 #define QUARK_CONS_BAR_INDEX	0		/* Index of console's MMIO
 						   base address register */
+#define QUARK_CPUID_VALUE	0x590		/* CPUID value for Intel
+						   Quark microprocessor */
+#define CPUID_MAJOR_MASK	0xfffffff0	/* Mask for CPUID w/o 
+						   processor stepping value */
+
+
+/*------------------------------------------------------------------
+ * cpu_is_quark - return true if the processor is an Intel Quark,
+ * false otherwise.
+ *------------------------------------------------------------------
+ */
+int cpu_is_quark(void)
+{
+	return (cpuid() & CPUID_MAJOR_MASK) == QUARK_CPUID_VALUE;
+}
+
 /*------------------------------------------------------------------
  * console_init - initialize the serial console.  The serial console
  * is on the second memory-mapped 16550 UART device.
@@ -43,8 +59,10 @@ void	platinit()
 	/* Initialize the console serial port */
 	console_init();
 
-	/* Remove Isolated Memory Region Protections */
-	remove_irm_protections();
+	if (cpu_is_quark()) {
+		/* Remove Quark Isolated Memory Region Protections */
+		remove_irm_protections();
+	}
 
 	/* Intel Quark Irq Routing */
 	quark_irq_routing();

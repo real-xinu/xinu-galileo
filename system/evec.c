@@ -40,7 +40,6 @@ void	setirmask(void);	/* Set interrupt mask			*/
 
 extern	struct	idt idt[NID];	/* Interrupt descriptor table		*/
 extern	long	defevec[];	/* Default exception vector		*/
-extern	int	lidt();		/* Load the interrupt descriptor table	*/
 
 /*------------------------------------------------------------------------
  * initevec  -  Initialize exception vectors to a default handler
