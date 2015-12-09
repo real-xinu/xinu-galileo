@@ -162,7 +162,8 @@ extern	void	icmp_in(struct netpacket *);
 extern	int32	icmp_register(uint32);
 extern	int32	icmp_recv(int32, char *, int32, uint32);
 extern	status	icmp_send(uint32, uint16, uint16, uint16, char *, int32);
-extern	struct	netpacket *icmp_mkpkt(uint32, uint16, uint16, uint16, char *, int32);
+extern	struct	netpacket *icmp_mkpkt(uint32, uint16, uint16, uint16,
+				      char *, int32);
 extern	status	icmp_release(int32);
 extern	uint16	icmp_cksum(char *, int32);
 extern	void	icmp_hton(struct netpacket *);
@@ -510,7 +511,8 @@ extern	devcall	rfsinit(struct dentry *);
 extern	devcall	rfsopen(struct dentry  *devptr, char *, char *);
 
 /* in file rfscomm.c */
-extern	int32	rfscomm(struct rf_msg_hdr *, int32, struct rf_msg_hdr *, int32);
+extern	int32	rfscomm(struct rf_msg_hdr *, int32,
+			struct rf_msg_hdr *, int32);
 
 /* in file rdsClose.c */
 extern	devcall	rdsClose(struct dentry *);
@@ -534,7 +536,8 @@ extern	devcall	rdsWrite(struct dentry *, char *, int32);
 extern	struct	rdbuff * rdsbufalloc(struct rdscblk *);
 
 /* in file rdscomm.c */
-extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *, int32, struct rdscblk *);
+extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
+			int32, struct rdscblk *);
 
 /* in file rdsprocess.c */
 extern	void	rdsprocess(struct rdscblk *);
@@ -624,7 +627,8 @@ extern	void	udp_init(void);
 extern	void	udp_in(struct netpacket *);
 extern	uid32	udp_register(uint32, uint16, uint16);
 extern	int32	udp_recv(uid32, char *, int32, uint32);
-extern	int32	udp_recvaddr(uid32, uint32 *, uint16 *, char *, int32, uint32);
+extern	int32	udp_recvaddr(uid32, uint32 *, uint16 *, char *,
+			     int32, uint32);
 extern	status	udp_send(uid32, char *, int32);
 extern	status	udp_sendto(uid32, uint32, uint16, char *, int32);
 extern	status	udp_release(uid32);
@@ -654,9 +658,9 @@ extern	void	xdone(void);
 extern	syscall	yield(void);
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
-#define	htons(x)   ( ( 0xff & ((x)>>8) ) | ( (0xff & (x)) << 8 ) )
-#define	htonl(x)   (  (((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
-		      (((x)<< 8) & 0x00ff0000) | (((x)<<24) & 0xff000000) )
-#define	ntohs(x)   ( ( 0xff & ((x)>>8) ) | ( (0xff & (x)) << 8 ) )
-#define	ntohl(x)   (  (((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
-		      (((x)<< 8) & 0x00ff0000) | (((x)<<24) & 0xff000000) )
+#define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
+#define	htonl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
+		   (((x)<<8) & 0x00ff0000) | (((x)<<24) & 0xff000000))
+#define	ntohs(x)  ((0xff & ((x)>>8)) | ( (0xff & (x)) << 8))
+#define	ntohl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
+		   (((x)<<8) & 0x00ff0000) | (((x)<<24) & 0xff000000))
