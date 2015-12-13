@@ -49,6 +49,8 @@ int32	tcplisten(
 		return SYSERR;
 	}
 	pnewtcb->tcb_rbsize = 65535;
+	pnewtcb->tcb_rbdata = pnewtcb->tcb_rbuf;
+	pnewtcb->tcb_rbend = pnewtcb->tcb_rbuf + pnewtcb->tcb_rbsize;
 	//pnewtcb->tcb_rbsize = 25*1024;
 	pnewtcb->tcb_sbuf = (char *)getmem (65535);
 	if (pnewtcb->tcb_sbuf == (char *)SYSERR) {
