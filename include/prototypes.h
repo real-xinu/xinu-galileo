@@ -394,6 +394,28 @@ extern	syscall	ptsend(int32, umsg32);
 /* in file putc.c */
 extern	syscall	putc(did32, char);
 
+/* in file ptycontrol.c */
+extern	devcall	ptycontrol(struct dentry *, int32, int32, int32);
+
+/* in file ptygetc.c */
+extern	devcall	ptygetc(struct dentry *);
+
+/* in file ptyhandle_in.c */
+extern	void	ptyhandle_in(struct ptycblk *, char next);
+
+/* in file ptyinit.c */
+extern	devcall	ptyinit(struct dentry *);
+
+/* in file ptyputc.c */
+extern	devcall	ptyputc(struct dentry *, char);
+
+/* in file ptyread.c */
+extern	devcall	ptyread(struct dentry *, char *, int32);
+
+/* in file ptywrite.c */
+extern	devcall	ptywrite(struct dentry *, char *, int32);
+
+
 /* in file quark_irq.c */
 extern	int32	quark_irq_routing(void);
 

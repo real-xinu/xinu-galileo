@@ -32,6 +32,14 @@ tty:
 		-w ttywrite     -s ioerr        -n ttycontrol
 		-intr ttydispatch
 
+/* type of a pty device */
+pty:
+	on nothing
+		i ptyinit      -o ionull       -c ionull
+		r ptyread      -g ptygetc      -p ptyputc
+		w ptywrite     -s ioerr        -n ptycontrol
+		intr ionull
+
 /* type of a ethernet device */
 eth:
 	on quark_eth
@@ -97,7 +105,7 @@ lfl:
 		-r lflread	-g lflgetc	-p lflputc
 		-w lflwrite	-s lflseek	-n lflcontrol
 		-intr ionull
-		
+
 /* type of namespace device */
 nam:
 	on top
@@ -114,6 +122,9 @@ nam:
    /* Define the console device to be a tty and specify CSR*/
    CONSOLE is tty  on uart  csr 0001770 -irq 0052
 
+   /* Define the pseudo-console to be a pty*/
+   PCONSOLE is pty  on nothing
+
    /* Define a null device */
    NULLDEV is null on nothing
 
@@ -125,7 +136,7 @@ nam:
 
    /* Define a remote disk system device */
    RDISK is rds on udp
-   
+
    /* Define a ram disk device */
    RAM0 is ram on mem
 
@@ -158,7 +169,7 @@ nam:
    LFILE3 is lfl on lfs
    LFILE4 is lfl on lfs
    LFILE5 is lfl on lfs
-   
+
    /* Define a SD memory card device */
    /*
    SDMC is sdmc on sd csr 0 -irq 0051

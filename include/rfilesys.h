@@ -18,7 +18,7 @@
 /* Global data for the remote server */
 
 #ifndef	RF_SERVER_IP
-#define	RF_SERVER_IP	"128.10.3.51"
+#define	RF_SERVER_IP	"128.10.136.53"
 #endif
 
 #ifndef	RF_SERVER_PORT

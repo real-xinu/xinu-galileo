@@ -32,6 +32,7 @@ MKVERS		=	$(TOPDIR)/compile/bin/mkvers
 REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c 	\
 			-s $(TOPDIR)/lib			\
 			-s $(TOPDIR)/device/tty			\
+			-s $(TOPDIR)/device/pty			\
 			-s $(TOPDIR)/device/nam			\
 			-s $(TOPDIR)/device/eth			\
 			-s $(TOPDIR)/device/rds			\
@@ -41,7 +42,8 @@ REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c 	\
 			-s $(TOPDIR)/net  'arp_dump*'  		\
 				'dhcp_dump*'  pxe.c		\
 			-s $(TOPDIR)/net/tcp			\
-			-s $(TOPDIR)/shell  'xsh_rdstest*'
+			-s $(TOPDIR)/shell  'xsh_rdstest*'	\
+			-s $(TOPDIR)/ssh
 
 INCLUDE		=	-I$(TOPDIR)/include
 DEFS		= 	-DBSDURG -DVERSION=\""`cat $(VERSIONFILE)`"\"
@@ -55,6 +57,30 @@ LDFLAGS = -dn -m elf_i386 -Map xinu.map -T $(LDSCRIPT)
 
 all:	xinu
 
+O2_ODIR = binaries
+O2_CFLAGS  = -march=i586 -m32 -fno-builtin -fno-stack-protector -nostdlib -Wall -O2 ${INCLUDE}
+
+O2_SRC = $(wildcard $(TOPDIR)/crypto/*/*.c) $(wildcard $(TOPDIR)/crypto/*.c)
+_O2_OBJS = $(patsubst %.c,%.o,$(notdir $(O2_SRC)))
+O2_OBJS = $(patsubst %,$(O2_ODIR)/%,$(_O2_OBJS))
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/SHA/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/DES/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/mpint/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/asn1/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
+
+$(O2_ODIR)/%.o: $(TOPDIR)/crypto/base64/%.c
+	$(CC) -c -o $@ $< $(O2_CFLAGS)
 #--------------------------------------------------------------------------------
 # Handle generation of a new version string when initialize is recompiled
 #--------------------------------------------------------------------------------
@@ -71,7 +97,7 @@ newversion:
 #--------------------------------------------------------------------------------
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
-LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
+LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES)) $(O2_OBJS)
 
 #------------------------------------------------------------
 # Rules for files that need special handling
@@ -108,7 +134,7 @@ xinu:	Makefile rebuild $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD
 	@rm -f $(XINUBIN)
 	@echo
 
-$(BLDDIRS): 
+$(BLDDIRS):
 	@mkdir -p $(BLDDIRS)
 
 objects: $(LD_LIST)
@@ -143,7 +169,7 @@ clean:
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
-	
+
 $(DEFSFILE):
 	@rm -f $(DEFSFILE)
 	@echo "" > $(DEFSFILE)

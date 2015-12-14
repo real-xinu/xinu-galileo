@@ -33,6 +33,9 @@ devcall	ethread	(
 							ethptr->rxHead;
 		pktptr = (struct netpacket*)rdescptr->buffer1;
 
+		/* update random pool */
+		update_randompool_net(pktptr->net_ipsrc);
+
 		/* See if destination address is our unicast address */
 
 		if(!memcmp(pktptr->net_ethdst, ethptr->devAddress, 6)) {

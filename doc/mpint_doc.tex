@@ -1,0 +1,1081 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[english]{isodate}
+\usepackage{parskip}
+\usepackage{listings,lstautogobble}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{etoolbox}
+\usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  filecolor=magenta,      
+  urlcolor=blue,
+}
+
+\usepackage{geometry}
+\geometry{
+  left=12mm,
+  right=12mm,
+  top=22mm,
+  bottom=22mm,
+  % headheight = -15mm,
+}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Gr\'egory Essertel}
+\lhead{MPINT - 1.0}
+\rfoot{Page \thepage}
+
+
+\lstloadaspects{directives}
+\renewcommand{\lstlistingname}{Code}
+
+\definecolor{mygray}{rgb}{0.1,0.1,0.1}
+
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Keywords}{rgb}{0,255,0}
+\definecolor{NewKeywords}{rgb}{255,255,0}
+\definecolor{Strings}{rgb}{255,0,255}
+\definecolor{Comments}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{42, 161, 152}
+\definecolor{Directive}{rgb}{0.8,0.3,0.09}
+
+\makeatletter
+
+\newif\iffirstchar\firstchartrue
+\newif\ifstartedbyadigit
+\newif\ifprecededbyequalsign
+
+\newcommand\processletter
+{%
+  \ifnum\lst@mode=\lst@Pmode%
+  \iffirstchar%
+  \global\startedbyadigitfalse%
+  \fi
+  \global\firstcharfalse%
+  \fi
+}
+
+\newcommand\processdigit
+{%
+  \ifnum\lst@mode=\lst@Pmode%
+  \iffirstchar%
+  \global\startedbyadigittrue%
+  \fi
+  \global\firstcharfalse%
+  \fi
+}
+
+\lst@AddToHook{OutputOther}%
+{%
+  \lst@IfLastOtherOneOf{=}
+  {\global\precededbyequalsigntrue}
+  {}%
+}
+
+\lst@AddToHook{Output}%
+{%
+  \ifprecededbyequalsign%
+  \ifstartedbyadigit%
+  \def\lst@thestyle{\color{orange}}%
+  \fi
+  \fi
+  \global\firstchartrue%
+  \global\startedbyadigitfalse%
+  \global\precededbyequalsignfalse%
+}
+
+\newtoks\jubo@toks
+\jubo@toks={
+  language=C,
+  commentstyle=\color{Comments}\slshape,
+  stringstyle=\color{Strings},
+  keywordstyle={\color{Keywords}\bfseries},
+  alsoletter=0123456789,
+  SelectCharTable=%
+}
+\def\add@savedef#1#2{%
+  \begingroup\lccode`?=#1\relax
+  \lowercase{\endgroup
+    \edef\@temp{%
+      \noexpand\lst@DefSaveDef{\number#1}%
+      \expandafter\noexpand\csname lsts@?\endcsname{%
+	\expandafter\noexpand\csname lsts@?\endcsname\noexpand#2}%
+    }}%
+  \jubo@toks=\expandafter{\the\expandafter\jubo@toks\@temp}%
+}
+\count@=`0
+\loop
+\add@savedef\count@\processdigit
+\ifnum\count@<`9
+\advance\count@\@ne
+\repeat
+\count@=`A
+\loop
+\add@savedef\count@\processletter
+\ifnum\count@<`Z
+\advance\count@\@ne
+\repeat
+\count@=`a
+\loop
+\add@savedef\count@\processletter
+\ifnum\count@<`z
+\advance\count@\@ne
+\repeat
+%\showthe\jubo@toks % for debugging
+\begingroup\edef\x{\endgroup
+  \noexpand\lstdefinestyle{mycode}{\the\jubo@toks}
+}\x% ---------- Beginning of ugly internals ----------
+\makeatletter
+
+% switches to keep track of context
+\newif\if@LastCharWasBackslash
+\newif\if@DirectiveContinued
+
+% --- hooking into listings ---
+\lst@AddToHook{OutputOther}%
+{% 
+  \ifx\lst@lastother\lstum@backslash%   % if the last character in
+  % \the\lst@token is a backslash...
+  \global\@LastCharWasBackslashtrue%
+  \else
+  \global\@LastCharWasBackslashfalse%
+  \fi  
+  \@condApplyDirectiveStyle             % Apply directive style if needed
+}
+\lst@AddToHook{Output}%
+{%
+  \global\@LastCharWasBackslashfalse%   % Reset switch
+  \@condApplyDirectiveStyle%            % Apply directive style if needed 
+}
+
+% `listings' automatically exits CDmode at the EOL hook;
+% we patch \lsthk@EOL so that it checks whether a compiler directive
+% is continued on the next line and set the relevant switch accordingly.
+\patchcmd{\lsthk@EOL}
+{\ifnum\lst@mode=\lst@CDmode \lst@LeaveMode \fi}
+{%
+  \global\@DirectiveContinuedfalse%
+  \ifnum\lst@mode=\lst@CDmode%
+  \lst@LeaveMode
+  \else
+  \if@LastCharWasBackslash%
+  \global\@DirectiveContinuedtrue%
+  \fi
+  \fi
+}
+{}{\@latex@error{\string\lsthk@EOL\space patch failed!}{}}
+
+% --- two helper macros ---
+\newcommand\@condApplyDirectiveStyle
+{%
+  \ifnum\lst@mode=\lst@CDmode%
+  \@applyDirectiveStyle%
+  \fi
+  \if@DirectiveContinued%
+  \@applyDirectiveStyle%
+  \fi  
+}
+
+\newcommand\@applyDirectiveStyle{\let\lst@thestyle\lst@directivestyle}
+
+\makeatother
+
+% ---------- End of ugly internals ----------
+
+
+
+
+\lstset{ %
+  backgroundcolor=\color{mygray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  autogobble=true,
+  basicstyle=\ttfamily\color{white},        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=false,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle={\color{Comments}\slshape},    % comment style
+  directivestyle={\color{Directive}},
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle={\color{Keywords}\bfseries},       % keyword style
+  language=C,                 % the language of the code
+  otherkeywords={},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{black}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{Strings},     % string literal style
+  tabsize=4,                       % sets default tabsize to 2 spaces
+  title=\lstname,                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+  alsoletter=0123456789,
+  SelectCharTable=
+  \lst@DefSaveDef{`0}\lsts@myzero{\lsts@myzero\processdigit}
+  \lst@DefSaveDef{`1}\lsts@myone{\lsts@myone\processdigit}
+  \lst@DefSaveDef{`2}\lsts@mytwo{\lsts@mytwo\processdigit}
+  \lst@DefSaveDef{`3}\lsts@mythree{\lsts@mythree\processdigit}
+  \lst@DefSaveDef{`4}\lsts@myfour{\lsts@myfour\processdigit}
+  \lst@DefSaveDef{`5}\lsts@myfive{\lsts@myfive\processdigit}
+  \lst@DefSaveDef{`6}\lsts@mysix{\lsts@mysix\processdigit}
+  \lst@DefSaveDef{`7}\lsts@myseven{\lsts@myseven\processdigit}
+  \lst@DefSaveDef{`8}\lsts@myeight{\lsts@myeight\processdigit}
+  \lst@DefSaveDef{`9}\lsts@mynine{\lsts@mynine\processdigit}
+  \lst@DefSaveDef{`a}\lsts@mya{\lsts@mya\processletter}
+  \lst@DefSaveDef{`b}\lsts@myb{\lsts@myb\processletter}
+  \lst@DefSaveDef{`c}\lsts@myc{\lsts@myc\processletter}
+  \lst@DefSaveDef{`d}\lsts@myd{\lsts@myd\processletter}
+  \lst@DefSaveDef{`e}\lsts@mye{\lsts@mye\processletter}
+  \lst@DefSaveDef{`f}\lsts@myf{\lsts@myf\processletter}
+  \lst@DefSaveDef{`g}\lsts@myg{\lsts@myg\processletter}
+  \lst@DefSaveDef{`h}\lsts@myh{\lsts@myh\processletter}
+  \lst@DefSaveDef{`i}\lsts@myi{\lsts@myi\processletter}
+  \lst@DefSaveDef{`j}\lsts@myj{\lsts@myj\processletter}
+  \lst@DefSaveDef{`k}\lsts@myk{\lsts@myk\processletter}
+  \lst@DefSaveDef{`l}\lsts@myl{\lsts@myl\processletter}
+  \lst@DefSaveDef{`m}\lsts@mym{\lsts@mym\processletter}
+  \lst@DefSaveDef{`n}\lsts@myn{\lsts@myn\processletter}
+  \lst@DefSaveDef{`o}\lsts@myo{\lsts@myo\processletter}
+  \lst@DefSaveDef{`p}\lsts@myp{\lsts@myp\processletter}
+  \lst@DefSaveDef{`q}\lsts@myq{\lsts@myq\processletter}
+  \lst@DefSaveDef{`r}\lsts@myr{\lsts@myr\processletter}
+  \lst@DefSaveDef{`s}\lsts@mys{\lsts@mys\processletter}
+  \lst@DefSaveDef{`t}\lsts@myt{\lsts@myt\processletter}
+  \lst@DefSaveDef{`u}\lsts@myu{\lsts@myu\processletter}
+  \lst@DefSaveDef{`v}\lsts@myv{\lsts@myv\processletter}
+  \lst@DefSaveDef{`w}\lsts@myw{\lsts@myw\processletter}
+  \lst@DefSaveDef{`x}\lsts@myx{\lsts@myx\processletter}
+  \lst@DefSaveDef{`y}\lsts@myy{\lsts@myy\processletter}
+  \lst@DefSaveDef{`z}\lsts@myz{\lsts@myz\processletter}
+  \lst@DefSaveDef{`A}\lsts@myA{\lsts@myA\processletter}
+  \lst@DefSaveDef{`B}\lsts@myB{\lsts@myB\processletter}
+  \lst@DefSaveDef{`C}\lsts@myC{\lsts@myC\processletter}
+  \lst@DefSaveDef{`D}\lsts@myD{\lsts@myD\processletter}
+  \lst@DefSaveDef{`E}\lsts@myE{\lsts@myE\processletter}
+  \lst@DefSaveDef{`F}\lsts@myF{\lsts@myF\processletter}
+  \lst@DefSaveDef{`G}\lsts@myG{\lsts@myG\processletter}
+  \lst@DefSaveDef{`H}\lsts@myH{\lsts@myH\processletter}
+  \lst@DefSaveDef{`I}\lsts@myI{\lsts@myI\processletter}
+  \lst@DefSaveDef{`J}\lsts@myJ{\lsts@myJ\processletter}
+  \lst@DefSaveDef{`K}\lsts@myK{\lsts@myK\processletter}
+  \lst@DefSaveDef{`L}\lsts@myL{\lsts@myL\processletter}
+  \lst@DefSaveDef{`M}\lsts@myM{\lsts@myM\processletter}
+  \lst@DefSaveDef{`N}\lsts@myN{\lsts@myN\processletter}
+  \lst@DefSaveDef{`O}\lsts@myO{\lsts@myO\processletter}
+  \lst@DefSaveDef{`P}\lsts@myP{\lsts@myP\processletter}
+  \lst@DefSaveDef{`Q}\lsts@myQ{\lsts@myQ\processletter}
+  \lst@DefSaveDef{`R}\lsts@myR{\lsts@myR\processletter}
+  \lst@DefSaveDef{`S}\lsts@myS{\lsts@myS\processletter}
+  \lst@DefSaveDef{`T}\lsts@myT{\lsts@myT\processletter}
+  \lst@DefSaveDef{`U}\lsts@myU{\lsts@myU\processletter}
+  \lst@DefSaveDef{`V}\lsts@myV{\lsts@myV\processletter}
+  \lst@DefSaveDef{`W}\lsts@myW{\lsts@myW\processletter}
+  \lst@DefSaveDef{`X}\lsts@myX{\lsts@myX\processletter}
+  \lst@DefSaveDef{`Y}\lsts@myY{\lsts@myY\processletter}
+  \lst@DefSaveDef{`Z}\lsts@myZ{\lsts@myZ\processletter},
+  emph={%  
+    MPINT, HALF_WORD, WORD, SWORD, MPPRIME%
+  },emphstyle={\color{NewKeywords}\bfseries},%,
+  belowskip=0em,
+}
+
+\begin{document}
+  
+  \newgeometry{left=2cm,right=2cm, bottom=1cm, top = 3cm}
+  \begin{titlepage}
+    
+    \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+    
+    \center % Center everything on the page
+    %\includegraphics[scale = 0.6]{logo_purdue.png}\\[2cm] % Include a department/university logo - this will require the graphicx package
+    
+    %----------------------------------------------------------------------------------------
+    %	HEADING SECTIONS
+    %----------------------------------------------------------------------------------------
+    
+    %\textsc{\LARGE ISAE - Supaero, Universit\'e Paul Sabatier}\\[1.3cm] % Name of your university/college
+    %\textsc{\Large Purdue University - e-Lab}\\[0.5cm] % Major heading such as course name
+    %\textsc{\large Minor Heading}\\[0.5cm] % Minor heading such as course title
+    
+    %----------------------------------------------------------------------------------------
+    %	TITLE SECTION
+    %----------------------------------------------------------------------------------------
+    
+    \HRule \\[0.5cm]
+    { \huge \bfseries MPINT - Documentation \\ Version 1.0}\\[0.5cm] % Title of your document
+    \HRule \\[4cm]
+    
+    %----------------------------------------------------------------------------------------
+    %	AUTHOR SECTION
+    %----------------------------------------------------------------------------------------
+    
+    \begin{minipage}{0.4\textwidth}
+      \begin{flushleft} \large
+	\emph{Author:}\\
+	Gr\'egory \textsc{Essertel}\\%Your name
+      \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}{0.4\textwidth}
+      ~
+      %       \begin{flushright} \large
+      % 	\emph{Professor:} \\
+      % 	Samuel \textsc{Wagstaff}\\ % Supervisor's Name
+      % 	\emph{Teacher Assistants:} \\
+      % 	Mohsen \textsc{Minaei}\\ % Supervisor's Name
+      %       \end{flushright}
+    \end{minipage}\\[5cm]
+    
+    % If you don't want a supervisor, uncomment the two lines below and remove the section above
+    % \Large \emph{Author:}\\
+    % Gr\'egory \textsc{Essertel}\\[3cm] % Your name
+    
+    %----------------------------------------------------------------------------------------
+    %	DATE SECTION
+    %----------------------------------------------------------------------------------------
+    
+    {\large \today}\\[1cm] % Date, change the \today to a set date if you want to be precise
+    
+    %----------------------------------------------------------------------------------------
+    %	LOGO SECTION
+    %----------------------------------------------------------------------------------------
+    
+    %\includegraphics{Logo}\\[1cm] % Include a department/university logo - this will require the graphicx package
+    %----------------------------------------------------------------------------------------
+    
+    
+  \end{titlepage}
+  \restoregeometry
+  
+  
+  \pagenumbering{Roman}
+  \tableofcontents
+  \newpage
+  \pagenumbering{arabic}
+  
+  \section{Introduction}
+  
+  MPINT is a multi-precision integer library supported for the Xinu operating system. Tested so far only for the Galileo version.
+  
+  This library provides the basic arithmetic operation such as addition, subtraction, multiplication, division etc. The initial design is not efficiency,
+  some efficiency tests have been perform and can be seen at the Section \ref{perfeval}.
+  
+  \section{Background}
+  
+  The reader is expecting to have a knowledge about Xinu, more precisely the low level memory management with \textit{getmem} and \textit{freemem}. Also
+  the constant $SYSERR$ is used in this document.
+  
+  \section{Setup}
+  
+  Some constants have to be set in the \textit{mpint.h} file.
+  
+  The operations require to define an HALF\_WORD. The HALF\_WORD should be half of the size of the registers, this trick is used to handle carries
+  easily. On the Galileo board for example we define:
+  
+  \begin{lstlisting}
+    typedef uint16  HALF_WORD;
+    typedef uint32  WORD;
+    typedef int32   SWORD;
+  \end{lstlisting}
+  
+  Some other constant are used for the computation:
+  \begin{lstlisting}
+    #define HW_BITS (16)        // 8 * sizeof(HALF_WORD)
+    #define HW_MASK (0xFFFF)	// 1 << HW_BITS - 1
+  \end{lstlisting}
+  
+  NOTE: the HALF\_WORD and WORD have to be unsigned.
+  
+  \section{Data Structure}
+  
+  \begin{lstlisting}[caption= MPINT structure, label = mpint]
+    typedef struct mpint {
+      HALF_WORD*  val;
+      uint32      size;
+      uint32      order;
+      int32       sign;
+    } MPINT;
+  \end{lstlisting}
+  
+  The basic structure used in the complete project is the $MPINT$. The structure stores a pointer to an array of $HALF\_WORD$ as well as the size of the corresponding
+  allocated memory. The little endian convention is used here, meaning that the value of a number of two $HALF\_WORD$ is "$val[1] << HW\_BITS + val[0]$".
+  The size of the array has to be a multiple of the variable $MPINT\_HWINIT$ plus one $HALF\_WORD$. When more space is required, the size is increase by
+  $MPINT\_HWINIT$.
+  
+  \begin{lstlisting}
+    #define MPINT_INIT  1024
+    #define MPINT_HWINIT  64 // MPINT_INIT / (8 * sizeof(HALF_WORD))
+  \end{lstlisting}
+  
+  With these values, the smaller $MPINT$ is a 1024 bits integer and 2048, 3062\dots are possible values.
+  
+  The order of a number is defined as the index of the Most Significant Halfword $+ 1$. Therefore a number is equal to zero if and only if the order is equal to 0.
+  
+  The sign is either +1 or -1. When constructed 0 has the sign +1, but there is no grantees on the sign of 0 if it is the output of an operation. 
+  
+  \section{Utils}
+  
+  The library offers some utility function in order to manipulate the $MPINT$.
+  
+  \subsection{new\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      MPINT* new_mpint();
+    \end{lstlisting}
+    \item [] \textbf{Description} Allocate and initialize a new $MPINT$ on the heap.
+    \item [] \textbf{Error} Return $SYSERR$ if an error occurs (Out Of Memory)
+  \end{itemize}
+  
+  \subsection{delete\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void delete_mpint(MPINT*);
+    \end{lstlisting}
+    \item [] \textbf{Description} Release memory used by an $MPINT$ previously allocated on the heap using \textit{new\_mpint}.
+  \end{itemize}
+  
+  \subsection{init\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void init_mpint(MPINT*);
+    \end{lstlisting}
+    \item [] \textbf{Description} Initialize a $MPINT$.
+    \item [] \textbf{Note} Initializing an already initialized $MPINT$ can lead to memory leak.
+  \end{itemize}
+  
+  \subsection{clear\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void clear_mpint(MPINT*);
+    \end{lstlisting}
+    \item [] \textbf{Description} Releases the memory used by a $MPINT$, but not the memory used by the structure $MPINT$.
+    \item [] \textbf{Note} Generally used for a $MPINT$ declared on the stack.
+  \end{itemize}
+  
+  \subsection{extend\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 extend_mpint(MPINT* n, int32 new_size);
+    \end{lstlisting}
+    \item [] \textbf{Description} Extends the size of $n$ to be at least \textit{new\_size}.
+    \item [] \textbf{Note} This function is destined to be used by developers, a user should not have to ue it.
+    \item [] \textbf{Return} the function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{write\_bigendian\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void write_bigendian_mpint(byte* buff, MPINT* src, int32 len);
+    \end{lstlisting}
+    \item [] \textbf{Description} Write the \textit{len} less significant bytes of \textit{src} into the buffer \textit{buff}
+  \end{itemize}
+  
+  \subsection{hton\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      int32 hton_mpint(byte* buff, MPINT* src, int32 len);
+    \end{lstlisting}
+    \item [] \textbf{Description} Formats \textit{src} into a machine independant representation using maximum \textit{len} bytes. The format is: |length (4 bytes)|sign (0 or 1 byte)| value using
+    big endian representation.
+    \item [] \textbf{Return} The function returns the number of bytes used or $SYSERR$ if an error occured. (Buffer to small).
+  \end{itemize}
+  
+  \subsection{read\_bigendian\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 read_bigendian_mpint(MPINT* dst, byte* buff, int32 length);
+    \end{lstlisting}
+    \item [] \textbf{Description} Sets the value of the \textit{dst} $MPINT$ to the value in the buffer using the $length$ first byte in a big endian order.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  
+  \subsection{ntoh\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 ntoh_mpint(MPINT* dst, byte* buff);
+    \end{lstlisting}
+    \item [] \textbf{Description} Reads a $MPINT$ formated with the \textit{hton\_mpint} function.
+    \item [] \textbf{Return} The function returns the number of bytes read and $SYSERR$ if an error occured.
+  \end{itemize}
+  
+  \subsection{copy\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 copy_mpint(MPINT* dst, MPINT* src);
+    \end{lstlisting}
+    \item [] \textbf{Description} Sets the value of \textit{dst} to the value of \textit{src}.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{subval\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 subval_mpint(MPINT* dst, int32 offset, MPINT* src, int32 start,
+      int32 length);
+    \end{lstlisting}
+    \item [] \textbf{Description} Sets the value of \textit{dst} between the $HALF\_WORD$ \textit{offset} and \textit{offset} + \textit{length} - 1 to the value of \textit{src} between the $HALF\_WORD$ \textit{start} and \textit{start} + \textit{length} - 1.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{subvalghost\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 subvalghost_mpint(MPINT* dst, MPINT* src, int32 start, int32 length);
+    \end{lstlisting}
+    \item [] \textbf{Description} Sets the value of \textit{dst} to the value of \textit{src} between the $HALF\_WORD$ \textit{start} and \textit{start} + \textit{length} - 1.
+    \item [] \textbf{Note} WARNING: This function does not copy the value, therefore it should only be used in a read only mode.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{uporder\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 uporder_mpint(MPINT* n);
+    \end{lstlisting}
+    \item [] \textbf{Description} Updates the order of the $MPINT$
+    \item [] \textbf{Note} This function is for developer only, user should not have to us it.
+    \item [] \textbf{Return} The function returns $FALSE$ if the order is greater than the size of the $MPINT$.
+  \end{itemize}
+  
+  \subsection{swap\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void swap_mpint(MPINT* v1, MPINT* v2);
+    \end{lstlisting}
+    \item [] \textbf{Description} Swaps two $MPINT$.
+  \end{itemize}
+  
+  \subsection{parse\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 parse_mpint(MPINT* n, char* val, int32 length);
+    \end{lstlisting}
+    \item [] \textbf{Description} Parses an $MPINT$ from the \textit{length} first character of the string \textit{val} (lower and upper case for a,b,c,d, e and f are accepted). Negative value can be
+    parsed as well.
+    \item [] \textbf{Note} If a non hexadecimal digit is found in the string of character, the behavior is undefined (other than the '-' at the beginning).
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+    
+  \end{itemize}
+  
+  \subsection{print\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void print_mpint(MPINT* n);
+    \end{lstlisting}
+    \item [] \textbf{Description} Prints a $MPINT$ in its hexadecimal representation.
+  \end{itemize}
+  
+  \section{Comparaison}
+  
+  \subsection{cmp\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      int32 cmp_mpint(MPINT* v1, MPINT* v2);
+    \end{lstlisting}
+    \item [] \textbf{Description} Compares two $MPINT$.
+    \item [] \textbf{Return} 1 if $v1 > v2$, 0 if $v1 = v2$ and -1 if $v1 < v2$
+    
+  \end{itemize}
+  
+  \subsection{unsigncmp\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      int32 unsigncmp_mpint(MPINT* v1, MPINT* v2);
+    \end{lstlisting}
+    \item [] \textbf{Description} Compares the absolute value of two $MPINT$.
+    \item [] \textbf{Return} 1 if $|v1| > |v2|$, 0 if $|v1| = |v2|$ and -1 if $|v1| < |v2|$
+  \end{itemize}
+  
+  \section{Summation}
+  
+  \subsection{add\_mpint / sub\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 add_mpint(MPINT* v1, MPINT* v2);
+      bool8 sub_mpint(MPINT* v1, MPINT* v2);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes the operation $v1 +/- v2$ and stores the result in \textit{v1}.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{low order functions}
+  
+  The lower order function aim to provide programmers with more efficient routines. However they are more difficult to use and can lead to unexpected bugs.
+  
+  \subsubsection{addcst\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 addcst_mpint(MPINT* v, HALF_WORD d, int32 index);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $v + d \times 2^{index \times HW\_BITS}$ and stores the result in \textit{v}.
+    \item [] \textbf{Note} This function does not extends the $MPINT$ if necessary. The result is truncated to the size of the original $MPINT$.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $DIRTY$ if the result has been truncated and $FALSE$ if an error
+    occurred.
+  \end{itemize}
+  
+  \subsubsection{unsignadd\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 unsignadd_mpint(MPINT* v1, MPINT* v2);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $|v1| + |v2|$ and stores the result in \textit{v1}. 
+    \item [] \textbf{Note} The sign of \textit{v1} is undefined afterward.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsubsection{diff\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 diff_mpint(MPINT* v1, MPINT* v2, int32 biggest);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $|v1 - v2|$ and stores the result in \textit{v1}. If the value of \textit{biggest} is 1, it indicates that the absolute value of \textit{v1}
+    id grater than the one of \textit{v2}, -1 is the opposite and 0 means that the user doesn't know.
+    \item [] \textbf{Note} The sign of \textit{v1} is undefined afterward.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \section{Product}
+  
+  \subsection{mul\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 mul_mpint(MPINT* dst, MPINT* v1, MPINT* v2, bool8 trunc);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes the operation $dst + v1 \times v2$ and stores the result in \textit{dst}. If \textit{trunc} is $TRUE$, the size of \textit{dst} is extend to
+    \textit{v1} size and the result is then truncated.
+    \item [] \textbf{Note} \begin{itemize}
+      \item If \textit{dst} is not empty and its size bigger than \textit{v1}, the result with \textit{trunc} set to $TRUE$ will be undefined.
+      (The carry won't be propagated further than \textit{v1} size).
+      \item If \textit{dst} is not empty and $sizeof(dst + v1 \times v2) > sizeof(v1) + sizeof(v2)$, then the extra $HALF\_WORD$ will be used and the $DIRTY$ value will be returned. The user
+      has to ensure that this state is temporary.
+      
+      Example: $9999 + 99 \times 99 = 19800$, the number requires 5 digits but has been prepared for only 4.
+    \end{itemize}
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $DIRTY$ (cf. NOTE) and $FALSE$ otherwise.
+  \end{itemize}
+  
+  \subsection{square\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 square_mpint(MPINT* dst, MPINT* v);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $v^2$ and store the result in \textit{dst}.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{mulcst\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 mulcst_mpint(MPINT* v1, HALF_WORD n);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $v1 \times n$ in place.
+    \item [] \textbf{Note} \textit{v1} is not extended, the $DIRTY$ value is returned if the extra $HALF\_WORD$ is used. The user has to ensure that
+    this state is temporary.
+    
+    Example: $99 \times 9 = 891$. 3 digits are used but the original size of \textit{v1} was 2.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $DIRTY$ (cf. NOTE) and $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \section{Division}
+  
+  \subsection{unsigndiv\_mpint / unsignmod\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 unsigndiv_mpint(MPINT* a, MPINT* b, MPINT* q, MPINT* r);
+      bool8 unsignmod_mpint(MPINT* r, MPINT* a, MPINT* b);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $|\lfloor\frac{a}{b}\rfloor|$ in $q$ and $a \mod b$ in $r$.
+    \item [] \textbf{Note} Theses functions are using two auxiliary functions called recursively.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{invmod\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 invmod_mpint(MPINT* x, MPINT* p);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $y$ such that $x \times y = 1 \mod p$ and put the result in $x$.
+    \item [] \textbf{Note} If such a value doesn't exist the function simply returns $FALSE$.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \section{Exponentiation}
+  
+  Currently, this library only support modular exponentiation with the modulus being an ODD number. This is due to the fact that the implementation uses the
+  Montgomery transformation: \href{http://en.wikipedia.org/wiki/Montgomery_modular_multiplication}{Wikipedia page}.
+  
+  \subsection{MPPRIME} \label{prime}
+  
+  \subsubsection{Data structure}
+  
+  Like the $MPINT$, each $MPPRIME$ is considered to be a 1024 bits prime or 2048 bits\dots. Therefore we define $R$ to be the upper bound of the $MPINT$ with the particular size. For example,
+  if a number is a 1024 bits integer, then the corresponding $R$ is $2^{1024}$.
+  
+  \begin{lstlisting}[caption= MPPRIME structure, label = mpprime]
+    typedef struct prime {
+      MPINT num;
+      MPINT inv;
+      MPINT r_square;
+    } MPPRIME;
+  \end{lstlisting}
+  
+  \begin{itemize}
+    \item \textit{num} is the value of the prime number.
+    \item \textit{inv} is the number such that $num \times inv \mod R = -1$, with $R$ defined as above.
+    \item \textit{r\_square} is the number $R^{2} \mod num$, with $R$ defined as above.
+  \end{itemize}
+  
+  NOTE: this data structure could be used with any odd integer.
+  
+  \subsubsection{init\_mprime}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void init_mpprime(MPPRIME* mp);
+    \end{lstlisting}
+    \item [] \textbf{Description} Initialize a $MPPRIME$.
+  \end{itemize}
+  
+  \subsubsection{clear\_mprime}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      void clear_mpprime(MPPRIME* mp);
+    \end{lstlisting}
+    \item [] \textbf{Description} Releases the memory used by a $MPPRIME$, but not the memory used by the structure $MPPRIME$.
+    
+  \end{itemize}
+  
+  \subsubsection{precompprime\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 precompprime_mpint(MPPRIME* prime);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes $y$ such that $x \times y = 1 \mod p$ and put the result in $x$.
+    \item [] \textbf{Note} If such a value doesn't exist the function simply returns $FALSE$.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{Montgomery operations}
+  
+  We first define some routines that we describe here. A user should use the macro defined in the next section \ref{macro}.
+  
+  \subsubsection{montgomery\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 montgomery_mpint(MPINT *v1, MPINT *v2, MPINT* n, MPINT* inv_n);
+      bool8 montgomery_square_mpint(MPINT *v, MPINT* n, MPINT* inv_n);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes the Montgomery reduction of \textit{v1} by \textit{v2} modulo \textit{n} and puts the result in \textit{v1}.
+    \item [] \textbf{Note} The value \textit{v1} and \textit{v2} are the representation of some numbers in the Montgomery space (cf Examples \ref{example}).
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsubsection{montgomery\_inv\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 montgomery_inv_mpint(MPINT *v1, MPINT* n, MPINT* inv_n);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes the real value of the value \textit{v1} from the Montgomery space modulo \textit{n} and puts the result in \textit{v1}.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsubsection{Macros} \label{macro}
+  
+  \begin{lstlisting}
+    #define montgomery_mul_mpint(v1, v2, p) \
+    montgomery_mpint(v1, v2, &((p)->num), &((p)->inv))
+    
+    #define montgomery_square_mpint(v1, p) \
+    montgomery_square_mpint(v1, &((p)->num), &((p)->inv))
+    
+    #define to_montgomery_mpint(v1, p) \
+    montgomery_mpint(v1, &((p)->r_square), &((p)->num), &((p)->inv))
+    
+    #define from_montgomery_mpint(v1, p) \
+    montgomery_inv_mpint(v1, &((p)->num), &((p)->fginv))
+  \end{lstlisting}
+  
+  \subsection{powmod\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      #define REAL        0
+      #define MONTGOMERY  1
+      bool8 powmod_mpint(MPINT *b, MPINT *n, MPPRIME *N, int32 output_space);
+    \end{lstlisting}
+    \item [] \textbf{Description} Computes the value $b^{n} \mod N$ and store it in \textit{b}. If \textit{output\_space} is equal to $MONTGOMERY$, the result is stored in its Montgomery form.
+    Otherwise it is in its real form.
+    \item [] \textbf{Note} Having the result in its Montomery form can be useful for computing $(a \times b^{c}) \mod N$. See Example \ref{example2}
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{Examples} 
+  
+  
+  \subsection{Exampel 1} \label{example}
+  Compute $34 \times 43 \mod 97$. (This is not efficient for only one operation, it is better to use \textit{mul\_mpint} and \textit{unsignmod\_mpint}).
+  
+  \begin{lstlisting}
+    MPPRIME p97;
+    MPINT i34, i43;
+    
+    // Initialize
+    init_mpint(&i34);
+    init_mpint(&i43);
+    init_mpprime(&p97);
+    
+    // Set value
+    word_mpint(&i34, 34, 1);
+    word_mpint(&i43, 43, 1);
+    word_mpint(&(p97.num), 97, 1);
+    precompprime_mpint(&p97);
+    
+    // To Montgomery space
+    to_montgomery_mpint(&i34, &p97);
+    to_montgomery_mpint(&i43, &p97);
+    
+    // Multiplication
+    montgomery_mul_mpint(&i34, &i43, &p97);
+    
+    // Back to real value
+    from_montgomery_mpint(&i34, &p97);
+    
+    // print result
+    print_mpint(&i34);
+    
+    // clear memory
+    clear_mpint(&i34);
+    clear_mpint(&i43);
+    clear_mpprime(&p97);
+  \end{lstlisting}
+  
+  \subsection{Exampel 2} \label{example2}
+  Compute $(34 \times 43^{55})\mod 97$.
+  
+  \begin{lstlisting}
+    MPPRIME p97;
+    MPINT i34, i43, i55;
+    
+    // Initialize
+    init_mpint(&i34);
+    init_mpint(&i43);
+    init_mpint(&i55);
+    init_mpprime(&p97);
+    
+    // Set value
+    word_mpint(&i34, 34, 1);
+    word_mpint(&i43, 43, 1);
+    word_mpint(&i55, 55, 1);
+    word_mpint(&(p97.num), 97, 1);
+    precompprime_mpint(&p97);
+    
+    // To Montgomery space
+    to_montgomery_mpint(&i34, &p97);
+    
+    // Exponenciation
+    powmod_mpint(&i43, &i55, &p97, MONTGOMERY);
+    
+    // print intermediate result
+    print_mpint(&i43);
+    
+    // Multiplication
+    montgomery_mul_mpint(&i34, &i43, &p97);
+    
+    // Back to real value
+    from_montgomery_mpint(&i34, &p97);
+    
+    // print result
+    print_mpint(&i34);
+    
+    // clear memory
+    clear_mpint(&i34);
+    clear_mpint(&i43);
+    clear_mpint(&i55);
+    clear_mpprime(&p97);
+  \end{lstlisting}
+  
+  \section{bits operations}
+  
+  \subsection{rshift\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 rshift_mpint(MPINT* x, int32 shift);
+    \end{lstlisting}
+    \item [] \textbf{Description} Shift \textit{shift} bits on the right.
+    \item [] \textbf{Note} For negative number, the absolute value is shifted and the sign stays negative.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{rshiftw\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 rshiftw_mpint(MPINT* x, int32 shift);
+    \end{lstlisting}
+    \item [] \textbf{Description} Shift \textit{shift} $HALF\_WORD$ on the right.
+    \item [] \textbf{Note} This function is not hardware independant.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{lshift\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 lshift_mpint(MPINT* x, int32 shift);
+    \end{lstlisting}
+    \item [] \textbf{Description} Shift \textit{shift} bits on the left.
+    \item [] \textbf{Note} For negative number, the absolute value is shifted and the sign stays negative.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{safelshift\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 lshift_mpint(MPINT* x, int32 shift);
+    \end{lstlisting}
+    \item [] \textbf{Description} Shift \textit{shift} bits on the left without extending the $MPINT$.
+    \item [] \textbf{Note} The maximum value for \textit{shift} is $HW\_BITS$. It used for example in the \textit{unsigndiv\_mpint} function to ensure that the
+    high order bits of the high order $HALF\_WORD$ is 1.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \section{Random}
+  
+  The $MPINT$ library is using the pseudo random generator \href{http://burtleburtle.net/bob/rand/isaacafa.html}{ISAAC}.
+  
+  A random context is used has parameter of each function, see the following example on how to create a context:
+  
+  \begin{lstlisting}
+    #include <random.h>
+    
+    randctx ctx;
+    int i;
+    byte* wt;
+    
+    // seed array of size RANDIZL * sizeof(uint32)
+    wt = (byte *)ctx.randrsl;
+    
+    // set a seed
+    for (i = 0 ; i < RANDSIZL * sizeof(uint32) ; i++) {
+      *wt++ = i & 0xFF;
+    }
+    
+    // Init the context TRUE is set to use the seed provided.
+    // FALSE create a default context
+    randinit(&ctx, TRUE);
+  \end{lstlisting}
+  
+  The function \textit{init\_context(randctx*)} can also be used. It seeds the context with a random value taken from a randompool inside the Xinu kernel\footnote{It is still experimental,
+    the quality of the randomness may not be perfect}.
+  
+  \subsection{rand\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 rand_mpint(MPINT *x, int32 length, randctx* ctx);
+    \end{lstlisting}
+    \item [] \textbf{Description} Create a random $MPINT$ with \textit{length} $HALF\_WORD$ with a uniform probability law.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  \subsection{randmod\_mpint}
+  
+  \begin{itemize}
+    \item [] \textbf{Prototype}
+    \begin{lstlisting}
+      bool8 randmod_mpint(MPINT* k, MPINT* q, randctx* ctx);
+    \end{lstlisting}
+    \item [] \textbf{Description} Create a random $MPINT$ in the range 0 to \textit{q-1} with a uniform probability law.
+    \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
+  \end{itemize}
+  
+  
+  
+  \section{Performance evaluation} \label{perfeval}
+\end{document}
+

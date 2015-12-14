@@ -25,6 +25,9 @@ devcall	ethwrite	(
 
 	wait(ethptr->osem);
 
+	/* update the randpool */
+	update_randompool_net(len);
+
 	/* Point to the tail of the descriptor ring */
 
 	descptr = (struct eth_q_tx_desc *)ethptr->txRing + ethptr->txTail;

@@ -5,7 +5,7 @@
 #endif
 
 #ifndef	BP_MAXB
-#define	BP_MAXB	8192		/* Maximum buffer size in bytes		*/
+#define	BP_MAXB	65536		/* Maximum buffer size in bytes		*/
 #endif
 
 #define	BP_MINB	8		/* Minimum buffer size in bytes		*/

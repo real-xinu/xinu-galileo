@@ -8,7 +8,7 @@
  */
 void ttyhandler(void) {
 	struct	dentry	*devptr;	/* Address of device control blk*/
-	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/	
+	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/
 	struct	uart_csreg *csrptr;	/* Address of UART's CSR	*/
 	byte	iir = 0;		/* Interrupt identification	*/
 	byte	lsr = 0;		/* Line status			*/
@@ -25,53 +25,54 @@ void ttyhandler(void) {
 
 	/* Decode hardware interrupt request from UART device */
 
-        /* Check interrupt identification register */
+	/* Check interrupt identification register */
 	iir = csrptr->iir;
-        if (iir & UART_IIR_IRQ) {
+	if (iir & UART_IIR_IRQ) {
 		return;
-        }
+	}
 
 	/* Decode the interrupt cause based upon the value extracted	*/
 	/* from the UART interrupt identification register.  Clear	*/
 	/* the interrupt source and perform the appropriate handling	*/
 	/* to coordinate with the upper half of the driver		*/
 
-        /* Decode the interrupt cause */
+	/* Decode the interrupt cause */
 
-        iir &= UART_IIR_IDMASK;		/* Mask off the interrupt ID */
-        switch (iir) {
+	iir &= UART_IIR_IDMASK;		/* Mask off the interrupt ID */
+	switch (iir) {
 
-	    /* Receiver line status interrupt (error) */
+		/* Receiver line status interrupt (error) */
 
-	    case UART_IIR_RLSI:
-		return;
+		case UART_IIR_RLSI:
+			return;
 
-	    /* Receiver data available or timed out */
+			/* Receiver data available or timed out */
 
-	    case UART_IIR_RDA:
-	    case UART_IIR_RTO:
+		case UART_IIR_RDA:
+		case UART_IIR_RTO:
 
-		resched_cntl(DEFER_START);
+			resched_cntl(DEFER_START);
 
-		/* While chars avail. in UART buffer, call ttyinter_in	*/
+			/* While chars avail. in UART buffer, call ttyinter_in	*/
 
-		while ( (csrptr->lsr & UART_LSR_DR) != 0) {
-			ttyhandle_in(typtr, csrptr);
-                }
+			while ( (csrptr->lsr & UART_LSR_DR) != 0) {
+				ttyhandle_in(typtr, csrptr);
+			}
 
-		resched_cntl(DEFER_STOP);
+			resched_cntl(DEFER_STOP);
 
-		return;
+			return;
 
-            /* Transmitter output FIFO is empty (i.e., ready for more)	*/
+			/* Transmitter output FIFO is empty (i.e., ready for more)	*/
 
-	    case UART_IIR_THRE:
-		ttyhandle_out(typtr, csrptr);
-		return;
+		case UART_IIR_THRE:
+			update_randompool_keyboard();
+			ttyhandle_out(typtr, csrptr);
+			return;
 
-	    /* Modem status change (simply ignore) */
+			/* Modem status change (simply ignore) */
 
-	    case UART_IIR_MSC:
-		return;
-	    }
+		case UART_IIR_MSC:
+			return;
+	}
 }

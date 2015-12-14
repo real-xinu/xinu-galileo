@@ -13,6 +13,7 @@
 #include <ports.h>
 #include <uart.h>
 #include <tty.h>
+#include <pty.h>
 #include <device.h>
 #include <interrupt.h>
 #include <file.h>
@@ -43,3 +44,11 @@
 #include <multiboot.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <random.h>
+#include <asn1.h>
+#include <base64.h>
+#include <crypto.h>
+#include <mpint.h>
+#include <dh_groups.h>
+#include <ssh.h>

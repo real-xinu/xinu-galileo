@@ -7,6 +7,9 @@ extern	shellcmd  xsh_arp	(int32, char *[]);
 /* in file xsh_bingid.c */
 extern	shellcmd  xsh_bingid	(int32, char *[]);
 
+/* in file xsh_base64.c */
+extern	shellcmd  xsh_base64	(int32, char *[]);
+
 /* in file xsh_cat.c */
 extern	shellcmd  xsh_cat	(int32, char *[]);
 
@@ -58,6 +61,9 @@ extern	shellcmd  xsh_ps	(int32, char *[]);
 /* in file xsh_sleep.c */
 extern	shellcmd  xsh_sleep	(int32, char *[]);
 
+/* in file xsh_sshdump.c */
+extern	shellcmd  xsh_sshdump	(int32, char *[]);
+
 /* in file xsh_udpdump.c */
 extern	shellcmd  xsh_udpdump	(int32, char *[]);
 
@@ -69,6 +75,9 @@ extern	shellcmd  xsh_udpeserver (int32, char *[]);
 
 /* in file xsh_uptime.c */
 extern	shellcmd  xsh_uptime	(int32, char *[]);
+
+/* in file xsh_uptime.c */
+extern	shellcmd  xsh_usermod	(int32, char *[]);
 
 /* in file xsh_help.c */
 extern	shellcmd  xsh_help	(int32, char *[]);
