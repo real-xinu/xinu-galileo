@@ -16,7 +16,7 @@ int32	tcpdata(
 	int32	offset;			/* Offset in segment of new	*/
 					/*   data (i.e., data not	*/
 					/*   received earlier		*/
-	int32	i, j;			/* counter and index used	*/
+	int32	i;			/* counter and index used	*/
 					/*   during data copy		*/
 	tcpseq	endseq;			/* Ending sequence number after	*/
 					/*   new data that arrived	*/

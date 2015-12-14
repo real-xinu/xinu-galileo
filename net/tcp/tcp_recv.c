@@ -14,7 +14,6 @@ int32	tcp_recv(
 {
 	struct	tcb	*tcbptr;	/* Ptr to a TCB			*/
 	int32		i;		/* Iteratives through data	*/
-	int32		j;		/* Counter used during copy	*/
 	int32		curlen;		/* Amount of data available	*/
 	pid32		child;		/* Process ID of child		*/
 	char *		end;		/* addr of the ring buffer until data has to be copied */

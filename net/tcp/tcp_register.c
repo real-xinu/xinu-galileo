@@ -44,7 +44,7 @@ int32	tcp_register (
 	int32	active
 	)
 {
-	char		*spec;		/* IP:port as a string		*/
+	// char		*spec;		/* IP:port as a string		*/
 	struct tcb	*tcbptr;	/* Ptr to TCB			*/
 	uint32		lip;		/* Local IP address		*/
 	int32		i;		/* Walks through TCBs		*/
