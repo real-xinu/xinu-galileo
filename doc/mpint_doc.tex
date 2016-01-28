@@ -370,8 +370,8 @@
   
   MPINT is a multi-precision integer library supported for the Xinu operating system. Tested so far only for the Galileo version.
   
-  This library provides the basic arithmetic operation such as addition, subtraction, multiplication, division etc. The initial design is not efficiency,
-  some efficiency tests have been perform and can be seen at the Section \ref{perfeval}.
+  This library provides the basic arithmetic operation such as addition, subtraction, multiplication, division etc. The initial design is not efficiency.
+  %, some efficiency tests have been perform and can be seen at the Section \ref{perfeval}.
   
   \section{Background}
   
@@ -1015,9 +1015,9 @@
   \begin{itemize}
     \item [] \textbf{Prototype}
     \begin{lstlisting}
-      bool8 lshift_mpint(MPINT* x, int32 shift);
+      bool8 safelshift_mpint(MPINT* x, int32 shift);
     \end{lstlisting}
-    \item [] \textbf{Description} Shift \textit{shift} bits on the left without extending the $MPINT$.
+    \item [] \textbf{Description} Shift \textit{shift} bits on the left \textbf{without} extending the $MPINT$.
     \item [] \textbf{Note} The maximum value for \textit{shift} is $HW\_BITS$. It used for example in the \textit{unsigndiv\_mpint} function to ensure that the
     high order bits of the high order $HALF\_WORD$ is 1.
     \item [] \textbf{Return} The function returns $TRUE$ if it has been successful, $FALSE$ if an error occurred.
