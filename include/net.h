@@ -2,7 +2,7 @@
 
 #define NETSTK			8192	/* Stack size for network setup */
 #define NETOUTPRIO		500		/* Network startup priority 	*/
-#define NETINPRIO		15		/* Network startup priority 	*/
+#define NETINPRIO		600		/* Network startup priority 	*/
 #define NETBOOTFILE		128		/* Size of the netboot filename	*/
 
 /* Constants used in the networking code */

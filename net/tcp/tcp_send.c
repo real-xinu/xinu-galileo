@@ -14,7 +14,7 @@ int32	tcp_send(
 {
 	struct	tcb	*tcbptr;	/* Ptr to TCB for the device	*/
 	int32		i;		/* counts bytes of data		*/
-	int32		j;		/* used during copy		*/
+	int32		j, k;		/* used during copy		*/
 	int32		curlen;		/* bytes that can be copied	*/
 
 	if((slot < 0) || (slot >= Ntcp)) {
@@ -64,10 +64,12 @@ int32	tcp_send(
 
 		/* Copy data */
 
+		k = tcbptr->tcb_sbdata + tcbptr->tcb_sblen;
 		for (j = 0; j < curlen; j++) {
-			tcbptr->tcb_sbuf[(tcbptr->tcb_sbdata
-					+ tcbptr->tcb_sblen
-					+ j) % tcbptr->tcb_sbsize] = data[i++];
+			if (k >= tcbptr->tcb_sbsize) {
+				k = 0;
+			}
+			tcbptr->tcb_sbuf[k++] = data[i++];
 		}
 		tcbptr->tcb_sblen += curlen;
 	}

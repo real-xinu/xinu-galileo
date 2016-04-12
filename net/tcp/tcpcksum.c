@@ -6,7 +6,7 @@
  *  localcksum  -  compute a checksum given an address and length
  *------------------------------------------------------------------------
  */
-static	uint16	localcksum(
+static	uint32	localcksum(
 	  char		*addr,		/* Address of items to checksum	*/
 	  int32		len		/* Length of items in bytes	*/
 	)
@@ -23,12 +23,16 @@ static	uint16	localcksum(
 		word = *hptr++;
 		sum += (uint32) htons(word);
 	}
+
+	return sum;
+	/*
 	sum += 0xffff & (sum >> 16);
 	sum = 0xffff & ~sum;
 	if (sum == 0xffff) {
 		sum = 0;
 	}
 	return (uint16) (0xffff & sum);
+	*/
 }
 
 /*------------------------------------------------------------------------
@@ -87,7 +91,8 @@ uint16	tcpcksum(
 
 	/* Compute the checksum over the TCP segment */
 
-	sum += ~localcksum ((char *)&pkt->net_tcpsport, len) & 0xffff;
+	//sum += ~localcksum ((char *)&pkt->net_tcpsport, len) & 0xffff;
+	sum += localcksum ((char *)&pkt->net_tcpsport, len);
 
 	/* Add overflow */
 

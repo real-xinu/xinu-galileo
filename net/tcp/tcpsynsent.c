@@ -34,7 +34,8 @@ int32	tcpsynsent(
 	/* Set up parameters, such as the window size */
 
 	tcbptr->tcb_rnext = tcbptr->tcb_rbseq = ++pkt->net_tcpseq;
-	tcbptr->tcb_rwnd = tcbptr->tcb_ssthresh = pkt->net_tcpwindow;
+	tcbptr->tcb_rwnd = pkt->net_tcpwindow;
+	tcbptr->tcb_ssthresh = 0x0fffffff;
 	pkt->net_tcpcode &= ~TCPF_SYN;
 
 	/* Send an ACK */

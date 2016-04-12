@@ -15,7 +15,7 @@ void	tcpsendseg(
 	  int32		code		/* Code value to use		*/
 	)
 {
-	int		i;		/* counts data bytes during copy*/
+	int		i, j;		/* counts data bytes during copy*/
 	char		*data;		/* ptr to data being copied	*/
 
 	struct netpacket *pkt;		/* ptr for new formant		*/
@@ -39,12 +39,13 @@ void	tcpsendseg(
 		pkt->net_iplen += 4;
 	}
 
-	//kprintf("tcpsendseg: tcpcode %x\n", pkt->net_tcpcode);
-
 	data = ((char *)&pkt->net_tcpsport + TCP_HLEN(pkt));
+	j =  tcbptr->tcb_sbdata + offset;
 	for (i = 0; i < len; i++) {
-		data[i] = tcbptr->tcb_sbuf[(tcbptr->tcb_sbdata + offset + i)
-			% tcbptr->tcb_sbsize];
+		data[i] = tcbptr->tcb_sbuf[j++];
+		if (j >= tcbptr->tcb_sbsize) {
+			j = 0;
+		}
 	}
 
 	if (tcbptr->tcb_suna == tcbptr->tcb_snext) {/* No outstanding data */
@@ -61,10 +62,8 @@ void	tcpsendseg(
 		tcbptr->tcb_rttseq = pkt->net_tcpseq;
 		tcbptr->tcb_rtttime = (int)ctr1000;
 	}
-	//kprintf("OUT: seq %x ackseq %x\n", pkt->net_tcpseq, pkt->net_tcpack);
-	//pdumph(pkt);
-	//kprintf("calling ip_send\n");
-	//ip_send (pkt);
-	ip_enqueue(pkt);
+
+	ip_send(pkt);
+
 	return;
 }

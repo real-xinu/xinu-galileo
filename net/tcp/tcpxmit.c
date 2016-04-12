@@ -7,8 +7,8 @@
  *------------------------------------------------------------------------
  */
 int32	tcpxmit(
-	struct tcb	*tcbptr,		/* Ptr to a TCB			*/
-	tcpseq		seq				/* seq of the first byte to send */
+	struct tcb	*tcbptr,	/* Ptr to a TCB			*/
+	tcpseq		seq		/* seq of the first byte to send*/
 	)
 {
 	int32		len;		/* length of segment to send	*/
@@ -19,7 +19,7 @@ int32	tcpxmit(
 	int32		sent;		/* Has anything been sent?	*/
 
 	sent = 0;
-	//kprintf("tcpxmit..\n");
+
 	/* Send as many segments as we can */
 
 	while (1) {

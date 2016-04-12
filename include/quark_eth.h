@@ -140,7 +140,7 @@ struct eth_q_rx_desc {
 #define ETH_QUARK_RDCTL1_RER	0x8000	/* Recv End of Ring	*/
 
 #define ETH_QUARK_RX_RING_SIZE	128
-#define ETH_QUARK_TX_RING_SIZE	32
+#define ETH_QUARK_TX_RING_SIZE	128
 
 #define ETH_QUARK_INIT_DELAY	500000		/* Delay in micro secs	*/
 #define ETH_QUARK_MAX_RETRIES	3		/* Max retries for init	*/

@@ -91,7 +91,8 @@ int32	tcplisten(
 	pnewtcb->tcb_rnext = pnewtcb->tcb_rbseq = pkt->net_tcpseq + 1;
 	pnewtcb->tcb_rwnd = pnewtcb->tcb_ssthresh = pkt->net_tcpwindow;
 	pnewtcb->tcb_snext = pnewtcb->tcb_suna = pnewtcb->tcb_ssyn = 1;
-	//kprintf("tcplisten: newtcb: rbseq %x, rnext %x\n", pnewtcb->tcb_rbseq, pnewtcb->tcb_rnext);
+	pnewtcb->tcb_ssthresh = 0x0fffffff;
+
 	/* Handle any data in the segment (unexpected, but required) */
 
 	tcpdata (pnewtcb, pkt);

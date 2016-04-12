@@ -71,6 +71,8 @@ int32	tcpupdate(
 		tcptmdel (tcbptr, TCBC_RTO);
 		if (tcbptr->tcb_suna != tcbptr->tcb_snext)
 			tcptmset (tcbptr->tcb_rto, tcbptr, TCBC_RTO);
+
+		tcpwake(tcbptr, TCPW_WRITERS);
 	}
 
 	return OK;
