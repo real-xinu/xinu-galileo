@@ -1,1 +1,4 @@
+Xinu
+=====
+
 This directory holds Xinu sources for the Galileo.
