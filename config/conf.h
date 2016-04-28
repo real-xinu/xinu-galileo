@@ -29,42 +29,16 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define NULLDEV     1       /* type null     */
 #define ETHER0      2       /* type eth      */
 #define NAMESPACE   3       /* type nam      */
-#define RDISK       4       /* type rds      */
-#define RAM0        5       /* type ram      */
-#define RFILESYS    6       /* type rfs      */
-#define RFILE0      7       /* type rfl      */
-#define RFILE1      8       /* type rfl      */
-#define RFILE2      9       /* type rfl      */
-#define RFILE3      10       /* type rfl      */
-#define RFILE4      11       /* type rfl      */
-#define RFILE5      12       /* type rfl      */
-#define RFILE6      13       /* type rfl      */
-#define RFILE7      14       /* type rfl      */
-#define RFILE8      15       /* type rfl      */
-#define RFILE9      16       /* type rfl      */
-#define LFILESYS    17       /* type lfs      */
-#define LFILE0      18       /* type lfl      */
-#define LFILE1      19       /* type lfl      */
-#define LFILE2      20       /* type lfl      */
-#define LFILE3      21       /* type lfl      */
-#define LFILE4      22       /* type lfl      */
-#define LFILE5      23       /* type lfl      */
 
 /* Control block sizes */
 
 #define	Nnull	1
 #define	Ntty	1
 #define	Neth	1
-#define	Nrds	1
-#define	Nram	1
-#define	Nrfs	1
-#define	Nrfl	10
-#define	Nlfs	1
-#define	Nlfl	6
 #define	Nnam	1
 
 #define DEVMAXNAME 24
-#define NDEVS 24
+#define NDEVS 4
 
 
 /* Configuration and Size Constants */
@@ -75,5 +49,3 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	IRQ_TIMER    IRQ_HW5	/* timer IRQ is wired to hardware 5	*/
 #define	IRQ_ATH_MISC IRQ_HW4	/* Misc. IRQ is wired to hardware 4	*/
 #define CLKFREQ      200000000	/* 200 MHz clock			*/
-
-#define	LF_DISK_DEV	RAM0
