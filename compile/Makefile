@@ -1,7 +1,7 @@
 #########################################################################
 #									#
 #									#
-#  Makefile for the Intel Galileo version of the Xinu operating system	#
+#  Makefile for the Intel Galileo version of the Xboot bootloader	#
 #									#
 #  includes: .deps and .defs						#
 #									#
@@ -16,10 +16,7 @@ TOPDIR		=	..
 CC		=	${COMPILER_ROOT}gcc
 LD		=	${COMPILER_ROOT}ld
 OBJCOPY		=	${COMPILER_ROOT}objcopy
-XINU		=	$(TOPDIR)/compile/xinu.elf
-XINUBIN		=	$(TOPDIR)/compile/xinu.bin
-XINUXBIN	=	$(TOPDIR)/compile/xinu
-MAKEXBIN 	=	$(TOPDIR)/compile/bin/buildxbin
+XBOOT		=	$(TOPDIR)/compile/xboot
 BUILDMAKE	=	$(TOPDIR)/compile/bin/build-make
 
 MAKEDEP		=	$(CC) -M -MG
@@ -29,30 +26,25 @@ DEFSFILE	=	.defs
 VERSIONFILE	=	version
 LDSCRIPT	=	ld.script
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
-REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c		\
+REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  main.c 	\
 			-s $(TOPDIR)/lib			\
 			-s $(TOPDIR)/device/tty			\
 			-s $(TOPDIR)/device/nam			\
 			-s $(TOPDIR)/device/eth			\
-			-s $(TOPDIR)/device/rds			\
-			-s $(TOPDIR)/device/ram			\
-			-s $(TOPDIR)/device/lfs			\
-			-s $(TOPDIR)/device/rfs			\
 			-s $(TOPDIR)/net  'arp_dump*'  		\
-				'dhcp_dump*'  pxe.c		\
-			-s $(TOPDIR)/shell  'xsh_rdstest*'
+				'dhcp_dump*'  pxe.c
 
 INCLUDE		=	-I$(TOPDIR)/include
 DEFS		= 	-DBSDURG -DVERSION=\""`cat $(VERSIONFILE)`"\"
 
 # Compiler flags
-CFLAGS  = -march=i586 -m32 -fno-builtin -fno-stack-protector -nostdlib -c -Wall -O0 ${DEFS} ${INCLUDE}
+CFLAGS  = -march=i586 -m32 -fno-builtin -fno-stack-protector -nostdlib -c -Wall -O ${DEFS} ${INCLUDE}
 SFLAGS  = ${INCLUDE}
 
 # Loader flags
 LDFLAGS = -dn -m elf_i386 -Map xinu.map -T $(LDSCRIPT)
 
-all:	xinu
+all:	xboot
 
 #--------------------------------------------------------------------------------
 # Handle generation of a new version string when initialize is recompiled
@@ -70,7 +62,7 @@ newversion:
 #--------------------------------------------------------------------------------
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
-LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
+D_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
 
 #------------------------------------------------------------
 # Rules for files that need special handling
@@ -97,14 +89,9 @@ export
 # Specific additional rules and exceptions
 #--------------------------------------------------------------------------------
 
-xinu:	Makefile rebuild $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD_LIST)
+xboot:	Makefile $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD_LIST)
 	@echo;echo 'Loading object files to produce GRUB bootable xinu'
-	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XINU)
-	@echo;echo 'Building $(XINUBIN)'
-	@objcopy -O binary $(XINU) $(XINUBIN)
-	@echo;echo 'Building $(XINUXBIN)'
-	@$(MAKEXBIN) $(XINUBIN) $(XINUXBIN)
-	@rm -f $(XINUBIN)
+	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XBOOT)
 	@echo
 
 $(BLDDIRS): 
@@ -135,21 +122,20 @@ clean:
 	@echo   removing configuration files ...
 	@rm -f $(CONFH) $(CONFC)
 	@(cd $(TOPDIR)/config; make clean)
-	@echo removing xinu ...
-	@rm -f $(XINU)
-	@rm -f $(XINUXBIN)
+	@echo removing xboot ...
+	@rm -f $(XBOOT)
 
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
 #--------------------------------------------------------------------------------
 	
 $(DEFSFILE):
-	@rm -f $(DEFSFILE)
+	rm -f $(DEFSFILE)
 	@echo "" > $(DEFSFILE)
-	@make rebuild
+	make rebuild
 
 $(DEPSFILE):
-	@rm -f $(DEPSFILE)
+	rm -f $(DEPSFILE)
 	@echo "" > $(DEPSFILE)
 	@make depend
 
