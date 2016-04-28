@@ -26,7 +26,7 @@ DEFSFILE	=	.defs
 VERSIONFILE	=	version
 LDSCRIPT	=	ld.script
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
-REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c main.c 	\
+REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  main.c 	\
 			-s $(TOPDIR)/lib			\
 			-s $(TOPDIR)/device/tty			\
 			-s $(TOPDIR)/device/nam			\
@@ -62,7 +62,7 @@ newversion:
 #--------------------------------------------------------------------------------
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
-LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
+D_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
 
 #------------------------------------------------------------
 # Rules for files that need special handling
