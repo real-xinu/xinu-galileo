@@ -29,7 +29,7 @@ DEFSFILE	=	.defs
 VERSIONFILE	=	version
 LDSCRIPT	=	ld.script
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
-REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c 	\
+REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c		\
 			-s $(TOPDIR)/lib			\
 			-s $(TOPDIR)/device/tty			\
 			-s $(TOPDIR)/device/nam			\
