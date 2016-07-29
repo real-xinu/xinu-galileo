@@ -79,7 +79,20 @@ devcall sdmc_set_dat_timeout (
 	 volatile struct sdmc_csreg *csrptr	/* address of SD controller's CSR	*/
 	)
 {
-	kprintf("TIMEOUT %08X %02X\n", csrptr->capabilities, csrptr->timeout_ctl);
+    /* Save old contents of error interrupt status registers */
+    uint16 save_err_int_stat_en = csrptr->err_int_stat_en;
+	uint16 save_err_int_sig_en = csrptr->err_int_sig_en;
+    
+    /* Disable data timeout error */
+    csrptr->err_int_stat_en &= !(SDMC_ERR_INT_DATA_TIMEOUT_ERR_STAT_EN);
+    csrptr->err_int_sig_en &= !(SDMC_ERR_INT_DATA_TIMEOUT_ERR_SIG_EN);
+    
+    /* Set the data time out mulitplier */
+    csrptr->timeout_ctl = SDMC_TMR_CTL_HIGH;
+    
+    /* Restore error interrupt values */
+    csrptr->err_int_stat_en = save_err_int_stat_en;
+    csrptr->err_int_sig_en = save_err_int_sig_en;
 
 	return SDMC_RC_OK;
 }	
@@ -122,18 +135,18 @@ devcall	sdmcopen (
 	
 	/* Issue card reset command (CMD0) */
 	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD0, 0x00000000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD0: %04X %04X", SDMC_CMD0, error_sts);
+		kprintf("[SDMC] Error in CMD0: %04X %04X\n", SDMC_CMD0, error_sts);
 		return SYSERR;
 	}
 	
 	/* Issue voltage check command (CMD8) */
-	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD8, 0x00000101, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD8: %04X %04X", SDMC_CMD8, error_sts);
+	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD8, 0x000001AA, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+		kprintf("[SDMC] Error in CMD8: %04X %04X\n", SDMC_CMD8, error_sts);
 		return SYSERR;
 	}
 	/* Error in CMD8 - card must not support it */
 	if(error_sts & SDMC_ERR_INT_CMD_TIMEOUT_ERR ||
-	   csrptr->response0 != 0x00000101) {
+	   csrptr->response0 != 0x000001AA) {
 		sdmcptr->cmd8 = 0;
 	}
 	
@@ -141,17 +154,17 @@ devcall	sdmcopen (
 	/* To send an application command (ACMD) a CMD55 must first be sent 	*/
 	/*   to tell the controller to expect an application command		*/
 	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD55, 0x00000000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD55: %04X %04X", SDMC_CMD55, error_sts);
+		kprintf("[SDMC] Error in CMD55: %04X %04X\n", SDMC_CMD55, error_sts);
 		return SYSERR;
 	}
-	if(sdmc_issue_cmd_sync(csrptr, SDMC_ACMD41, 0x00000000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in ACMD41: %04X %04X", SDMC_ACMD41, error_sts);
+	if(sdmc_issue_cmd_sync(csrptr, SDMC_ACMD41, 0x40FF8000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+		kprintf("[SDMC] Error in ACMD41: %04X %04X\n", SDMC_ACMD41, error_sts);
 		return SYSERR;
 	}
 	
 	/* Issue initialize card command (ACMD41) */
 	cmd_arg = SDMC_OCR_MASK & csrptr->response0;	/* Set OCR 				*/
-	if(csrptr->response0 & SDMC_R3_S18A) {		/* Set switch to 1.8V is card supports	*/
+	if(csrptr->response0 & SDMC_R3_S18A) {		/* Set switch to 1.8V if card supports	*/
 		cmd_arg |= SDMC_ACMD41_S18R;
 	}
 	cmd_arg |= SDMC_ACMD41_XPC | SDMC_ACMD41_HCS; 	/* Set high capacity support 		*/
@@ -167,34 +180,75 @@ devcall	sdmcopen (
 		/* To send an application command (ACMD) a CMD55 must first be sent 	*/
 		/*   to tell the controller to expect an application command		*/
 		if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD55, 0x00000000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-			kprintf("[SDMC] Error in CMD55: %04X %04X", SDMC_CMD55, error_sts);
+			kprintf("[SDMC] Error in CMD55: %04X %04X\n", SDMC_CMD55, error_sts);
 			return SYSERR;
 		}
 		/* Send the card initialization command 	*/
 		if(sdmc_issue_cmd_sync(csrptr, SDMC_ACMD41, cmd_arg, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-			kprintf("[SDMC] Error in ACMD41: %04X %04X", SDMC_ACMD41, error_sts);
+			kprintf("[SDMC] Error in ACMD41: %04X %04X\n", SDMC_ACMD41, error_sts);
 			return SYSERR;
 		}
 		
 		first_ACMD41 = 0;
 	} while(!(csrptr->response0 & SDMC_R3_BUSY));
 	
-	/* TODO run voltage switch procedure of the card supports 1.8V signaling */
+	/* TODO run voltage switch procedure if the card supports 1.8V signaling */
 	
 	/* Retrieve the card's card identifier (CID) */
 	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD2, 0, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD2: %04X %04X", SDMC_CMD2, error_sts);
+		kprintf("[SDMC] Error in CMD2: %04X %04X\n", SDMC_CMD2, error_sts);
 		return SYSERR;
 	}
 	memcpy(sdmcptr->cid, (char*)&csrptr->response0, 16);
 	
 	/* Retrieve the card's relative card address (RCA) */
 	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD3, 0, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD3: %04X %04X", SDMC_CMD3, error_sts);
+		kprintf("[SDMC] Error in CMD3: %04X %04X\n", SDMC_CMD3, error_sts);
 		return SYSERR;
 	}
 	sdmcptr->rca = csrptr->response0 & SDMC_R6_RCA_MASK;
-	
+    
+    /* Retrieve the card specific data (CSD) */
+	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD9, sdmcptr->rca, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+		kprintf("[SDMC] Error in CMD9: %04X %04X\n", SDMC_CMD9, error_sts);
+		return SYSERR;
+	}
+    
+    /* Select the card */
+	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD7, sdmcptr->rca, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+		kprintf("[SDMC] Error in CMD7: %04X %04X\n", SDMC_CMD7, error_sts);
+		return SYSERR;
+	}
+    if(csrptr->response0 & SDMC_R1_ANY_ERROR) {
+        kprintf("[SDMC] Error in CMD7 response: %04X %04X\n", SDMC_CMD7, csrptr->response0);
+        return SYSERR;
+    }
+    
+    /* Set the block size */
+    uint32 block_size_to_set = SDMC_BLK_SIZE;
+	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD16, block_size_to_set, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+		kprintf("[SDMC] Error in CMD16: %04X %04X\n", SDMC_CMD16, error_sts);
+		return SYSERR;
+	}
+    if(csrptr->response0 & SDMC_R1_ANY_ERROR) {
+        kprintf("[SDMC] Error in CMD16 response: %04X %04X\n", SDMC_CMD16, csrptr->response0);
+        return SYSERR;
+    }
+    csrptr->blk_size = SDMC_BLK_SIZE;
+    
+    /* To send an application command (ACMD) a CMD55 must first be sent 	*/
+    /*   to tell the controller to expect an application command		*/
+    if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD55, sdmcptr->rca, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+        kprintf("[SDMC] Error in CMD55: %04X %04X\n", SDMC_CMD55, error_sts);
+        return SYSERR;
+    }
+    /* Set the bus width 	*/
+    if(sdmc_issue_cmd_sync(csrptr, SDMC_ACMD6, 2, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+        kprintf("[SDMC] Error in ACMD6: %04X %04X\n", SDMC_ACMD6, error_sts);
+        return SYSERR;
+    }
+    csrptr->host_ctl |= SDMC_HOST_DAT_TX_4BIT;
+ 
 	sdmcptr->cmd_sem = semcreate(0);
 	if((int)sdmcptr->cmd_sem == SYSERR) {
 		return SYSERR;

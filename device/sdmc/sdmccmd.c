@@ -105,8 +105,8 @@ devcall sdmc_issue_cmd_async (
 	/* Wait for command inhibit bits to be cleared */
 	
 	kprintf("State Prior to CMD: %08X %08X %08X %08X %08X %04X %04X\n",
-		csrptr->pre_state, csrptr->response0, csrptr->response2,
-		csrptr->response4, csrptr->response6,
+		csrptr->pre_state, csrptr->response6, csrptr->response4,
+		csrptr->response2, csrptr->response0,
 		csrptr->nml_int_status, csrptr->err_int_status);
 	
 	while(csrptr->pre_state & SDMC_PRE_STATE_CMD_INHIBIT_CMD) {
@@ -117,14 +117,6 @@ devcall sdmc_issue_cmd_async (
 	}
 	
 	kprintf("Issuing command %04X %08X\n", cmd_value, arg_value);
-	
-	/* Ensure that the command complete interrupt status are enabled*/
-	csrptr->nrm_int_status_en |= SDMC_CMD_COMP_STAT_EN |
-			SDMC_TX_COMP_STAT_EN | SDMC_CRD_INT_STAT_EN;
-	csrptr->err_int_stat_en |= SDMC_ERR_INT_CMD_TIMEOUT_ERR_STAT_EN |
-			SDMC_ERR_INT_CMD_CRC_ERR_STAT_EN |
-			SDMC_ERR_INT_CMD_END_BIT_ERR_STAT_EN |
-			SDMC_ERR_INT_CMD_IND_ERR_STAT_EN;
 	
 	/* Asynchronous command execution, ensure that interrupt	*/
 	/*		signals are enabled				*/
@@ -162,8 +154,8 @@ devcall sdmc_finalize_cmd_async (
 	}
 	
 	kprintf("State After CMD: %08X %08X %08X %08X %08X %04X %04X\n",
-		csrptr->pre_state, csrptr->response0, csrptr->response2,
-		csrptr->response4, csrptr->response6,
+		csrptr->pre_state, csrptr->response6, csrptr->response4,
+		csrptr->response2, csrptr->response0,
 		csrptr->nml_int_status, csrptr->err_int_status);
 	
 	return SDMC_RC_OK;
@@ -179,17 +171,11 @@ devcall sdmc_issue_cmd_sync (
 {
 	uint8 rc = SDMC_RC_OK;
 
-	/* Save old contents of interrupt registers */
-	uint16 save_nrm_int_stat_en = csrptr->nrm_int_status_en;
-	uint16 save_nrm_int_sig_en = csrptr->nrm_int_sig_en;
-	uint16 save_err_int_stat_en = csrptr->err_int_stat_en;
-	uint16 save_err_int_sig_en = csrptr->err_int_sig_en;
-
 	/* Wait for command inhibit bits to be cleared */
 	
 	kprintf("State Prior to CMD: %08X %08X %08X %08X %08X %04X %04X\n",
-		csrptr->pre_state, csrptr->response0, csrptr->response2,
-		csrptr->response4, csrptr->response6,
+		csrptr->pre_state, csrptr->response6, csrptr->response4,
+		csrptr->response2, csrptr->response0,
 		csrptr->nml_int_status, csrptr->err_int_status);
 	
 	while(csrptr->pre_state & SDMC_PRE_STATE_CMD_INHIBIT_CMD) {
@@ -200,23 +186,6 @@ devcall sdmc_issue_cmd_sync (
 	}
 	
 	kprintf("Issuing command %04X %08X\n", cmd_value, arg_value);
-	
-	/* Ensure that the command complete interrupt status are enabled*/
-
-	csrptr->nrm_int_status_en |= SDMC_CMD_COMP_STAT_EN |
-		SDMC_TX_COMP_STAT_EN | SDMC_CRD_INT_STAT_EN;
-	csrptr->err_int_stat_en |= SDMC_ERR_INT_CMD_TIMEOUT_ERR_STAT_EN |
-		SDMC_ERR_INT_CMD_CRC_ERR_STAT_EN |
-		SDMC_ERR_INT_CMD_END_BIT_ERR_STAT_EN |
-		SDMC_ERR_INT_CMD_IND_ERR_STAT_EN;
-	
-	if(flags & SDMC_CMD_DAT_TRNS) {
-		csrptr->nrm_int_status_en |= SDMC_TX_COMP_STAT_EN;
-		csrptr->err_int_stat_en |=
-			SDMC_ERR_INT_DATA_TIMEOUT_ERR_STAT_EN |
-			SDMC_ERR_INT_DATA_CRC_ERR_STAT_EN |
-			SDMC_ERR_INT_DATA_END_BIT_ERR_STAT_EN;
-	}
 	
 	/* Synchronous command execution, ensure that interrupt		*/
 	/*	signals are not enabled					*/
@@ -245,6 +214,11 @@ devcall sdmc_issue_cmd_sync (
 	if(csrptr->nml_int_status & SDMC_NML_INT_CMD_COMP) {
 		csrptr->nml_int_status |= SDMC_NML_INT_CMD_COMP;
 	}
+    
+    kprintf("State After CMD: %08X %08X %08X %08X %08X %04X %04X\n",
+		csrptr->pre_state, csrptr->response6, csrptr->response4,
+		csrptr->response2, csrptr->response0,
+		csrptr->nml_int_status, csrptr->err_int_status);
 	
 	if(flags & SDMC_CMD_DAT_TRNS) {
 		
@@ -252,10 +226,10 @@ devcall sdmc_issue_cmd_sync (
 		while(!(csrptr->nml_int_status & SDMC_NML_INT_TX_COMP) &&
 		      !(csrptr->nml_int_status & SDMC_NML_INT_ERR_INT)) {
 		   kprintf(
-		     "Waiting for data trans %08X %04X %04X %08X %02X\n",
+		     "Waiting for data trans %08X %04X %04X %08X %02X %04X %08X\n",
 		      csrptr->sys_adr, csrptr->nml_int_status,
 		      csrptr->err_int_status, csrptr->pre_state,
-		      csrptr->blk_gap_ctl);
+		      csrptr->blk_gap_ctl, csrptr->tx_mode, csrptr->buf_data_port);
 				DELAY(SDMC_CMD_DELAY);
 		}
 		
@@ -272,17 +246,6 @@ devcall sdmc_issue_cmd_sync (
 			rc = sdmc_cmd_err_rcvy(csrptr, error_sts);
 		}
 	}
-	
-	kprintf("State After CMD: %08X %08X %08X %08X %08X %04X %04X\n",
-		csrptr->pre_state, csrptr->response0, csrptr->response2,
-		csrptr->response4, csrptr->response6,
-		csrptr->nml_int_status, csrptr->err_int_status);
-	
-	/* Restore saved interrupt enable bits */
-	csrptr->nrm_int_status_en = save_nrm_int_stat_en;
-	csrptr->nrm_int_sig_en = save_nrm_int_sig_en;
-	csrptr->err_int_stat_en = save_err_int_stat_en;
-	csrptr->err_int_sig_en = save_err_int_sig_en;
-	
+
 	return rc;
 }

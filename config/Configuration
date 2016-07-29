@@ -57,7 +57,7 @@ ram:
 		-intr ionull
 
 /* type of SD memory card */
-/*
+/* 
 sdmc:
 	on sd
 		-i sdmcinit	-o sdmcopen	-c sdmcclose

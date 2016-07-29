@@ -52,7 +52,7 @@ devcall sdmcread_nodma (
 	
 	for(i = 0; i < 512/sizeof(csrptr->buf_data_port); i++) {
 		while(!(csrptr->nml_int_status & SDMC_NML_INT_BUF_RD_RDY)) {
-			//kprintf("INT %08X %04X %04X %08X\n", csrptr->pre_state, csrptr->nml_int_status, csrptr->err_int_status, csrptr->buf_data_port);
+			kprintf("INT %08X %04X %04X %08X\n", csrptr->pre_state, csrptr->nml_int_status, csrptr->err_int_status, csrptr->buf_data_port);
 			DELAY(SDMC_CMD_DELAY);
 		}
 		csrptr->nml_int_status |= SDMC_NML_INT_BUF_RD_RDY;
@@ -74,59 +74,40 @@ devcall sdmcread_dma (
 	)
 {
 	volatile struct	sdmc_csreg *csrptr;	/* address of SD controller's CSR	*/
-	struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
+	//struct	sdmcblk	*sdmcptr;	/* Pointer to sdmctab entry	*/
 	uint16	error_sts = 0;		/* SDMC command error status	*/
 	uint32	cmd_arg = 0;
 	char* buff_ptr = buff;
 	uint32 i;
 	
-	sdmcptr = &sdmctab[devptr->dvminor];
+	//sdmcptr = &sdmctab[devptr->dvminor];
 	csrptr = (struct sdmc_csreg *) devptr->dvcsr;
 	
 	/* Issue command CMD16 - set block size */
-	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD16, 512, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
+	/*if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD16, 512, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
 		kprintf("[SDMC] Error in CMD16: %04X %04X", SDMC_CMD16, error_sts);
 		return SYSERR;
-	}
-	
-	csrptr->nrm_int_status_en = 0x1FF;
-	csrptr->err_int_stat_en = 0x7FF;
-	csrptr->err_int_stat_en &= ~(SDMC_ERR_INT_DATA_TIMEOUT_ERR);
+	}*/
 	
 	csrptr->sys_adr = (uint32)buff;
-	csrptr->blk_size = 0x00000200;
+	csrptr->blk_size = SDMC_BLK_SIZE;
 	csrptr->blk_count = 1;
-	cmd_arg = blk;
+	cmd_arg = blk * csrptr->blk_size;
 	
 	/* Set transmit mode 		*/
 	/*   Single block read DMA	*/
-	csrptr->tx_mode = 0x0011;
+	csrptr->tx_mode = SDMC_TXM_DMA_EN | SDMC_TXM_DAT_TX_RD;
 	
 	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD17, cmd_arg, &error_sts, SDMC_CMD_DAT_TRNS) != SDMC_RC_OK) {
 		kprintf("[SDMC] Error in CMD17: %04X %04X\n", SDMC_CMD17, error_sts);
-		//return SYSERR;
+		return SYSERR;
 	}
 	
 	kprintf("INTSTS %08X %08X\n", csrptr->nrm_int_status_en, csrptr->err_int_stat_en);
 	
-	cmd_arg = sdmcptr->rca;
-	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD13, cmd_arg, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD13: %04X %04X\n", SDMC_CMD13, error_sts);
-		return SYSERR;
-	}
-	
-	return SYSERR;
-	
-	/*
-	if(sdmc_issue_cmd_sync(csrptr, SDMC_CMD12, 0x00000000, &error_sts, SDMC_CMD_NO_FLAGS) != SDMC_RC_OK) {
-		kprintf("[SDMC] Error in CMD12: %04X %04X\n", SDMC_CMD17, error_sts);
-		return SYSERR;
-	}
-	*/
-	
 	for(i = 0; i < 512/sizeof(csrptr->buf_data_port); i++) {
 		while(!(csrptr->nml_int_status & SDMC_NML_INT_BUF_RD_RDY)) {
-			//kprintf("INT %08X %04X %04X %08X\n", csrptr->pre_state, csrptr->nml_int_status, csrptr->err_int_status, csrptr->buf_data_port);
+			kprintf("INT %08X %04X %04X %08X\n", csrptr->pre_state, csrptr->nml_int_status, csrptr->err_int_status, csrptr->buf_data_port);
 			DELAY(SDMC_CMD_DELAY);
 		}
 		csrptr->nml_int_status |= SDMC_NML_INT_BUF_RD_RDY;

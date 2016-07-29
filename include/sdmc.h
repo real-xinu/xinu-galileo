@@ -108,6 +108,15 @@ struct sdmc_capabilities {
 
 /* Individual Bits in Control and Status Registers	*/
 
+/* Host Control Register */
+#define SDMC_HOST_CTL_LED_CTL		0x0001	/* LED Control	*/
+#define SDMC_HOST_DAT_TX_4BIT		0x0002	/* Set 4 Bit Bus Width	*/
+#define SDMC_HOST_HS_EN				0x0004	/* High Speed Enable	*/
+#define SDMC_HOST_ADMA_32			0x0010	/* 32 bit ADMA			*/
+#define SDMC_HOST_ADMA_64			0x0018	/* 64 bit ADMA			*/
+#define SDMC_HOST_CARD_DET_TST		0x0040	/* Card is inserted (test)		*/
+#define SDMC_HOST_CARD_DET_SIG		0x0080	/* Test signal: card inserted	*/
+
 /* Normal Interrupt Status Enable */
 #define SDMC_CMD_COMP_STAT_EN		0x0001	/* Command Complete Status Enable 	*/
 #define SDMC_TX_COMP_STAT_EN		0x0002	/* Transfer Complete Status Enable	*/
@@ -122,6 +131,7 @@ struct sdmc_capabilities {
 #define SDMC_INT_B_STAT_EN		0x0400	/* INT_A Status Enable			*/
 #define SDMC_INT_C_STAT_EN		0x0800	/* INT_A Status Enable			*/
 #define SDMC_RE_TUNE_STAT_EN		0x1000	/* Re-Tuning Event Status Enable	*/
+#define SDMC_NML_INT_ALL_STAT_EN	0x1FFF	/* Enable all interrupt status		*/
 
 /* Normal Interrupt Signal Enable */
 #define SDMC_CMD_COMP_SIG_EN		0x0001	/* Command Complete Signal Enable 	*/
@@ -137,6 +147,7 @@ struct sdmc_capabilities {
 #define SDMC_INT_B_SIG_EN		0x0400	/* INT_A Signal Enable			*/
 #define SDMC_INT_C_SIG_EN		0x0800	/* INT_A Signal Enable			*/
 #define SDMC_RE_TUNE_SIG_EN		0x1000	/* Re-Tuning Event Signal Enable	*/
+#define SDMC_NML_INT_ALL_SIG_EN	0x1FFF	/* Enable all interrupt signals		*/
 
 /* Normal Interrupt Status Register */
 #define SDMC_NML_INT_CMD_COMP		0x0001	/* Command Complete			*/
@@ -170,6 +181,7 @@ struct sdmc_capabilities {
 #define SDMC_ERR_INT_TUNE_ERR_STAT_EN		0x0400	/* Tuning Error Status Enable		*/
 #define SDMC_ERR_INT_TGT_RSP_ERR_EN		0x1000	/* Target Response Error Status Enable	*/
 #define SDMC_ERR_INT_CEATA_ERR_EN		0x2000	/* CEATA Error Status Enable		*/
+#define SDMC_ERR_INT_ALL_STAT_EN		0x3FFF	/* Enable all interrupt signals		*/
 
 /* Error Interrupt Signal Enable */
 #define SDMC_ERR_INT_CMD_TIMEOUT_ERR_SIG_EN	0x0001 	/* Command Timeout Error Signal Enable	*/
@@ -185,6 +197,7 @@ struct sdmc_capabilities {
 #define SDMC_ERR_INT_TUNE_ERR_SIG_EN		0x0400	/* Tuning Error Signal Enable		*/
 #define SDMC_ERR_INT_TGT_RSP_ERR_SIG_EN		0x1000	/* Target Response Error Signal Enable	*/
 #define SDMC_ERR_INT_CEATA_ERR_SIG_EN		0x2000	/* CEATA Error Signal Enable		*/
+#define SDMC_ERR_INT_ALL_SIG_EN				0x3FFF	/* Enable all interrupt signals		*/
 
 /* Error Interrupt Status Register */
 #define SDMC_ERR_INT_CMD_TIMEOUT_ERR		0x0001	/* Command Timeout Error		*/
@@ -224,6 +237,9 @@ struct sdmc_capabilities {
 #define SDMC_CLK_CTL_CLK_GEN_SEL	0x0020	/* Clock Generator Select		*/
 #define SDMC_CLK_CTL_SD_FREQ_HIGH_MASK	0x00FF	/* Mask to set SD clock frequency to max*/
 
+/* Timeout Control Register */
+#define SDMC_TMR_CTL_HIGH		0x0E	/* Mask to set timeout to max 	*/
+
 /* Power Control Register */
 #define SDMC_PWR_CTL_SD_BUS_PWR			0x01	/* SD Bus Power			*/
 #define SDMC_PWR_CTL_HW_RST			0x10	/* HW Reset			*/
@@ -231,6 +247,13 @@ struct sdmc_capabilities {
 #define SDMC_PWR_CTL_SD_BUS_VOL_SEL_3P3V	0x0E	/* Set mask for 3.3V		*/
 #define SDMC_PWR_CTL_SD_BUS_VOL_SEL_3P0V	0x0C	/* Set mask for 3.0V		*/
 #define SDMC_PWR_CTL_SD_BUS_VOL_SEL_1P8V	0x0A	/* Set mask for 1.8V		*/
+
+/* Transfer Mode Register */
+#define SDMC_TXM_DMA_EN			0x0001		/* DMA Enable 		*/
+#define SDMC_TXM_BLK_CNT_EN		0x0002		/* Block Count Enable 		*/
+#define SDMC_TXM_AUTO_CMD12_EN	0x0004		/* Auto CMD12 Enable 		*/
+#define SDMC_TXM_DAT_TX_RD		0x0010		/* Data Direction Read 		*/
+#define SDMC_TXM_MB_SEL			0x0020		/* Multi block select 		*/
 
 /* Card Status Response (R1) */
 #define SDMC_R1_AKE_SEQ_ERROR		0x00000008	/* Authentication Error		*/
@@ -254,6 +277,7 @@ struct sdmc_capabilities {
 #define SDMC_R1_BLOCK_LEN_ERROR		0x20000000	/* TX block length not allowed	*/
 #define SDMC_R1_ADDRESS_ERROR		0x40000000	/* Misaligned address		*/
 #define SDMC_R1_OUT_OF_RANGE		0x80000000	/* Argument out of range	*/
+#define SDMC_R1_ANY_ERROR			0xFDF90008  /* Combined mask for any error */
 
 /* Card state */
 #define SDMC_R1_IDLE_STATE		0x00000000	/* Idle State			*/
@@ -291,28 +315,57 @@ struct sdmc_capabilities {
 #define SDMC_R6_ILLEGAL_COMMAND		0x00004000	/* Not a legal command		*/
 #define SDMC_R6_COM_CRC_ERROR		0x00008000	/* Previous command CRC failed	*/
 
-/* ACMD41 Argument flags */
+/* ACMD41 Argument Flags */
 #define SDMC_OCR_MASK			0x00FFFF00	/* OCR set mask			*/
 #define SDMC_ACMD41_S18R		0x01000000	/* Switching to 1.8V request	*/
 #define SDMC_ACMD41_XPC			0x10000000	/* Extended capacity power ctl	*/
 #define SDMC_ACMD41_HCS			0x40000000	/* High capacity card support	*/
 
-#define SDMC_ABT			0x0CC0	/* CMD12 - Abort			*/
-#define SDMC_CMD0			0x0000	/* CMD0 - Go Idle State	(Reset)		*/
-#define SDMC_CMD2			0x0209	/* CMD2 - All send card identifier	*/
-#define SDMC_CMD3			0x031A	/* CMD3 - Send relative card address	*/
-#define SDMC_CMD7			0x071B	/* CMD7 - Select/Deselect card		*/
-#define SDMC_CMD8			0x081A	/* CMD8 - Voltage check			*/
-#define SDMC_CMD9			0x0909	/* CMD9 - Send CSD			*/
-#define SDMC_CMD10			0x0A09	/* CMD10 - Send CID			*/
-#define SDMC_CMD12			0x0C1B	/* CMD12 - Stop Transmission		*/
-#define SDMC_CMD13			0x0D1A	/* CMD13 - Send status			*/
-#define SDMC_CMD16			0x101A	/* CMD16 - Set block length		*/
-#define SDMC_CMD17			0x113A	/* CMD17 - Single block read		*/
-#define SDMC_CMD55			0x371A	/* CMD55 - Application specific command	*/
-#define SDMC_ACMD41			0x2902	/* ACMD41 - Card Initialization/Inquiry	*/
+/* Command Resgitser */
+#define SDMC_CMD_TYPE_NML		0x0000		/* Normal Command Type		*/
+#define SDMC_CMD_TYPE_SUS		0x0040		/* Suspend Command Type		*/
+#define SDMC_CMD_TYPE_RSM		0x0080		/* Resume Command Type		*/
+#define SDMC_CMD_TYPE_ABT		0x00C0		/* Abort Command Type		*/
+#define SDMC_CMD_DAT_PRES		0x0020  	/* Data Present Flag 		*/
+#define SDMC_CMD_CMD_IDX_EN		0x0010		/* Index Check Enable Flag	*/
+#define SDMC_CMD_CMD_CRC_EN		0x0008		/* CRC Check Enable Flag	*/
+#define SDMC_CMD_CMD_RSP_LG		0x0001		/* 138 Bit Response Length	*/
+#define SDMC_CMD_CMD_RSP_ST		0x0002		/* 48 Bit Response Length	*/
+#define SDMC_CMD_CMD_RSP_ST_BSY	0x0003		/* 48 Bit Response Length Check Busy */
+
+/* Expected Command Response Types */
+#define SDMC_CMD_NO_RESP	(0x0000)
+#define SDMC_CMD_R1			(SDMC_CMD_CMD_RSP_ST | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R1b		(SDMC_CMD_CMD_RSP_ST_BSY | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R2			(SDMC_CMD_CMD_RSP_LG | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R3			(SDMC_CMD_CMD_RSP_ST)
+#define SDMC_CMD_R4			(SDMC_CMD_CMD_RSP_ST)
+#define SDMC_CMD_R5			(SDMC_CMD_CMD_RSP_ST | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R5b		(SDMC_CMD_CMD_RSP_ST_BSY | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R6			(SDMC_CMD_CMD_RSP_ST | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+#define SDMC_CMD_R7			(SDMC_CMD_CMD_RSP_ST | SDMC_CMD_CMD_IDX_EN | SDMC_CMD_CMD_CRC_EN)
+
+/* Command Definitions with Expected Response Types */
+#define SDMC_CMD0		0x0000 | (SDMC_CMD_NO_RESP)		/* CMD0 - Go Idle State	(Reset)		*/
+#define SDMC_CMD2		0x0200 | (SDMC_CMD_R2)			/* CMD2 - All send card identifier	*/
+#define SDMC_CMD3		0x0300 | (SDMC_CMD_R6)			/* CMD3 - Send relative card address	*/
+#define SDMC_CMD7		0x0700 | (SDMC_CMD_R1b)			/* CMD7 - Select/Deselect card		*/
+#define SDMC_CMD8		0x0800 | (SDMC_CMD_R7)			/* CMD8 - Voltage check			*/
+#define SDMC_CMD9		0x0900 | (SDMC_CMD_R2)			/* CMD9 - Send CSD			*/
+#define SDMC_CMD10		0x0A00 | (SDMC_CMD_R2)			/* CMD10 - Send CID			*/
+#define SDMC_CMD12		0x0C00 | (SDMC_CMD_R1b)			/* CMD12 - Stop Transmission		*/
+#define SDMC_ABT		0x0C00 | (SDMC_CMD_TYPE_ABT)	/* CMD12 - Abort			*/
+#define SDMC_CMD13		0x0D00 | (SDMC_CMD_R1)			/* CMD13 - Send status			*/
+#define SDMC_CMD16		0x1000 | (SDMC_CMD_R1)			/* CMD16 - Set block length		*/
+#define SDMC_CMD17		0x1100 | (SDMC_CMD_R1 | SDMC_CMD_DAT_PRES)	/* CMD17 - Single block read		*/
+#define SDMC_CMD55		0x3700 | (SDMC_CMD_R1)			/* CMD55 - Application specific command	*/
+#define SDMC_ACMD6		0x0600 | (SDMC_CMD_R1)			/* ACMD6 - Set bus width	*/
+#define SDMC_ACMD41		0x2900 | (SDMC_CMD_R3)			/* ACMD41 - Card Initialization/Inquiry	*/
+#define SDMC_ACMD51		0x3300 | (SDMC_CMD_R1 | SDMC_CMD_DAT_PRES )  /* ACMD51 - Send SCR		*/
 
 #define SDMC_CMD_DELAY			100000		/* Delay in micro secs	*/
+
+#define SDMC_BLK_SIZE			512			/* Block size used for data transfers */
 
 #define SDMC_RC_OK			(0)
 #define SDMC_RC_RECOVERABLE_ERR		(-1)
