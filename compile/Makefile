@@ -26,13 +26,13 @@ DEFSFILE	=	.defs
 VERSIONFILE	=	version
 LDSCRIPT	=	ld.script
 MKVERS		=	$(TOPDIR)/compile/bin/mkvers
-REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c  main.c 	\
+REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c main.c 	\
 			-s $(TOPDIR)/lib			\
 			-s $(TOPDIR)/device/tty			\
 			-s $(TOPDIR)/device/nam			\
 			-s $(TOPDIR)/device/eth			\
 			-s $(TOPDIR)/net  'arp_dump*'  		\
-				'dhcp_dump*'  pxe.c
+				  'dhcp_dump*' pxe.c hexdump.c
 
 INCLUDE		=	-I$(TOPDIR)/include
 DEFS		= 	-DBSDURG -DVERSION=\""`cat $(VERSIONFILE)`"\"

@@ -203,7 +203,7 @@ int32 main(void)
 		kprintf("[XBOOT] Could not obtain an IP address\n");
 		return SYSERR;
 	}
-	
+
 	kprintf("[XBOOT] Loading Xinu...\n");
 	
 	/* Retrieve the xboot header from the boot server */
@@ -231,7 +231,7 @@ int32 main(void)
 	
 	tftp_buffers[1] = (char*)boot_hdr.xboot_load_addr;
 	tftp_buffer_sizes[1] = boot_hdr.xboot_file_size;
-	
+    
 	size = tftpget_mb(NetData.bootserver, NetData.bootfile,
 		tftp_buffers, tftp_buffer_sizes, 2, TFTP_NON_VERBOSE);
 	if(size == SYSERR) {

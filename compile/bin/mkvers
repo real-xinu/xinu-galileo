@@ -24,4 +24,4 @@ echo $VERS > $VERS_NUM_FILE
 if test "x$USER" = "x"; then
        USER=`who am i | sed 's/ .*//'`
 fi
-echo "Xinu for $PLAT -- version #$VERS  ($USER)  `date`"
+echo "Xboot for $PLAT -- version #$VERS   `date`"

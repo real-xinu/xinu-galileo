@@ -137,8 +137,6 @@ status  tftpget_mb(
 	int32	mlen;			/* Length of outgoing mesage	*/
 	struct	tftp_msg inmsg;		/* Buffer for response message	*/
 	int32	dlen;			/* Size of data in a response	*/
-	uint32	now;			/* Current time (used to gener.	*/
-					/*   a "random" port number	*/
 	char*   curr_buf;		/* Current buffer being used	*/
 	uint32  curr_buf_ind;		/* Index of current buffer	*/
 	uint32  curr_used;		/* Amount used in buffer	*/
