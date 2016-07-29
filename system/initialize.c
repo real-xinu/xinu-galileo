@@ -1,6 +1,6 @@
 /* initialize.c - nulluser, sysinit */
 
-/* Handle system initialization and become the null process */
+/* XBOOT - Handle system initialization and become the null process */
 
 #include <xinu.h>
 #include <string.h>
@@ -46,33 +46,9 @@ pid32	currpid;		/* ID of currently executing process	*/
 
 void	nulluser()
 {	
-	struct	memblk	*memptr;	/* Ptr to memory block		*/
-	uint32	free_mem;		/* Total amount of free memory	*/
-	
 	/* Initialize the system */
 
 	sysinit();
-
-	/* Output Xinu memory layout */
-	free_mem = 0;
-	for (memptr = memlist.mnext; memptr != NULL;
-						memptr = memptr->mnext) {
-		free_mem += memptr->mlength;
-	}
-	kprintf("%10d bytes of free memory.  Free list:\n", free_mem);
-	for (memptr=memlist.mnext; memptr!=NULL;memptr = memptr->mnext) {
-	    kprintf("           [0x%08X to 0x%08X]\n",
-		(uint32)memptr, ((uint32)memptr) + memptr->mlength - 1);
-	}
-
-	kprintf("%10d bytes of Xinu code.\n",
-		(uint32)&etext - (uint32)&text);
-	kprintf("           [0x%08X to 0x%08X]\n",
-		(uint32)&text, (uint32)&etext - 1);
-	kprintf("%10d bytes of data.\n",
-		(uint32)&ebss - (uint32)&data);
-	kprintf("           [0x%08X to 0x%08X]\n\n",
-		(uint32)&data, (uint32)&ebss - 1);
 
 	/* Enable interrupts */
 
@@ -138,7 +114,7 @@ local process	startup(void)
 
 /*------------------------------------------------------------------------
  *
- * sysinit  -  Initialize all Xinu data structures and devices
+ * sysinit - intialize all Xinu data structures and devices
  *
  *------------------------------------------------------------------------
  */
@@ -146,7 +122,7 @@ static	void	sysinit()
 {
 	int32	i;
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
-	struct	sentry	*semptr;	/* Ptr to semaphore table entry	*/
+	struct	sentry	*semptr;	/* Prr to semaphore table entry	*/
 
 	/* Platform Specific Initialization */
 
@@ -222,6 +198,8 @@ static	void	sysinit()
 	}
 	return;
 }
+
+#define	NBPG		4096		/* Number of bytes per page	*/
 
 int32	stop(char *s)
 {

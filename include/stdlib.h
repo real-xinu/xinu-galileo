@@ -14,6 +14,7 @@ long atol(char *);
 void bzero(void *, int);
 void qsort(char *, unsigned int, int, int (*)(void));
 int rand(void);
+int rand_r(unsigned int*);
 void srand(unsigned int);
 void *malloc(unsigned int nbytes);
 void free(void *pmem);
