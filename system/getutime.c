@@ -14,7 +14,6 @@ status	getutime(
 	uint32	now;			/* Current time in xinu format	*/
 	int32	retval;			/* Return value from call	*/
 	uid32	slot;			/* Slot in UDP table		*/
-	uint32	serverip;		/* IP address of a time server	*/
 	struct	ntp {			/* Format of an NTP message	*/
 		byte	livn;		/* LI:2 VN:3 and mode:3 fields	*/
 		byte	strat;		/* Stratum			*/
@@ -36,25 +35,27 @@ status	getutime(
 		return OK;
 	}
 
-	/* Convert time server IP address to binary */
+	/* Verify that we have obtained an IP address */
 
-	if (dot2ip(TIMESERVER, &serverip) == SYSERR) {
+	if (getlocalip() == SYSERR) {
 		return SYSERR;
+	}
+
+	/* If the DHCP response did not contain an NTP server address	*/
+	/*	use the default server					*/
+
+	if (NetData.ntpserver == 0) {
+		if (dot2ip(TIMESERVER, &NetData.ntpserver) == SYSERR) {
+			return SYSERR;
+		}
 	}
 
 	/* Contact the time server to get the date and time */
 
-	slot = udp_register(serverip, TIMERPORT, TIMELPORT);
+	slot = udp_register(NetData.ntpserver, TIMERPORT, TIMELPORT);
 	if (slot == SYSERR) {
 		fprintf(stderr,"getutime: cannot register a udp port %d\n",
 					TIMERPORT);
-		return SYSERR;
-	}
-
-	/* Verify that we have obtained an IP address */
-
-	if (getlocalip() == SYSERR) {
-		udp_release(slot);
 		return SYSERR;
 	}
 

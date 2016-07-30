@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 static unsigned int rand_seed = 1;
+extern	int rand_r(unsigned int*);
 
 /*------------------------------------------------------------------------
  *  rand  -  Calculates a uniform random number [0, RAND_MAX]

@@ -11,7 +11,6 @@ void ttyhandler(void) {
 	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/	
 	struct	uart_csreg *csrptr;	/* Address of UART's CSR	*/
 	byte	iir = 0;		/* Interrupt identification	*/
-	byte	lsr = 0;		/* Line status			*/
 
 
 	/* Get CSR address of the device (assume console for now) */

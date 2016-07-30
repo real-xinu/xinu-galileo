@@ -11,10 +11,6 @@ devcall	rflputc(
 	char	ch			/* Character to write		*/
 	)
 {
-	struct	rflcblk	*rfptr;		/* Pointer to rfl control block	*/
-
-	rfptr = &rfltab[devptr->dvminor];
-
 	if (rflwrite(devptr, &ch, 1) != 1) {
 		return SYSERR;
 	}

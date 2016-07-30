@@ -152,6 +152,8 @@ uint32	getlocalip(void)
 	int32	msgtype;		/* Type of DCHP message		*/
 	uint32	addrmask;		/* Address mask for network	*/
 	uint32	routeraddr;		/* Default router address	*/
+	uint32	dnsaddr;		/* DNS server address		*/
+	uint32	ntpaddr;		/* NTP server address		*/
 	uint32	tmp;			/* Used for byte conversion	*/
 	uint32* tmp_server_ip;		/* Temporary DHCP server pointer*/
 
@@ -168,102 +170,115 @@ uint32	getlocalip(void)
 	}
 
 	for (i = 0; i < DHCP_RETRY; i++) {
-		udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,
+	    udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,
 						(char *)&dmsg_snd, len);
 
-		/* Read 3 incoming DHCP messages and check for an offer	*/
-		/* 	or wait for three timeout periods if no message */
-		/* 	arrives.					*/
+	    /* Read 3 incoming DHCP messages and check for an offer	*/
+	    /* 	or wait for three timeout periods if no message */
+	    /* 	arrives.					*/
 
-		for (j=0; j<3; j++) {
-			inlen = udp_recv(slot, (char *)&dmsg_rvc,
-					    sizeof(struct dhcpmsg),2000);
-			if (inlen == TIMEOUT) {
-				continue;
-			} else if (inlen == SYSERR) {
+	    for (j=0; j<3; j++) {
+		inlen = udp_recv(slot, (char *)&dmsg_rvc,
+				    sizeof(struct dhcpmsg),2000);
+		if (inlen == TIMEOUT) {
+			continue;
+		} else if (inlen == SYSERR) {
+			return SYSERR;
+		}
+		/* Check that incoming message is a valid	*/
+		/*   response (ID matches our request)		*/
+
+		if (dmsg_rvc.dc_xid != dmsg_snd.dc_xid) {
+			continue;
+		}
+
+		eop = (char *)&dmsg_rvc + inlen - 1;
+		optptr = (char *)&dmsg_rvc.dc_opt;
+		msgtype = addrmask = routeraddr = dnsaddr = ntpaddr = 0;
+
+		while (optptr < eop) {
+
+		    switch (*optptr) {
+			case 53:	/* Message type */
+				msgtype = 0xff & *(optptr+2);
+				break;
+
+			case 1:		/* Subnet mask */
+				memcpy((void *)&tmp, optptr+2, 4);
+				addrmask = ntohl(tmp);
+				break;
+
+			case 3:		/* Router address */
+				memcpy((void *)&tmp, optptr+2, 4);
+				routeraddr = ntohl(tmp);
+				break;
+
+			case 6:		/* DNS server address */
+				memcpy((void *)&tmp, optptr+2, 4);
+				dnsaddr = ntohl(tmp);
+				break;
+
+			case 42:	/* NTP server address */
+				memcpy((void *)&tmp, optptr+2, 4);
+				ntpaddr = ntohl(tmp);
+				break;
+
+		    }
+		    optptr++;	/* Move to length octet */
+		    optptr += (0xff & *optptr) + 1;
+		}
+
+		if (msgtype == 0x02) {	/* Offer - send request	*/
+			len = dhcp_bld_req(&dmsg_snd, &dmsg_rvc, inlen);
+			if(len == SYSERR) {
+				kprintf("getlocalip: %s\n",
+				  "Unable to build DHCP request");
 				return SYSERR;
 			}
-			/* Check that incoming message is a valid	*/
-			/*   response (ID matches our request)		*/
+			udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,
+					(char *)&dmsg_snd, len);
+			continue;
 
-			if (dmsg_rvc.dc_xid != dmsg_snd.dc_xid) {
-				continue;
-			}
-
-			eop = (char *)&dmsg_rvc + inlen - 1;
-			optptr = (char *)&dmsg_rvc.dc_opt;
-			msgtype = addrmask = routeraddr = 0;
-
-			while (optptr < eop) {
-
-			    switch (*optptr) {
-				case 53:	/* Message type */
-					msgtype = 0xff & *(optptr+2);
-				break;
-
-				case 1:		/* Subnet mask */
-					memcpy((void *)&tmp, optptr+2, 4);
-					addrmask = ntohl(tmp);
-				break;
-
-				case 3:		/* Router address */
-					memcpy((void *)&tmp, optptr+2, 4);
-					routeraddr = ntohl(tmp);
-					break;
-			    }
-			    optptr++;	/* Move to length octet */
-			    optptr += (0xff & *optptr) + 1;
-			}
-
-			if (msgtype == 0x02) {	/* Offer - send request	*/
-				len = dhcp_bld_req(&dmsg_snd, &dmsg_rvc,
-								inlen);
-				if(len == SYSERR) {
-					kprintf("getlocalip: %s\n",
-					  "Unable to build DHCP request");
-					return SYSERR;
-				}
-				udp_sendto(slot, IP_BCAST, UDP_DHCP_SPORT,
-						(char *)&dmsg_snd, len);
-				continue;
-
-			} else if (dmsg_rvc.dc_opt[2] != 0x05) {
-				/* If not an ack skip it */
-				continue;
-			}
-			if (addrmask != 0) {
-				NetData.ipmask = addrmask;
-			}
-			if (routeraddr != 0) {
-				NetData.iprouter = routeraddr;
-			}
-			NetData.ipucast = ntohl(dmsg_rvc.dc_yip);
-			NetData.ipprefix = NetData.ipucast &
-							 NetData.ipmask;
-			NetData.ipbcast = NetData.ipprefix |
-							~NetData.ipmask;
-			NetData.ipvalid = TRUE;
-			udp_release(slot);
-
-			/* Retrieve the boot server IP */
-			if(dot2ip((char*)dmsg_rvc.sname,
-					    &NetData.bootserver) != OK) {
-
-			  /* Could not retrieve the boot server from	*/
-			  /*  the  BOOTP fields, so use the DHCP server	*/
-			  /*  address					*/
-			  tmp_server_ip = (uint32*)dhcp_get_opt_val(
-					&dmsg_rvc, len, DHCP_SERVER_ID);
-			  if(tmp_server_ip == 0) {
-			    kprintf("Cannot retrieve boot server addr\n");
-				return (uint32)SYSERR;
-			  }
-			NetData.bootserver = ntohl(*tmp_server_ip);
-			}
-			memcpy(NetData.bootfile, dmsg_rvc.bootfile,
-					     sizeof(dmsg_rvc.bootfile));
-			return NetData.ipucast;
+		} else if (dmsg_rvc.dc_opt[2] != 0x05) {
+			/* If not an ack skip it */
+			continue;
 		}
+		if (addrmask != 0) {
+			NetData.ipmask = addrmask;
+		}
+		if (routeraddr != 0) {
+			NetData.iprouter = routeraddr;
+		}
+		if (dnsaddr != 0) {
+			NetData.dnsserver = dnsaddr;
+		}
+		if (ntpaddr != 0) {
+			NetData.ntpserver = ntpaddr;
+		}
+		NetData.ipucast = ntohl(dmsg_rvc.dc_yip);
+		NetData.ipprefix = NetData.ipucast & NetData.ipmask;
+		NetData.ipbcast = NetData.ipprefix | ~NetData.ipmask;
+		NetData.ipvalid = TRUE;
+		udp_release(slot);
+
+		/* Retrieve the boot server IP */
+		if (dot2ip((char*)dmsg_rvc.sname,
+					    &NetData.bootserver) != OK) {
+			/* Could not retrieve the boot server from	*/
+			/*  the  BOOTP fields, so use the DHCP server	*/
+			/*  address					*/
+			tmp_server_ip = (uint32*)dhcp_get_opt_val(
+					&dmsg_rvc, len, DHCP_SERVER_ID);
+			if(tmp_server_ip == 0) {
+			   kprintf("Cannot retrieve boot server addr\n");
+			   return (uint32)SYSERR;
+			}
+			NetData.bootserver = ntohl(*tmp_server_ip);
+		}
+		memcpy(NetData.bootfile, dmsg_rvc.bootfile,
+					     sizeof(dmsg_rvc.bootfile));
+		return NetData.ipucast;
+	    }
 	}
 
 	kprintf("DHCP failed to get response\n");
