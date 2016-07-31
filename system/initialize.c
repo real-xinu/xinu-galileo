@@ -74,6 +74,10 @@ void	nulluser()
 
 	enable();
 
+	/* Initialize the network stack and processes */
+
+	net_init();
+
 	/* Create a process to execute function main() */
 
 	resume (

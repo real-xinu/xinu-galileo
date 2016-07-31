@@ -4,9 +4,12 @@
 #include <math.h>
 
 process	main(void)
-{   
+{
+	/* Obtain an IP address */
 
 	netstart();
+
+	/* Run the Xinu shell */
 
 	recvclr();
 	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));

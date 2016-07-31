@@ -119,7 +119,7 @@ shellcmd xsh_ipaddr(int nargs, char *args[]) {
 			(dserver>>24)&0xff, (dserver>>16)&0xff,
 			(dserver>>8)&0xff,        dserver&0xff);
 		printf("   %-16s  %-16s  0x%08x\n",
-			"NTP time server:", str, dserver);
+			"DNS server:", str, dserver);
 	}
 
 	printf("   %-16s  %02x:%02x:%02x:%02x:%02x:%02x\n",

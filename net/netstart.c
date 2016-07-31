@@ -3,35 +3,33 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * netstart  -  Initialize network and run DHCP to get an IP address
+ * netstart  -   run DHCP, obtain an IP address, and print network info
+ *
+ * Note: this function cannot be run during initialization; it must be
+ *		called from main or a process that can block
+ *
  *------------------------------------------------------------------------
  */
 
 void	netstart (void)
 {
-	uint32	ipaddr;			/* IP address			*/
+	uint32	ipaddr;		/* Computer's IP address in binary	*/
+	char	str[128];	/* String used to format the output	*/
 
-	/* Initialize the network stack */
 
-	kprintf("...initializing network stack\n");
-	net_init();
+	/* Use DHCP to obtain an IP address */
 
-	/* Force system to use DHCP to obtain an address */
-
-	kprintf("...using dhcp to obtain an IP address\n");
 	ipaddr = getlocalip();
-	if (ipaddr == SYSERR) {
-		panic("Error: could not obtain an IP address\n\r");
+	if ((int32)ipaddr == SYSERR) {
+		return;
 	}
-	kprintf("\nIP address is %d.%d.%d.%d   (0x%08x)\n\r",
-		(ipaddr>>24)&0xff, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff,
-		ipaddr&0xff,ipaddr);
 
-	kprintf("Subnet mask is %d.%d.%d.%d and router is %d.%d.%d.%d\n\r",
-		(NetData.ipmask>>24)&0xff, (NetData.ipmask>>16)&0xff,
-		(NetData.ipmask>> 8)&0xff,  NetData.ipmask&0xff,
-		(NetData.iprouter>>24)&0xff, (NetData.iprouter>>16)&0xff,
-		(NetData.iprouter>> 8)&0xff, NetData.iprouter&0xff);
+	/* Print the IP in dotted decimal and hex */
 
+	ipaddr = NetData.ipucast;
+	sprintf(str, "%d.%d.%d.%d",
+		(ipaddr>>24)&0xff, (ipaddr>>16)&0xff,
+		(ipaddr>>8)&0xff,        ipaddr&0xff);
+	printf("Obtained IP address  %s   (0x%08x)\n", str, ipaddr);
 	return;
 }
