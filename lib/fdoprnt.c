@@ -18,11 +18,11 @@ static void _prtl2(long num, char *str);
  *------------------------------------------------------------------------
  */
 void	_fdoprnt(
-		  char		*fmt,				/* format string				*/
-		  va_list	ap,					/* ap list of values			*/
-		  int		(*func)(int, int),	/* character output function	*/
-		  int		farg				/* argument for char output func*/
-		)
+	  char		*fmt,			/* format string	*/
+	  va_list	ap,			/* ap list of values	*/
+	  int		(*func)(int, int),	/* char output function	*/
+	  int		farg			/* arg for char output	*/
+	)
 {
     int c;
     int i;
@@ -248,10 +248,10 @@ void	_fdoprnt(
  *  _prtl10  -  Converts long to base 10 string.
  *------------------------------------------------------------------------
  */
-static void		_prtl10(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl10(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[11];
@@ -273,10 +273,10 @@ static void		_prtl10(
  *  _prtl8  -  Converts long to base 8 string.
  *------------------------------------------------------------------------
  */
-static void		_prtl8(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl8(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[12];
@@ -299,10 +299,10 @@ static void		_prtl8(
  *  _prtl16  -  Converts long to lowercase hex string.
  *------------------------------------------------------------------------
  */
-static void		_prtl16(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl16(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[9];
@@ -324,10 +324,10 @@ static void		_prtl16(
  *  _prtX16  -  Converts long to uppercase hex string.
  *------------------------------------------------------------------------
  */
-static void		_prtX16(
-				  long		num,
-				  char		*str
-				)
+static void	_prtX16(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[9];
@@ -349,10 +349,10 @@ static void		_prtX16(
  *  _prtl2  -  Converts long to binary string.
  *------------------------------------------------------------------------
  */
-static void		_prtl2(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl2(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[35];

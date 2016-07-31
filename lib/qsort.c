@@ -7,15 +7,15 @@ static void qsexc(char *, char *);
 static void qstexc(char *, char *, char *);
 
 /*------------------------------------------------------------------------
- *  qsort  -  Sorts an array using quicksort.
+ *  qsort  -  Use quicksort to sort an array
  *------------------------------------------------------------------------
  */
-void		qsort(
-			  char			*a,			/* array to sort				*/
-			  unsigned		n,			/* length of the array			*/
-			  int			es,			/* pivot						*/
-			  int			(*fc)(char *, char *)	/* comparison func	*/
-			)
+void	qsort(
+	  char		*a,		/* Array to sort		*/
+	  unsigned	n,		/* Length of the array		*/
+	  int		es,		/* Pivot value			*/
+	  int		(*fc)(char *, char *)	/* Comparison function	*/
+	)
 {
     qscmp = fc;
     qses = es;
@@ -23,13 +23,13 @@ void		qsort(
 }
 
 /*------------------------------------------------------------------------
- *  qs1  -  DOCUMENT
+ *  qs1  -  internal quicksort function
  *------------------------------------------------------------------------
  */
-static void		qs1(
-				  char		*a,
-				  char		*l
-				)
+static void	qs1(
+		  char		*a,
+		  char		*l
+		)
 {
     register char *i, *j;
     register int es;
@@ -110,13 +110,13 @@ static void		qs1(
 }
 
 /*------------------------------------------------------------------------
- *  qsexc  -  DOCUMENT
+ *  qsexc  -  internal quicksort function
  *------------------------------------------------------------------------
  */
-static void		qsexc(
-				  char		*i,
-				  char		*j
-				)
+static void	qsexc(
+		  char		*i,
+		  char		*j
+		)
 {
     register char *ri, *rj, c;
     int n;
@@ -134,14 +134,14 @@ static void		qsexc(
 }
 
 /*------------------------------------------------------------------------
- *  qstexc  -  DOCUMENT
+ *  qstexc  -  internal quicksort function
  *------------------------------------------------------------------------
  */
-static void		qstexc(
-				  char		*i,
-				  char		*j,
-				  char		*k
-				)
+static void	qstexc(
+		  char		*i,
+		  char		*j,
+		  char		*k
+		)
 {
     register char *ri, *rj, *rk;
     int c;

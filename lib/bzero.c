@@ -5,9 +5,9 @@
  *------------------------------------------------------------------------
  */
 void	bzero(
-		  void		*p,
-		  int		len
-		)
+	  void		*p,
+	  int		len
+	)
 {
     int n;
     char *pch = (char *)p;

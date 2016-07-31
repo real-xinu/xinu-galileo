@@ -13,11 +13,11 @@ extern int _doscan(register char *, register int **,
  *			   Return result of _doscan.
  *------------------------------------------------------------------------
  */
-int		sscanf(
-		  char		*str,		/* string to read from					*/
-		  char		*fmt,		/* format string						*/
-		  int		args		/* number of args in format string		*/
-		)
+int	sscanf(
+	  char		*str,		/* String to read from		*/
+	  char		*fmt,		/* Format string		*/
+	  int		args		/* Num of args in format string	*/
+	)
 {
     char *s;
 
@@ -26,25 +26,25 @@ int		sscanf(
 }
 
 /*------------------------------------------------------------------------
- *  sgetch  -  Get the next character from a string.
+ *  sgetch  -  Get the next character from a string
  *------------------------------------------------------------------------
  */
-static int		sgetch(
-				  int		dummy,		/* dummy unused variable		*/
-				  char		**cpp		/* string to read next char from*/
-				)
+static int	sgetch(
+		  int		dummy,	/* Dummy unused variable	*/
+		  char		**cpp	/* String to use		*/
+		)
 {
     return (*(*cpp) == '\0' ? EOF : *(*cpp)++);
 }
 
 /*------------------------------------------------------------------------
- *  sungetch  -  Pushback a character in a string.
+ *  sungetch  -  Pushback a character in a string
  *------------------------------------------------------------------------
  */
-static int		sungetch(
-				  int		dummy,		/* dummy unused variable		*/
-				  char		**cpp		/* string to pushback char to	*/
-				)
+static int	sungetch(
+		  int		dummy,	/* Dummy unused variable	*/
+		  char		**cpp	/* String for pushback		*/
+		)
 {
     return (*(*cpp)--);
 }

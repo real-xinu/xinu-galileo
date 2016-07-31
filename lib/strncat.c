@@ -1,16 +1,16 @@
 /* strncat.c - strncat */
 
 /*------------------------------------------------------------------------
- *  strncat  -  Concatenate s2 on the end of s1.
- *				S1's space must be large enough.
- *				At most n characters are moved.
+ *  strncat  -  Concatenate s2 onto the end of s1.  Sufficient space must
+ *			exist at the end of s1; ar most n characters are
+ *			copied
  *------------------------------------------------------------------------
  */
-char		*strncat(
-			  char			*s1,		/* first string					*/
-			  const char	*s2,		/* second string				*/
-			  int			n			/* length to concatenate		*/
-			)
+char	*strncat(
+	  char		*s1,		/* first string			*/
+	  const char	*s2,		/* second string		*/
+	  int		n		/* length to concatenate	*/
+	)
 {
     char *os1;
 

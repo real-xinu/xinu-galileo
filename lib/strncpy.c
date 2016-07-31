@@ -1,15 +1,14 @@
 /* strncpy.c - strncpy */
 
 /*------------------------------------------------------------------------
- *  strncpy  -  Copy string s2 to s1, truncating or null-padding
- *				to always copy n bytes.
- *				Return s1.
+ *  strncpy  -  Copy string s2 to s1, truncating or null-padding so that
+ *			excatly n bytes are copied; return s1
  *------------------------------------------------------------------------
  */
-char		*strncpy(
-			  char			*s1,		/* first string					*/
-			  const char	*s2,		/* second string				*/
-			  int			n			/* length of s2 to copy			*/
+char	*strncpy(
+	  char		*s1,		/* First string			*/
+	  const char	*s2,		/* Second string		*/
+	  int		n		/* Length  to copy		*/
 			)
 {
     register int i;

@@ -5,9 +5,9 @@
  *			counting the null byte.
  *------------------------------------------------------------------------
  */
-int		strlen(
-		  char		*str				/* string to use				*/
-		)
+int	strlen(
+	  char		*str		/* string to use		*/
+	)
 {
 	int	len;
 

@@ -4,12 +4,12 @@
 #include <stdio.h>
 
 /*------------------------------------------------------------------------
- *  putchar  -  DOCUMENT
+ *  putchar  -  C putchar function
  *------------------------------------------------------------------------
  */
-int		putchar(
-		  int		c
-		)
+int	putchar(
+	  int		c
+	)
 {
     return fputc(c, stdout);
 }

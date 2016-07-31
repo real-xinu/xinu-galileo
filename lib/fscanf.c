@@ -1,7 +1,11 @@
 /* fscanf.c - fscanf, getch, ungetch */
 
+#ifndef	EMPTY
 #define EMPTY (-1)
+#endif
+#ifndef	EOF
 #define EOF   (-2)
+#endif
 
 extern int getc(int);
 
@@ -16,11 +20,11 @@ extern int _doscan(register char *, register int **,
  *			   Return result of _doscan.
  *------------------------------------------------------------------------
  */
-int		fscanf(
-		  int		dev,		/* device to read from					*/
-		  char		*fmt,		/* format string						*/
-		  int		args		/* number of arguments in format string */
-		)
+int	fscanf(
+	  int		dev,		/* device to use		*/
+	  char		*fmt,		/* format string		*/
+	  int		args		/* num of args in format	*/
+	)
 {
     int buf;
 
@@ -33,10 +37,10 @@ int		fscanf(
  *  getch  -  Get a character from a device with pushback.
  *------------------------------------------------------------------------
  */
-static int		getch(
-				  int		dev,	/* device to read from				*/
-				  int		abuf	/* buffer for reading into			*/
-				)
+static int	getch(
+		  int		dev,	/* device to use		*/
+		  int		abuf	/* buffer to use		*/
+		)
 {
     int *buf = (int *)abuf;
 
@@ -49,19 +53,14 @@ static int		getch(
     return (*buf);
 }
 
-/**
- * Pushback a character for getch.
- * @param dev device to push back to
- * @param abuf buffer for pushing back from
- */
 /*------------------------------------------------------------------------
  *  ungetch  -  Pushback a character for getch.
  *------------------------------------------------------------------------
  */
-static int		ungetch(
-				  int		dev,		/* device to push back to		*/
-				  int		abuf		/* buffer for pushing back from	*/
-				)
+static int	ungetch(
+		  int		dev,	/* device to use		*/
+		  int		abuf	/* buffer to use		*/
+		)
 {
     int *buf = (int *)abuf;
 

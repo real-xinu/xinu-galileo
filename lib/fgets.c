@@ -1,6 +1,8 @@
 /* fgets.c - fgets */
 
+#ifndef	NULL
 #define NULL    0
+#endif
 extern int getc(int);
 
 /*------------------------------------------------------------------------
@@ -8,10 +10,10 @@ extern int getc(int);
  *------------------------------------------------------------------------
  */
 char	*fgets(
-		  char		*s,				/* buffer for result				*/
-		  int		n,				/* maximum read length				*/
-		  int		dev				/* device to read from				*/
-		)
+	  char		*s,		/* buffer for result		*/
+	  int		n,		/* maximum read length		*/
+	  int		dev		/* device to read from		*/
+	)
 {
     int c = 0;
     char *cs;

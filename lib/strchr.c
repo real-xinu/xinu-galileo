@@ -1,15 +1,14 @@
 /* strchr.c - strchr */
 
 /*------------------------------------------------------------------------
- *  strchr  -  Returns a pointer to the location in a string at which
- *			   a particular character appears.
- *			   Return the pointer in the string, NULL if char not found.
+ *  strchr  -  Returns a pointer to the location in a string at which a
+ *			   character appears or NULL if char not found
  *------------------------------------------------------------------------
  */
-char		*strchr(
-			  const char		*s,		/* string to search				*/
-			  int				c		/* character to locate			*/
-			)
+char	*strchr(
+	  const char	*s,		/* String to search		*/
+	  int		c		/* Character to locate		*/
+	)
 {
     for (; *s != '\0'; s++)
     {

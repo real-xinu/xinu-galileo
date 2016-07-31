@@ -1,15 +1,15 @@
 /* strrchr.c - strrchr */
 
 /*------------------------------------------------------------------------
- *  strrchr  -  Returns a pointer to the location in a string at which
- *				a particular character last appears.
- *				Return the pointer in the string, NULL if char not found.
+ *  strrchr  -  Return a pointer to the location in a string at which a
+ *			particular character last appears or NULL if the
+ *			char is not found
  *------------------------------------------------------------------------
  */
-char		*strrchr(
-			  const char		*s,			/* string to search			*/
-			  int				c			/* character to locate		*/
-			)
+char	*strrchr(
+	  const char	*s,		/* String to search		*/
+	  int		c		/* Character to locate		*/
+	)
 {
     char *r = 0;
 

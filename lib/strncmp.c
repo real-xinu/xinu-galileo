@@ -1,15 +1,15 @@
 /* strncmp.c - strncmp */
 
 /*------------------------------------------------------------------------
- *  strncmp  -  Compare strings (at most n bytes).
- *				Return s1>s2: >0	s1==s2: 0	s1<s2: <0
+ *  strncmp  -  Compare at most n bytes of two strings, returning
+ *			>0 if s1>s2,  0 if s1=s2,  and <0 if s1<s2
  *------------------------------------------------------------------------
  */
-int		strncmp(
-		  char		*s1,		/* first memory location				*/
-		  char		*s2,		/* second memory location				*/
-		  int		n			/* length to compare					*/
-		)
+int	strncmp(
+	  char		*s1,		/* First memory location	*/
+	  char		*s2,		/* Second memory location	*/
+	  int		n		/* Length to compare		*/
+	)
 {
 
     while (--n >= 0 && *s1 == *s2++)

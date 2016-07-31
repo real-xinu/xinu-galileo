@@ -35,14 +35,14 @@ char _sctab[128] = {
  *  _doscan  -  Scan and recognize input according to a format.
  *------------------------------------------------------------------------
  */
-int		_doscan(
-		  register char	*fmt,				/* format str for scanf		*/
-		  register int	**argp,				/* arguments to scanf		*/
-          int			(*getch)(int, int),	/* function to get char		*/
-		  int			(*ungetch)(int, int),/* function to unget char	*/
-          int			arg1,				/* 1st arg to getch/ungetch */
-		  int			arg2				/* 2nd arg to getch/ungetch */
-		)
+int	_doscan(
+	  register char	*fmt,			/* format str for scanf	*/
+	  register int	**argp,			/* arguments to scanf	*/
+          int		(*getch)(int, int),	/* function to get char	*/
+	  int		(*ungetch)(int, int),/* function to unget char	*/
+          int		arg1,			/* arg to getch/ungetch	*/
+	  int		arg2			/* 2nd arg to getch/unge*/
+	)
 {
     register int ch;
     int nmatch, len, ch1;
@@ -150,17 +150,17 @@ int		_doscan(
  *  _innum  -  DOCUMENT
  *------------------------------------------------------------------------
  */
-static int		_innum(
-				  int		**ptr,
-				  int		type,
-				  int		len,
-				  int		size,
+static int	_innum(
+		  int		**ptr,
+		  int		type,
+		  int		len,
+		  int		size,
                   int		(*getch)(int, int),
-				  int		(*ungetch)(int, int),
+		  int		(*ungetch)(int, int),
                   int		arg1,
-				  int		arg2,
-				  int		*eofptr
-				)
+		  int		arg2,
+		  int		*eofptr
+		)
 {
     extern double atof(char *p);
     register char *np;
@@ -283,16 +283,16 @@ static int		_innum(
  *  _instr  -  DOCUMENT
  *------------------------------------------------------------------------
  */
-static int		_instr(
-				  register char		*ptr,
-				  int				type,
-				  int				len,
-                  int				(*getch)(int, int),
-				  int				(*ungetch)(int, int),
-                  int				arg1,
-				  int				arg2,
-				  int				*eofptr
-				)
+static int	_instr(
+		  register char		*ptr,
+		  int			type,
+		  int			len,
+		  int			(*getch)(int, int),
+		  int			(*ungetch)(int, int),
+                  int			arg1,
+		  int			arg2,
+		  int			*eofptr
+		)
 {
     register unsigned int ch;
     register char *optr;
@@ -364,9 +364,9 @@ static int		_instr(
  *  _getccl  -  DOCUMENT
  *------------------------------------------------------------------------
  */
-static char		*_getccl(
-				  char		*s
-				)
+static char	*_getccl(
+		  char		*s
+		)
 {
     int c, t;
 

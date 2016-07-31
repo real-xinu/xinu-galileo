@@ -20,10 +20,10 @@ static void _prtdbl(double num, int precision, char *str);
  *------------------------------------------------------------------------
  */
 void	_doprnt(
-		  char			*fmt,
-		  va_list		ap,
-		  int			(*func)(int)
-		)
+	  char			*fmt,
+	  va_list		ap,
+	  int			(*func)(int)
+	)
 {
     int c;
     int i;
@@ -309,10 +309,10 @@ static void		_prtl10(
  *  _prtl8  -  Converts long to base 8 string.
  *------------------------------------------------------------------------
  */
-static void		_prtl8(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl8(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[12];
@@ -335,10 +335,10 @@ static void		_prtl8(
  *  _prtl16  -  Converts long to lowercase hex string.
  *------------------------------------------------------------------------
  */
-static void		_prtl16(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl16(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[9];
@@ -360,10 +360,10 @@ static void		_prtl16(
  *  _prtX16  -  Converts long to uppercase hex string.
  *------------------------------------------------------------------------
  */
-static void		_prtX16(
-				  long		num,
-				  char		*str
-				)
+static void	_prtX16(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[9];
@@ -385,10 +385,10 @@ static void		_prtX16(
  *  _prtl2  -  Converts long to binary string.
  *------------------------------------------------------------------------
  */
-static void		_prtl2(
-				  long		num,
-				  char		*str
-				)
+static void	_prtl2(
+		  long		num,
+		  char		*str
+		)
 {
     int i;
     char temp[35];
@@ -410,11 +410,11 @@ static void		_prtl2(
  *  _prtdbl  -  Converts double to binary string.
  *------------------------------------------------------------------------
  */
-static void		_prtdbl(
-				  double	num,
-				  int		precision,
-				  char		*str
-				)
+static void	_prtdbl(
+		  double	num,
+		  int		precision,
+		  char		*str
+		)
 {
     int i,mp;
     long w,p;

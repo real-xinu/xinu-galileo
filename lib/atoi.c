@@ -4,9 +4,9 @@
  *  atoi  -  Converts an ascii value to an integer.
  *------------------------------------------------------------------------
  */
-int		atoi(
-		  char		*p
-		)
+int	atoi(
+	  char		*p
+	)
 {
     int n = 0, f = 0;
 

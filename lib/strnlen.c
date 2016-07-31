@@ -1,13 +1,13 @@
 /* strnlen.c - strnlen */
 
 /*------------------------------------------------------------------------
- *  strnlen  -  Counts the number of non-NULL bytes in a string or len.
- *			    Return length of the string up to user specified length.
+ *  strnlen  -  Return the length of a string (number of non-NULL bytes),
+ *			up to the max specified by n
  *------------------------------------------------------------------------
  */
-int		strnlen(
-		  const char		*s,			/* string						*/
-		  unsigned int		len			/* length you wish to scan s to	*/
+int	strnlen(
+	  const char	*s,		/* string			*/
+	  unsigned int	len		/* max length			*/
 		)
 {
     int n;

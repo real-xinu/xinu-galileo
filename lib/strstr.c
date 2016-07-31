@@ -1,15 +1,14 @@
 /* strstr.c - strstr */
 
 /*------------------------------------------------------------------------
- *  strstr  -  Returns a pointer to the location in a string at which
- *			   a particular string appears.
- *			   Return the pointer in the string, NULL if string not found.
+ *  strstr  -  Return a pointer to the location in a string at which a
+ *			substring appears or NULL if not found
  *------------------------------------------------------------------------
  */
-char		*strstr(
-			  const char		*cs,		/* string to search			*/
-			  const char		*ct			/* string to locate			*/
-			)
+char	*strstr(
+	  const char	*cs,		/* String to search		*/
+	  const char	*ct		/* Substring to locate		*/
+	)
 {
     char *cq;
     char *cr;

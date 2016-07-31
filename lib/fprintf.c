@@ -7,15 +7,15 @@ extern void _fdoprnt(char *, va_list, int (*)(did32, char), int);
 
 /*------------------------------------------------------------------------
  *  fprintf  -  Print a formatted message on specified device (file).
- *				Return 0 if the output was printed successfully,
- *				-1 if an error occurred.
+ *			Return 0 if the output was printed successfully,
+ *			and -1 if an error occurred.
  *------------------------------------------------------------------------
  */
-int		fprintf(
-		  int		dev,			/* device to write to				*/
-		  char		*fmt,			/* format string					*/
-		  ...
-		)
+int	fprintf(
+	  int		dev,		/* device to write to		*/
+	  char		*fmt,		/* format string		*/
+	  ...
+	)
 {
     va_list ap;
     int putc(did32, char);
