@@ -60,6 +60,7 @@ devcall	rdsinit (
 		panic("Cannot allocate memory for remote disk buffers");
 	}
 
+	pptr = (struct rdbuff *) NULL;	/* To avoid a compiler warning	*/
 	buffend = (struct rdbuff *) ((char *)bptr + size);
 	while (bptr < buffend) {	/* walk through memory */
 		pptr = bptr;

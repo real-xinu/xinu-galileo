@@ -1,7 +1,6 @@
 /*  main.c  - main */
 
 #include <xinu.h>
-#include <math.h>
 
 process	main(void)
 {

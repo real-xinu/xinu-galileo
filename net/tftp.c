@@ -39,7 +39,7 @@ status	tftp_send1 (
 	/*   ---------------------   */
 	/*  | Opcode |   Block #  |  */
 	/*   ---------------------   */
-	
+
 	/* Send the outgoing message */
 	
 	ret = udp_sendto(sock, remip, *remport, (char *) msg, mlen);
@@ -109,7 +109,7 @@ status  tftpget(
 								 verbose);
 }
 
- /*------------------------------------------------------------------------
+/*------------------------------------------------------------------------
  *
  * tftpget_mb  -  multibuffer version of TFPT
  *

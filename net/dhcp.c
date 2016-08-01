@@ -106,7 +106,6 @@ int32 	dhcp_bld_req(
 
 	dhcp_bld_bootp_msg(dmsg);
 	dmsg->dc_sip = dmsg_offer->dc_sip; /* Server IP address		*/
-
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  3;	/* DHCP Request message		*/
@@ -114,7 +113,7 @@ int32 	dhcp_bld_req(
 
 	dmsg->dc_opt[j++] = 0xff & 50;	/* Requested IP			*/
 	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
-	*((uint32*)&dmsg->dc_opt[j]) = dmsg_offer->dc_yip;
+	memcpy(((void *)&dmsg->dc_opt[j]), &dmsg_offer->dc_yip, 4);
 	j += 4;
 
 	/* Retrieve the DHCP server IP from the DHCP options */
@@ -128,9 +127,9 @@ int32 	dhcp_bld_req(
 
 	dmsg->dc_opt[j++] = 0xff & 54;	/* Server IP			*/
 	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
-	*((uint32*)&dmsg->dc_opt[j]) = *server_ip;
-	j += 4;
+	memcpy((void *)&dmsg->dc_opt[j], &server_ip, 4);
 
+	j += 4;
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }
 
@@ -179,7 +178,7 @@ uint32	getlocalip(void)
 
 	    for (j=0; j<3; j++) {
 		inlen = udp_recv(slot, (char *)&dmsg_rvc,
-				    sizeof(struct dhcpmsg),2000);
+				    sizeof(struct dhcpmsg), 2000);
 		if (inlen == TIMEOUT) {
 			continue;
 		} else if (inlen == SYSERR) {
@@ -255,6 +254,7 @@ uint32	getlocalip(void)
 		if (ntpaddr != 0) {
 			NetData.ntpserver = ntpaddr;
 		}
+
 		NetData.ipucast = ntohl(dmsg_rvc.dc_yip);
 		NetData.ipprefix = NetData.ipucast & NetData.ipmask;
 		NetData.ipbcast = NetData.ipprefix | ~NetData.ipmask;
@@ -273,7 +273,8 @@ uint32	getlocalip(void)
 			   kprintf("Cannot retrieve boot server addr\n");
 			   return (uint32)SYSERR;
 			}
-			NetData.bootserver = ntohl(*tmp_server_ip);
+			memcpy((char *)&tmp, tmp_server_ip, 4);
+			NetData.bootserver = ntohl(tmp);
 		}
 		memcpy(NetData.bootfile, dmsg_rvc.bootfile,
 					     sizeof(dmsg_rvc.bootfile));

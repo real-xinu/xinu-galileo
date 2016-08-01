@@ -2,87 +2,60 @@
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
 
 /* in file arp.c */
-
-extern	void	arp_init();
+extern	void	arp_init(void);
 extern	status	arp_resolve(uint32, byte[]);
 extern	void	arp_in(struct arppacket *);
-extern	int32	arp_alloc();
+extern	int32	arp_alloc(void);
 extern	void	arp_ntoh(struct arppacket *);
 extern	void	arp_hton(struct arppacket *);
 
 /* in file ascdate.c */
-
 extern	status	ascdate(uint32, char *);
 
 /* in file bufinit.c */
-
 extern	status	bufinit(void);
 
 /* in file chprio.c */
-
 extern	pri16	chprio(pid32, pri16);
 
 /* in file clkupdate.S */
-
 extern	uint32	clkcount(void);
 
 /* in file clkhandler.c */
-
 extern	interrupt clkhandler(void);
 
 /* in file clkinit.c */
-
 extern	void	clkinit(void);
 
 /* in file clkdisp.S */
-
 extern	void	clkdisp(void);
 
 /* in file close.c */
-
 extern	syscall	close(did32);
 
 /* in file control.c */
-
 extern	syscall	control(did32, int32, int32, int32);
 
 /* in file create.c */
-
 extern	pid32	create(void *, uint32, pri16, char *, uint32, ...);
 
 /* in file ctxsw.S */
-
 extern	void	ctxsw(void *, void *);
 
 /* in file dhcp.c */
-
 extern	uint32	getlocalip(void);
 
 /* in file dns.c */
 extern	uint32	dnslookup(char *);
 
 /* in file dot2ip.c */
-
 extern	uint32	dot2ip(char *, uint32 *);
-
-/* in file queue.c */
-
-extern	pid32	enqueue(pid32, qid16);
-extern	pid32	dequeue(qid16);
-
-/* in file intutils.S */
-
-extern	intmask	disable(void);
-
-/* in file intutils.S */
-
-extern	void	enable(void);
 
 /* in file ethinit.c */
 extern 	int32	ethinit(struct dentry *);
 
 /* in file ethhandler.c */
-extern 	interrupt	ethhandler();
+extern 	interrupt	ethhandler(void);
 
 /* in file ethcontrol.c */
 extern 	devcall ethcontrol(struct dentry *, int32, int32, int32);
@@ -156,7 +129,6 @@ extern	status	getutime(uint32 *);
 extern	void	halt(void);
 
 /* in file icmp.c */
-
 extern	void	icmp_init(void);
 extern	void	icmp_in(struct netpacket *);
 extern	int32	icmp_register(uint32);
@@ -184,6 +156,10 @@ extern	status	insertd(pid32, qid16, int32);
 /* in file intr.S */
 extern	uint16	getirmask(void);
 
+/* in file intutils.S */
+extern	intmask	disable(void);
+extern	void	enable(void);
+
 /* in file ioerr.c */
 extern	devcall	ioerr(void);
 
@@ -191,7 +167,6 @@ extern	devcall	ioerr(void);
 extern	devcall	ionull(void);
 
 /* in file ip.c */
-
 extern	void	ip_in(struct netpacket *);
 extern	status	ip_send(struct netpacket *);
 extern	void	ip_local(struct netpacket *);
@@ -204,32 +179,26 @@ extern	process	ipout(void);
 extern	status	ip_enqueue(struct netpacket *);
 
 /* in file net.c */
-
 extern	void	net_init(void);
-extern	process	netin();
+extern	process	netin(void);
 extern	process	netout(void);
 extern	process	rawin(void);
 extern	void	eth_hton(struct netpacket *);
 extern	void	eth_ntoh(struct netpacket *);
 
 /* in file netstart.c */
-
 extern	void	netstart(void);
 
 /* in file kill.c */
-
 extern	syscall	kill(pid32);
 
 /* in file lexan.c */
-
 extern	int32	lexan(char *, int32, char *, int32 *, int32 [], int32 []);
 
 /* in file lfibclear.c */
-
 extern	void	lfibclear(struct lfiblk *, int32);
 
 /* in file lfibget.c */
-
 extern	void	lfibget(did32, ibid32, struct lfiblk *);
 
 /* in file lfibput.c */
@@ -355,7 +324,7 @@ extern	void	pdump(struct netpacket *);
 extern	void	pdumph(struct netpacket *);
 
 /* in file platinit.c */
-extern	void	platinit();
+extern	void	platinit(void);
 
 /* in file ptclear.c */
 extern	void	_ptclear(struct ptentry *, uint16, int32 (*)(int32));
@@ -387,10 +356,14 @@ extern	syscall	putc(did32, char);
 /* in file quark_irq.c */
 extern	int32	quark_irq_routing(void);
 
+/* in file queue.c */
+extern	pid32	enqueue(pid32, qid16);
+extern	pid32	dequeue(qid16);
+
 /* in file ramclose.c */
 extern	devcall	ramclose(struct dentry *);
 
-/* in file ramInit.c */
+/* in file raminit.c */
 extern	devcall	raminit(struct dentry *);
 
 /* in file ramopen.c */
@@ -513,27 +486,6 @@ extern	devcall	rfsopen(struct dentry  *devptr, char *, char *);
 /* in file rfscomm.c */
 extern	int32	rfscomm(struct rf_msg_hdr *, int32,
 			struct rf_msg_hdr *, int32);
-
-/* in file rdsClose.c */
-extern	devcall	rdsClose(struct dentry *);
-
-/* in file rdsControl.c */
-extern	devcall	rdsControl(struct dentry *, int32, int32, int32);
-
-/* in file rdsInit.c */
-extern	devcall	rdsInit(struct dentry *);
-
-/* in file rdsOpen.c */
-extern	devcall	rdsOpen(struct dentry *, char *, char *);
-
-/* in file rdsRead.c */
-extern	devcall	rdsRead(struct dentry *, char *, int32);
-
-/* in file rdsWrite.c */
-extern	devcall	rdsWrite(struct dentry *, char *, int32);
-
-/* in file rdsbufalloc.c */
-extern	struct	rdbuff * rdsbufalloc(struct rdscblk *);
 
 /* in file rdscomm.c */
 extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
