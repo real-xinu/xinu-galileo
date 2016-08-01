@@ -5,6 +5,7 @@
 
 struct	network	NetData;
 bpid32	netbufpool;
+uint64	netportseed;
 
 /*------------------------------------------------------------------------
  * net_init  -  Initialize network data structures and processes
@@ -24,6 +25,10 @@ void	net_init (void)
 	control(ETHER0, ETH_CTRL_GET_MAC, (int32)NetData.ethucast, 0);
 
 	memset((char *)NetData.ethbcast, 0xFF, ETH_ADDR_LEN);
+
+	/* Initialize the random port seed */
+
+	netportseed = getticks();
 
 	/* Create the network buffer pool */
 
@@ -136,4 +141,14 @@ void 	eth_ntoh(
 	)
 {
 	pktptr->net_ethtype = ntohs(pktptr->net_ethtype);
+}
+
+/*------------------------------------------------------------------------
+ * getport  -  Retrieve a random port number 
+ *------------------------------------------------------------------------
+ */
+uint16 	getport()
+{
+	netportseed = 6364136223846793005ULL * netportseed + 1;
+	return 50000 + (uint16)((netportseed >> 48) & 0xffff);
 }

@@ -119,6 +119,9 @@ extern	syscall	getprio(pid32);
 /* in file getstk.c */
 extern	char	*getstk(uint32);
 
+/* in file getticks.c */
+extern	uint64	getticks(void);
+
 /* in file gettime.c */
 extern	status	gettime(uint32 *);
 
@@ -185,6 +188,7 @@ extern	process	netout(void);
 extern	process	rawin(void);
 extern	void	eth_hton(struct netpacket *);
 extern	void	eth_ntoh(struct netpacket *);
+extern	uint16	getport(void);
 
 /* in file netstart.c */
 extern	void	netstart(void);

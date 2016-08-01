@@ -169,10 +169,7 @@ status  tftpget_mb(
 
 	/* Generate a local port */
 
-	if (getutime(&now) == SYSERR) {
-		return SYSERR;
-	}
-	localport = (uint16) ( 50000 + (now & 0xfff) );
+	localport = getport();
 
 	if (verbose & TFTP_VERBOSE) {
 		kprintf("[TFTP Get] Using local port %u\n",
