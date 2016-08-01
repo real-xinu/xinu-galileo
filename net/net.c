@@ -150,5 +150,5 @@ void 	eth_ntoh(
 uint16 	getport()
 {
 	netportseed = 6364136223846793005ULL * netportseed + 1;
-	return 50000 + (uint16)((netportseed >> 48) & 0xffff);
+	return 50000 + ((uint16)((netportseed >> 48)) % 15535);
 }
