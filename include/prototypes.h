@@ -247,6 +247,9 @@ extern	devcall	lflseek(struct dentry *, uint32);
 /* in file lflwrite.c */
 extern	devcall	lflwrite(struct dentry *, char *, int32);
 
+/* in file lfscheck.c */
+extern	status	lfscheck(struct lfdir *);
+
 /* in file lfscreate.c */
 extern  status  lfscreate(did32, ibid32, uint32);
 
