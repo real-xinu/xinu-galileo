@@ -75,6 +75,10 @@ struct	lfiblk		{		/* Format of index block	*/
 	dbid32		ib_dba[LF_IBLEN];/* Ptrs to data blocks indexed	*/
 };
 
+/* File System ID */
+
+#define	LFS_ID		0x58696E75	/* ID for Xinu Local File System*/
+
 /* Conversion functions below assume 7 index blocks per disk block */
 
 /* Conversion between index block number and disk sector number */
@@ -108,11 +112,16 @@ struct	lfdbfree {
 
 #pragma pack(2)
 struct	lfdir	{			/* Entire directory on disk	*/
+	uint32	lfd_fsysid;		/* File system ID		*/
+	int16	lfd_vers;		/* File system version		*/
+	int16	lfd_subvers;		/* File system subversion	*/
+	uint32	lfd_allzeros;		/* All 0 bits			*/
+	uint32	lfd_allones;		/* All 1 bits			*/
 	dbid32	lfd_dfree;		/* List of free d-blocks on disk*/
 	ibid32	lfd_ifree;		/* List of free i-blocks on disk*/
 	int32	lfd_nfiles;		/* Current number of files	*/
 	struct	ldentry lfd_files[LF_NUM_DIR_ENT]; /* Set of files	*/
-	char	padding[20];		/* Unused chars in directory blk*/
+	uint32	lfd_revid;		/* fsysid in reverse byte order	*/
 };
 #pragma pack()
 

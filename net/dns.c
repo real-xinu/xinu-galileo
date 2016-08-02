@@ -156,6 +156,7 @@ uint32	dns_geta (
 {
 	uint16	qcount;			/* Number of Questions		*/
 	uint16	acount;			/* Number of Answers		*/
+	uint32	ipaddr;			/* IP address from the response	*/
 	char	*dptr;			/* Data pointer			*/
 	byte	llen;			/* Label length			*/
 	int32	i;			/* Loop index			*/
@@ -198,11 +199,17 @@ uint32	dns_geta (
 
 	acount = ntohs(rpkt->ancount);
 
+	/* Set the IP address to zero */
+
+	ipaddr = 0;
+
 	/* Check each answer to see if it matches the name we seek */
 
 	for(i = 0; i < acount; i++) {
 
 		char	rname[256];
+		uint16	type;
+		uint32	tmpip;
 		uint32	dlen;
 
 		/* Convert the domain to a null-terminated string */
@@ -214,19 +221,29 @@ uint32	dns_geta (
 
 			/* Verify that the answer is Type A */
 
-			if(ntohs(*((uint16 *)dptr)) == DNS_QT_A) {
+			memcpy((char *)&type, dptr, 2);
+			if(ntohs(type) == DNS_QT_A) {
 				dptr += 10;
-				return *((uint32 *)dptr);
+				memcpy((char *)&tmpip, dptr, 4);
+				if ((ipaddr == 0) ||
+				    ( (NetData.ipmask&tmpip) ==
+					NetData.ipprefix) ) {
+					ipaddr = tmpip;
+				}
 			}
 		}
 
-		/* If not match, move past the answer */
+		/* Move to the next answer */
 
 		dptr += 8;
 		dptr += (ntohs(*((uint16 *)dptr)) + 2);
 	}
 
-	return (uint32)SYSERR;
+	if (ipaddr != 0) {
+		return ipaddr;
+	} else {
+		return (uint32)SYSERR;
+	}
 }
 
 /*------------------------------------------------------------------------

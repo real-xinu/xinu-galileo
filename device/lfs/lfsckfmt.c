@@ -30,6 +30,13 @@ status	lfsckfmt (
 	kprintf("Have read directory from disk device %d\n\r",
 		disk);
 
+	/* Check to see if directory contains a Xinu file system */
+
+	if (lfscheck(&dir) == SYSERR) {
+		panic("directory does not contain a Xinu file system");
+	}
+	kprintf("Directory corresponds to a local Xinu file system\n");
+
 	/* Follow index block list */
 
 	lfiblks = 0;
