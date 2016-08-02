@@ -62,7 +62,7 @@ newversion:
 #--------------------------------------------------------------------------------
 # Add files that require special rules and place start.o at the front
 #--------------------------------------------------------------------------------
-D_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
+LD_LIST = binaries/start.o $(filter-out binaries/start.o,$(OBJ_FILES))
 
 #------------------------------------------------------------
 # Rules for files that need special handling
@@ -90,7 +90,7 @@ export
 #--------------------------------------------------------------------------------
 
 xboot:	Makefile $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD_LIST)
-	@echo;echo 'Loading object files to produce GRUB bootable xinu'
+	@echo;echo 'Loading object files to produce GRUB bootable xboot'
 	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XBOOT)
 	@echo
 
