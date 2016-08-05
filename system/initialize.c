@@ -1,4 +1,4 @@
-/* initialize.c - nulluser, sysinit, sizmem */
+/* initialize.c - nulluser, sysinit */
 
 /* Handle system initialization and become the null process */
 
