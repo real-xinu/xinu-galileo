@@ -22,7 +22,7 @@
 #define SHELL_BAN6      "   / /  \\ \\  |     |  | | \\ |  \\  --  /   "
 #define SHELL_BAN7      "   --    --   -----    -   -     ----     "
 #define SHELL_BAN8      "------------------------------------------"
-#define	SHELL_BAN9	"\033[37;0m\033[40m\n"
+#define	SHELL_BAN9	"\033[0m\n"
 
 /* Messages shell displays for user */
 
