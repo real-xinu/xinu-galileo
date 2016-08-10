@@ -91,6 +91,7 @@ uint32	dns_bldq (
 	uint32	dlen;			/* Length of domain name	*/
 	byte	*llptr;			/* Label length pointer		*/
 	int32	i;			/* Loop index			*/
+	uint16	tmp;			/* Temporary for conversion	*/
 
 	/* Get length of the domain name */
 
@@ -131,13 +132,15 @@ uint32	dns_bldq (
 
 	/* Set the Qtype to a Type A Address */
 
-	*((uint16 *)data) = htons(DNS_QT_A);
+	tmp = htons(DNS_QT_A);
+	memcpy(data, (char *)&tmp, 2);
 	data += 2;
 	qlen += 2;
 
 	/* Set the QClass  to Internet */
 
-	*((uint16 *)data) = htons(DNS_QC_IN);
+	tmp = htons(DNS_QC_IN);
+	memcpy(data, (char *)&tmp, 2);
 	qlen += 2;
 
 	/* Return the total packet length */
@@ -146,7 +149,7 @@ uint32	dns_bldq (
 }
 
 /*------------------------------------------------------------------------
- * dns_geta - returns the first IP address in the Answer Section
+ * dns_geta - return the best IP address in the Answer Section
  *------------------------------------------------------------------------
  */
 uint32	dns_geta (
@@ -155,6 +158,7 @@ uint32	dns_geta (
 	)
 {
 	uint16	qcount;			/* Number of Questions		*/
+	uint16	tmp16;			/* Used for endian conversion	*/
 	uint16	acount;			/* Number of Answers		*/
 	uint32	ipaddr;			/* IP address from the response	*/
 	char	*dptr;			/* Data pointer			*/
@@ -163,7 +167,8 @@ uint32	dns_geta (
 
 	/* Pick up the count of questions */
 
-	qcount = ntohs(rpkt->qucount);
+	memcpy((char *)&tmp16, (char *) &rpkt->qucount, 2);
+	qcount = ntohs(tmp16);
 	dptr = rpkt->data;
 
 	/* Skip qcount questions */
@@ -178,10 +183,14 @@ uint32	dns_geta (
 
 		while(llen != 0) {
 
+			/* Pointer means end of name */
+
 			if(llen > 63) {
 				dptr += 2;
 				break;
 			}
+
+			/* Move to the next label */
 
 			dptr += (llen + 1);
 			llen = *((byte *)dptr);
@@ -192,51 +201,63 @@ uint32	dns_geta (
 		if (llen == 0) {
 			dptr += 1;
 		}
+
+		/* Skip the type and class */
+
 		dptr += (2 + 2);
 	}
 
 	/* Pick up the count of answers */
 
-	acount = ntohs(rpkt->ancount);
+	memcpy((char *)&tmp16, (char *)&rpkt->ancount, 2);
+	acount = ntohs(tmp16);
 
 	/* Set the IP address to zero */
 
 	ipaddr = 0;
 
-	/* Check each answer to see if it matches the name we seek */
+	/* Check each answer to see if it matches the local net */
 
 	for(i = 0; i < acount; i++) {
 
-		char	rname[256];
-		uint16	type;
+		char	rname[1024];
+		uint16	tmptype;
 		uint32	tmpip;
-		uint32	dlen;
+		uint16	tmplen;
+		uint32	namlen;
 
-		/* Convert the domain to a null-terminated string */
+		/* Get the name, and the number of bytes it occupied	*/
+		/*    in the packet (may be short if the name contains	*/
+		/*    pointer (e.g.,back to the question)		*/
 
-		dlen = dns_getrname((char *)rpkt, dptr, rname);
-		dptr += dlen;
+		namlen = dns_getrname( (char *)rpkt, dptr, rname);
+		dptr += namlen;
 
-		if(strncmp(rname, dname, strlen(dname)) == 0) {
+		/* Verify that the answer matches and is Type A */
 
-			/* Verify that the answer is Type A */
+		memcpy((char *)&tmptype, dptr, 2);
+		if( (strncmp(dname, rname, strlen(dname)) == 0) &&
+		    (ntohs(tmptype) == DNS_QT_A) ) {
 
-			memcpy((char *)&type, dptr, 2);
-			if(ntohs(type) == DNS_QT_A) {
-				dptr += 10;
-				memcpy((char *)&tmpip, dptr, 4);
-				if ((ipaddr == 0) ||
-				    ( (NetData.ipmask&tmpip) ==
+			/* Pick up the IP address */
+
+			memcpy((char *)&tmpip, dptr+10, 4);
+			if ((ipaddr == 0) ||
+				    ((NetData.ipmask&ntohl(tmpip)) ==
 					NetData.ipprefix) ) {
-					ipaddr = tmpip;
-				}
+				ipaddr = tmpip;
 			}
 		}
 
-		/* Move to the next answer */
+
+		/* Move past the type, class, and ttl fields to the length */
 
 		dptr += 8;
-		dptr += (ntohs(*((uint16 *)dptr)) + 2);
+
+		/* Move past the length field itself (2 bytes) and data */
+
+		memcpy((char *)&tmplen, dptr, 2);
+		dptr += ntohs(tmplen) + 2;
 	}
 
 	if (ipaddr != 0) {
@@ -257,13 +278,18 @@ uint32	dns_getrname (
 	)
 {
 	byte	llen;			/* Label length			*/
-	char	*sson = son;		/* Saved start of name		*/
+	uint16	tmpoff;			/* Temporary to hold offset	*/
+	uint16	offset;			/* Offset in host byte order	*/
+	char	*sson;			/* Saved start of name		*/
 	int32	i;			/* Loop index			*/
 
+	/* Record initial position */
+
+	sson = son;
 
 	/* Pick up length of initial label */
 
-	llen = *((byte *)son++);
+	llen = *son++;
 
 	/* While not at the end of the name, pick up a label */
 
@@ -275,25 +301,21 @@ uint32	dns_getrname (
 				*dst++ = *son++;
 			}
 			*dst++ = '.';
-			llen = *((byte *)son++);
+			llen = *son++;
 		} else {
-			/* Handle inter. names */
-			uint16	offset;
+			/* Handle pointer to remainder of name */
 			son--;
-			(*son) = (*son) & 0x3f;
-
-			offset = (uint16)(*son++) * 256;
-			offset += (uint16)(*son++);
-
+			memcpy( (char *)&tmpoff, son, 2);
+			offset = ntohs(tmpoff) & 0x3fff;
+			son += 2;
 			dns_getrname(sop, sop+offset, dst);
-
 			return (son-sson);
-
 		}
 	}
 
 	/* Null-terminate the string */
 
+	dst--;
 	*dst = NULLCH;
 
 	return (uint32)(son-sson);
