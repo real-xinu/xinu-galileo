@@ -127,7 +127,7 @@ int32 	dhcp_bld_req(
 
 	dmsg->dc_opt[j++] = 0xff & 54;	/* Server IP			*/
 	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
-	memcpy((void *)&dmsg->dc_opt[j], &server_ip, 4);
+	memcpy((void *)&dmsg->dc_opt[j], server_ip, 4);
 
 	j += 4;
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
