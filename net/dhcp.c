@@ -269,10 +269,6 @@ uint32	getlocalip(void)
 			/*  address					*/
 			tmp_server_ip = (uint32*)dhcp_get_opt_val(
 					&dmsg_rvc, len, DHCP_SERVER_ID);
-			if(tmp_server_ip == 0) {
-			   kprintf("Cannot retrieve boot server addr\n");
-			   return (uint32)SYSERR;
-			}
 			memcpy((char *)&tmp, tmp_server_ip, 4);
 			NetData.bootserver = ntohl(tmp);
 		}
@@ -286,3 +282,4 @@ uint32	getlocalip(void)
 	udp_release(slot);
 	return (uint32)SYSERR;
 }
+
