@@ -27,7 +27,7 @@ shellcmd xsh_ipaddr(int nargs, char *args[]) {
 		printf("Description:\n");
 		printf("\tDisplays IP address information\n");
 		printf("Options:\n");
-		printf("\t-f\tforce a new DHCP request");
+		printf("\t-f\tforce a new DHCP request\n");
 		printf("\t--help\tdisplay this help and exit\n");
 		return OK;
 	}
