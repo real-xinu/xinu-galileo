@@ -26,7 +26,7 @@ syscall	ptsend(
 
 	/* Wait for space and verify port has not been reset */
 
-	seq = ptptr->ptseq;		/* Record orignal sequence	*/
+	seq = ptptr->ptseq;		/* Record original sequence	*/
 	if (wait(ptptr->ptssem) == SYSERR
 	    || ptptr->ptstate != PT_ALLOC
 	    || ptptr->ptseq != seq) {
