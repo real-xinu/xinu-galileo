@@ -12,7 +12,7 @@ pri16	chprio(
 	)
 {
 	intmask	mask;			/* Saved interrupt mask		*/
-	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	struct	procent *prptr;		/* Ptr to process's table entry	*/
 	pri16	oldprio;		/* Priority to return		*/
 
 	mask = disable();
