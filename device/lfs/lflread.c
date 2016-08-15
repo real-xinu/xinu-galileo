@@ -19,7 +19,7 @@ devcall	lflread (
 		return SYSERR;
 	}
 
-	/* Iterate and use lflgetc to read indivdiual bytes */
+	/* Iterate and use lflgetc to read individual bytes */
 
 	for (numread=0 ; numread < count ; numread++) {
 		nxtbyte = lflgetc(devptr);
