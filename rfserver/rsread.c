@@ -11,6 +11,8 @@
 #include "rfilesys.h"
 #include "rfserver.h"
 
+extern	void*	memset(void *, int, size_t);
+
 /*------------------------------------------------------------------------
  * rsread - handle a read request
  *------------------------------------------------------------------------
@@ -99,8 +101,11 @@ void	rsread (
 	lseek(fd, ntohl(reqptr->rf_pos), SEEK_SET);
 	memset(resptr->rf_data, NULLCH, RF_DATALEN);
 	nbytes = read(fd, resptr->rf_data, ntohl(reqptr->rf_len));
-/*DEBUG*/printf("DEBUG: read from desc %d specified file returns %d \n",
-/*DEBUG*/			fd, nbytes);
+
+#ifdef DEBUG
+	printf("DEBUG: read from desc %d specified file returns %d \n",
+			fd, nbytes);
+#endif
 	
 	if (nbytes < 0) {
 		resptr->rf_pos = reqptr->rf_pos;

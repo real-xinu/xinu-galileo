@@ -25,7 +25,10 @@ void	snderr (
 	int	i;			/* counts bytes in header	*/
 	char	*from, *to;		/* pointers used during copy	*/
 	int	retval;
-/*DEBUG*/ printf("DEBUG: reached snderr with length %d\n", len);
+
+#ifdef DEBUG
+	printf("DEBUG: reached snderr with length %d\n", len);
+#endif
 
 	/* copy header to from request to response */
 
@@ -45,22 +48,28 @@ void	snderr (
 
 	/* Return response to source */
 
-/*DEBUG*/ printf("Sending %d bytes\n", len);
-/*DEBUG*/ to = (char *)resptr;
-/*DEBUG*/ for (i=0; i<len; i++) {
-/*DEBUG*/	printf("%02x ",0xff&*to++);
-/*DEBUG*/	if ( ((i+1)%32) == 0) {
-/*DEBUG*/		printf("\n");
-/*DEBUG*/	}
-/*DEBUG*/	if (i> 190) {
-/*DEBUG*/		printf("...");
-/*DEBUG*/		break;
-/*DEBUG*/	}
-/*DEBUG*/}
-/*DEBUG*/	printf("\n");
+#ifdef DEBUG
+	printf("Sending %d bytes\n", len);
+	to = (char *)resptr;
+	for (i=0; i<len; i++) {
+		printf("%02x ",0xff&*to++);
+		if ( ((i+1)%32) == 0) {
+			printf("\n");
+		}
+		if (i> 190) {
+			printf("...");
+			break;
+		}
+	}
+	printf("\n");
+#endif
+
 	retval = sendto(sock, (const void *)resptr, len, 0,
 		(struct sockaddr *)&senderip, addrlen);
-/*DEBUG*/ if(retval<0){printf("DEBUG: sendto fails\n");}
+
+#ifdef DEBUG
+	if(retval<0){printf("DEBUG: sendto fails\n");}
+#endif
 
 	return;
 }

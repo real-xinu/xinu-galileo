@@ -10,13 +10,15 @@
 #include "rfilesys.h"
 #include "rfserver.h"
 
+extern	void*	memset(void *, int, size_t);
+
 /*------------------------------------------------------------------------
  * rsclose - handle a close request
  *------------------------------------------------------------------------
  */
 void	rsclose (
-	struct	rf_msg_creq *reqptr,	/* ptr to close request	*/
-	struct	rf_msg_cres *resptr	/* ptr to close response*/
+	 struct	rf_msg_creq *reqptr,	/* ptr to close request		*/
+	 struct	rf_msg_cres *resptr	/* ptr to close response	*/
 	)
 {
 

@@ -21,7 +21,10 @@ void	rsmkdir (
 	)
 {
 	int	retval;			/* return value			*/
-/*DEBUG*/ printf("DEBUG: reached rsmkdir\n");
+
+#ifdef DEBUG
+	printf("DEBUG: reached rsmkdir\n");
+#endif
 
 	if (findex >=0) {		/* file exists and is open	*/
 		snderr( (struct rf_msg_hdr *)reqptr,

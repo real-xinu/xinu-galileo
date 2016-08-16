@@ -9,18 +9,20 @@
 #include "rfilesys.h"
 #include "rfserver.h"
 
+extern	void*	memset(void *, int, size_t);
+
 /*------------------------------------------------------------------------
  * rsdirread - handle a directory read request
  *------------------------------------------------------------------------
  */
 void	rsdirread (
-	struct	rf_msg_rreq *reqptr,	/* Read request pointer	*/
-	struct	rf_msg_rres *resptr	/* Read response pointer*/
+	 struct	rf_msg_rreq *reqptr,	/* Read request pointer		*/
+	 struct	rf_msg_rres *resptr	/* Read response pointer	*/
 	)
 {
-	struct	dirent *dentry;	/* An entry in the directory	*/
+	struct	dirent *dentry;		/* An entry in the directory	*/
 	struct	rfdirent *rfdentry;
-	char	*to, *from;	/* used to copy names		*/
+	char	*to, *from;		/* used to copy names		*/
 
 	if(findex < 0) {
 		snderr( (struct rf_msg_hdr *)reqptr,

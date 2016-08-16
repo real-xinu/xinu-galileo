@@ -23,7 +23,7 @@ struct	sockaddr_in senderip;		/* the sender's address taken	*/
 					/*   the current UDP packet	*/
 int	addrlen;			/* size of the above address	*/
 
-extern	void	memset(void *, int, size_t);
+extern	void*	memset(void *, int, size_t);
 /*------------------------------------------------------------------------
  * main - implement a Xinu remote file server running on a Unix machine
  *------------------------------------------------------------------------
@@ -50,8 +50,12 @@ int	main (int argc, char *argv[])
 	int	retval;			/* return value			*/
 	char	*to, *from;		/* used during name copy	*/
 	int	len;			/* length of name		*/
-/*DEBUG*/ char	*typnams[] = {"error", "read", "write", "open", "delete",
-/*DEBUG*/	  "truncate", "size", "make directory", "remove directory", "close"};
+
+#ifdef DEBUG
+	char	*typnams[] = {"error", "read", "write", "open", "delete",
+			"truncate", "size", "make directory", 
+			"remove directory", "close"};
+#endif
 
 	/* initialize table that records open files */
 
@@ -85,7 +89,7 @@ int	main (int argc, char *argv[])
 	} else {
 		printf("Server is using UDP port %d\n\n",
 				RF_SERVER_PORT);
-}
+	}
 
 	mptr = (struct rf_msg_hdr *)inbuf;
 	rptr = (struct rf_msg_hdr *)outbuf;
@@ -95,24 +99,30 @@ int	main (int argc, char *argv[])
 
 		n = recvfrom(sock, &inbuf, MAXMSG, 0,
 			(struct sockaddr *) &senderip, &addrlen);
-/*DEBUG*/ printf("Recv returns %d bytes\n", n);
-/*DEBUG*/ for (i=0; i<n; i++) {
-/*DEBUG*/	printf("%02x ",0xff&inbuf[i]);
-/*DEBUG*/	if ( ((i+1)%32) == 0) {
-/*DEBUG*/		printf("\n");
-/*DEBUG*/	}
-/*DEBUG*/	if (i> 190) {
-/*DEBUG*/		printf("...");
-/*DEBUG*/		break;
-/*DEBUG*/	}
-/*DEBUG*/}
-/*DEBUG*/	printf("\n");
+
+#ifdef DEBUG
+		printf("Recv returned %d bytes\n", n);
+		for (i=0; i<n; i++) {
+			printf("%02x ",0xff & inbuf[i]);
+			if ( ((i+1)%32) == 0) {
+				printf("\n");
+			}
+			if (i> 190) {
+				printf("...");
+				break;
+			}
+		}
+		printf("\n");
+#endif
 
 		/* ignore if message is too small or an error occurrred	*/
 
 		if ( n < sizeof(struct rf_msg_hdr) ) {
-/*DEBUG*/ printf("DEBUG: message length (%d) is less than minimum (%d)\n\r",
-/*DEBUG*/			n, sizeof(struct rf_msg_hdr));
+#ifdef DEBUG
+			printf("DEBUG: message length (%d) is "
+					"less than minimum (%lu)\n\r",
+					n, sizeof(struct rf_msg_hdr));
+#endif 
 			continue;
 		}
 
@@ -120,10 +130,17 @@ int	main (int argc, char *argv[])
 
 		msgtyp = ntohs(mptr->rf_type & 0xffff);
 		if ( (msgtyp < RF_MIN_REQ) || (msgtyp > RF_MAX_REQ) ) {
-/*DEBUG*/ printf("DEBUG: ignoring because message type %04x is out of range\n", msgtyp);
+#ifdef DEBUG
+			printf("DEBUG: ignoring because message type "
+					"%04x is out of range\n", msgtyp);
+#endif
 			continue;
 		}
-/*DEBUG*/ printf("DEBUG: message type %04x   %s\n", msgtyp, typnams[msgtyp]);
+
+#ifdef DEBUG
+		printf("DEBUG: message type %04x   %s\n", 
+				msgtyp, typnams[msgtyp]);
+#endif
 
 		/* if incoming sequence is 1, reset local seq */
 
@@ -135,9 +152,15 @@ int	main (int argc, char *argv[])
 		/* ignore if sequence in packet is non-zero and is less	*/
 		/*	than the server's sequence number		*/
 
-/*DEBUG*/ printf("DEBUG: incomming seq: %d  local seq: %d)\n",thisseq, seq);
+#ifdef DEBUG
+		printf("DEBUG: incomming seq: %d  local seq: %d)\n", 
+				thisseq, seq);
+#endif
+
 		if ( (thisseq != 0) && (thisseq < seq) ) {
-/*DEBUG*/ printf("DEBUG: ignoring because sequence is bad \n");
+#ifdef DEBUG
+			printf("DEBUG: ignoring because bad sequence\n");
+#endif
 			continue;
 		}
 
@@ -152,17 +175,24 @@ int	main (int argc, char *argv[])
 			}
 		}
 		if (len >= RF_NAMLEN) {
-/*DEBUG*/ printf("DEBUG: ignoring name that's too long\n");
+#ifdef DEBUG
+			printf("DEBUG: ignoring name that's too long\n");
+#endif
 			snderr(mptr, rptr, sizeof(struct rf_msg_hdr) );
 			continue;
 		}
-/*DEBUG*/ printf("DEBUG: name is %s\n", mptr->rf_name);
+#ifdef DEBUG
+		printf("DEBUG: name is %s\n", mptr->rf_name);
+#endif
 
 		/* Ignore if name contains starts with slash */
 
 		if (mptr->rf_name[0]=='/') {
 			snderr(mptr, rptr, sizeof(struct rf_msg_hdr) );
-/*DEBUG*/ printf("DEBUG: ignoring because name starts with slash\n");
+#ifdef DEBUG
+			printf("DEBUG: ignoring because name starts "
+					"with slash\n");
+#endif
 			continue;
 		}
 
@@ -180,7 +210,10 @@ int	main (int argc, char *argv[])
 		}
 		if (err > 0) {
 			snderr(mptr, rptr, sizeof(struct rf_msg_hdr) );
-/*DEBUG*/ printf("DEBUG: ignoring because name contains ..\n");
+#ifdef DEBUG
+			printf("DEBUG: ignoring because name "
+					"contains ..\n");
+#endif
 			continue;
 		}
 
@@ -199,7 +232,9 @@ int	main (int argc, char *argv[])
 		if (findex >= MAXFILES) {
 			findex = -1;	/* file not found */
 		}
-/*DEBUG*/ printf("DEBUG: findex is %d\n", findex);
+#ifdef DEBUG
+		printf("DEBUG: findex is %d\n", findex);
+#endif
 
 		/* process message */
 
@@ -249,6 +284,5 @@ int	main (int argc, char *argv[])
 			rsclose(  (struct rf_msg_creq *)mptr,
 				  (struct rf_msg_cres *)rptr );
 		}
-
 	}
 }

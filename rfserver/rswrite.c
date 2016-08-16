@@ -80,7 +80,12 @@ void	rswrite (
 	if ( (retval<0) || (ntohl(reqptr->rf_pos) > buf.st_size) ) {
 		resptr->rf_pos = reqptr->rf_pos;
 		resptr->rf_len = 0;	 /* set length to zero */
-/*DEBUG*/ printf("DEBUG: requested offset %d is beyond %d\n",reqptr->rf_pos,buf.st_size);
+
+#ifdef DEBUG
+		printf("DEBUG: requested offset %d is beyond %lu\n",
+			reqptr->rf_pos, buf.st_size);
+#endif
+
 		snderr( (struct rf_msg_hdr *)reqptr,
 			(struct rf_msg_hdr *)resptr,
 			sizeof(struct rf_msg_wres) );
@@ -93,7 +98,11 @@ void	rswrite (
 	nbytes = write(fd, reqptr->rf_data, ntohl(reqptr->rf_len));
 	
 	if (nbytes < 0) {
-/*DEBUG*/ printf("DEBUG: write fails\n");
+
+#ifdef DEBUG
+		printf("DEBUG: write failed\n");
+#endif
+
 		resptr->rf_pos = reqptr->rf_pos;
 		resptr->rf_len = 0; /* set length to zero */
 		snderr( (struct rf_msg_hdr *)reqptr,
