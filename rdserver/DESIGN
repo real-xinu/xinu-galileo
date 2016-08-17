@@ -1,0 +1,211 @@
+
+Paradigm:
+
+  1. Reads are synchronous - a process blocks until the read
+     completes
+
+  2. Writes are asynchronous - a process issues a write and
+     returns; later a background process will update the
+     remote disk
+
+----------------------------------------------------------------------------
+
+Remote Disk Client Side
+
+  The client maintains three sets of disk buffers:
+
+	List of free disk buffers
+
+	Cache of recently-accessed blocks implemented as a linked-list
+		of buffers.  Each buffer has a header that includes
+		the block number, a pointer to the next item buffer in
+		the cache, and a reference count of processes that have
+		requested a read, have been given the buffer address, but
+		have not yet obtained a copy.  The buffer cannot be reused
+		until the reference count reaches zero.
+
+	Queue of requests implemented as queue, where requests are inserted
+		at the tail and remove from the head;  each request consists
+		of a buffer with a header that specifies a disk block number,
+		an operation ("read", "write", or "sync"), and the ID of the
+		of a process that initiated the request (for "read" or "sync"
+		requests).
+
+Free list
+
+	Initially, N disk buffers are allocated and placed on the free list.
+
+Cache
+	The cache is organized as a set of up to N blocks managed using an
+	LRU algorithm.  The cache is implemented with a linked-list of
+	buffers.  When a block is accessed, the buffer is moved to the head
+	of the list (the exception is a block that has a non-zero refernce
+	count).  If the system runs out of buffers and needs to take one
+	from the cache, the buffer nearest the tail that has a zero reference
+	count is selected.  The reference count tells how many processes
+	have requested a "read" operation on the block, have been informed
+	that the block is available, but have not yet accessed the data in
+	the buffer (a process with low priority may not have had CPU service
+	yet).  A buffer with non-zero refernce count cannot be removed from
+	the cache or reused.  If a subsequent write to the block occurs, the
+	cache can have two buffers for the same block, and the most recent
+	is nearest the front of the list.  Thus, a "stale" block is not
+	moved to the front, and cache lookups will select the fresh copy
+	instead.
+
+Requests
+	The request queue is a FIFO queue, where requests are inserted at
+	the tail and removed from the head.  The request at the head of the
+	list is a "current" request (i.e., bein serviced).  A remote disk
+	communication process repeatedly takes the request from the head
+	of the list, communicates with the remote disk server to handle
+	the request, moves the disk block to the cache, and in the case of
+	a read, informs the application process that made the request and
+	then searches the request list for other requests for the same
+	block, increments the refernce count accordingly, and informs the
+	processes that they can access the data.
+
+----------------------------------------------------------------------------
+Basic operations
+
+init	Initialize the global data structures; set the IP address and
+	and port number for the server; create a process (which runs
+	in background and communicates with the server) and record the
+	process ID in the RDISK control block; allocate a set of disk
+	buffers and place them on the free list; set the cache and
+	request queue to empty; create an "available" semaphore with
+	initial count N
+
+open	if (RDISK is not free) return SYSERR;
+	Mark the control block "pending"
+	Store the remote disk ID in the control block;
+	hand-craft an "open" message for the server;
+	use function rdscomm to send the message and obtain a response
+	If (rdscomm fails) make the control block free and return SYSERR;
+	Mark RDISK control block "open" and return OK
+
+close	if (RDISK is not open) return SYSERR
+	if request queue is non-empty return SYSERR
+	clear the cache and move all buffers back to free list
+	signal the "available" semaphore for each
+	Mark the control block "unused"
+	return OK;
+
+read	if (RDISK is not open) return SYSERR
+	if (specified block is in the cache) {
+		copy data to the user's buffer;
+		return OK;
+	}
+	if (specified block is already on request list and
+		most recent operation is a "write" request ) {
+		copy data to the user's buffer;
+		return OK;
+	}
+	allocate a buffer;
+	form a read request that includes block number and current
+		PID, and insert at tail of request queue;
+	recvclr();
+	resume disk process;
+	MSG = receive();
+	if (MSG == SYSERR) eeturn SYSERR or panic
+	treat MSG as pointer to a buffer in the cache and copy
+		data to the user's buffer;
+	decrement reference count;
+	if (ref count == 0) {
+		signal "available" semaphore
+		look through cache and move buffer to free list if a
+			 previous cache item has same block number
+	return OK;
+
+write	if (RDISK is not open) return SYSERR
+	Find the last occurrence of the block on the request queue;
+	If (the last occurrence is a "write" request and is not the head
+		of the request queue) {
+		replace the data with the user's data
+		return OK;
+	}
+	if (specified block is in the cache and ref count is zero) {
+		remove from cache so buffer can be used;
+	} else {
+		allocate a new buffer;
+	}
+	Copy user's data into buffer;
+	Form a write request that includes block number and
+		insert at tail of request queue;
+	resume disk process;
+	return OK;
+
+control	switch (func) {
+	case SYNC:
+		if (RDISK is not open) return SYSERR;
+		allocate a buffer;
+		form a "sync" request that includes the current
+		  process ID and place at tail of request queue;
+		MSG= recvclr();
+		resume disk process;
+		MSG = receive();
+		return OK;
+
+	case ERASE:
+		handcraft a request message for the server that
+			requests erasing the disk with the
+			specified ID;
+		use rdscomm to send the request to the server
+			and obtain a reply;
+		if (return_value == SYSERR)
+			return SYSERR;
+		de-allocate buffers and semaphores;
+		mark RDISK closed;
+		return OK;
+	}
+
+----------------------------------------------------------------------------
+allocate a disk buffer
+
+	wait("available" semaphore);
+	if (free list nonempty) {
+		extract buffer from free list
+		return buffer address;
+	}
+	find oldest item in cache with ref count zero (at least one
+		such item must exist)
+	remove item
+	return address of item;
+
+----------------------------------------------------------------------------
+
+remote disk process /* high priority process */
+
+    do forever {
+
+	if (request queue empty) {
+		suspend():
+	}
+	Let R denote the item at head of request queue
+	switch (request_type of R) {
+
+	  sync:	extract item R from request list and insert it
+		   on the free list
+		signal the "available" semaphore
+		send a message to process doing sync
+		continue;
+
+	  read:	use rdscomm to read block in R from the remote server
+		if (rdscomm returns SYSERR) panic
+		extract R from request queue and insert in cache
+		set the reference count to 1
+		send the buffer address to the process that made
+			the initial request
+		scan request queue for occurrences of read(R)
+			remove each item from the queue
+			send a message to the process that made the
+				request
+		continue;
+
+	 write:	use rdscomm to write block to server;
+		place buffer R in cache and set ref count to zero
+		continue;
+	}
+    }
+
+----------------------------------------------------------------------------
