@@ -28,16 +28,16 @@ shellcmd xsh_memdump(int nargs, char *args[])
 	/* For argument '--help', emit help about the 'memdump' command	*/
 
 	if (nargs == 2 && strncmp(args[1], "--help", 7) == 0) {
-		printf("Use: %s [-f] begin LENGTH\n\n", args[0]);
+		printf("Use: %s [-f] Address Length\n\n", args[0]);
 		printf("Description:\n");
-		printf("\tDumps a LENGTH bytes of memory begining at\n");
-		printf("\tthe specified begin address (both begin and\n");
-		printf("\tLENGTH can be specified in decimal or hex)\n");
+		printf("\tDumps Length bytes of memory begining at the\n");
+		printf("\tspecified starting address (both the address\n");
+		printf("\tand length can be specified in decimal or hex)\n");
 		printf("Options:\n");
-		printf("\t-f\t\tignore sanity checks for addresses\n");
-		printf("\tbegin\t\tmemory address at which to begin\n");
-		printf("\tLENGTH\tnumber of bytes to dump\n");
-		printf("\t--help\t display this help and exit\n");
+		printf("\t-f         ignore sanity checks for addresses\n");
+		printf("\tAddress    memory address at which to start\n");
+		printf("\tLength     the number of bytes to dump\n");
+		printf("\t--help     display this help and exit\n");
 		return 0;
 	}
 
