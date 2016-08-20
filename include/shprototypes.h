@@ -31,9 +31,6 @@ extern	shellcmd  xsh_exit	(int32, char *[]);
 /* in file xsh_help.c */
 extern	shellcmd  xsh_help	(int32, char *[]);
 
-/* in file xsh_ipaddr.c */
-extern	shellcmd  xsh_ipaddr	(int32, char *[]);
-
 /* in file xsh_kill.c */
 extern	shellcmd  xsh_kill	(int32, char *[]);
 
@@ -45,6 +42,9 @@ extern	shellcmd  xsh_memdump	(int32, char *[]);
 
 /* in file xsh_memstat.c */
 extern	shellcmd  xsh_memstat	(int32, char *[]);
+
+/* in file xsh_netinfo.c */
+extern	shellcmd  xsh_netinfo	(int32, char *[]);
 
 /* in file xsh_nvram.c */
 extern	shellcmd  xsh_nvram	(int32, char *[]);

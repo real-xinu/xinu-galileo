@@ -1,15 +1,15 @@
-/* xsh_ipaddr.c - xsh_ipaddr */
+/* xsh_netinfo.c - xsh_netinfo */
 
 #include <xinu.h>
 #include <string.h>
 #include <stdio.h>
 
 /*------------------------------------------------------------------------
- * xsh_ipaddr - obtain and print the IP address, subnet mask and default
- *			router address for each interface that's up
+ * xsh_netinfo - obtain and print the IP address, subnet mask, default
+ *			router address and other network information
  *------------------------------------------------------------------------
  */
-shellcmd xsh_ipaddr(int nargs, char *args[]) {
+shellcmd xsh_netinfo(int nargs, char *args[]) {
 
 	uint32	ipaddr;			/* An IP address in binary	*/
 	uint32	ipbcast;		/* IP broadcast addr. in binary	*/
