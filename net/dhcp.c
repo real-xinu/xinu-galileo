@@ -86,6 +86,7 @@ int32 	dhcp_bld_disc(struct dhcpmsg* dmsg)
 	dmsg->dc_opt[j++] = 0xff &  2;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* Request subnet mask 		*/
 	dmsg->dc_opt[j++] = 0xff &  3;	/* Request default router addr->*/
+	dmsg->dc_opt[j++] = 0xff;	/* End of options		*/
 
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }
@@ -128,8 +129,9 @@ int32 	dhcp_bld_req(
 	dmsg->dc_opt[j++] = 0xff & 54;	/* Server IP			*/
 	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
 	memcpy((void *)&dmsg->dc_opt[j], server_ip, 4);
-
 	j += 4;
+	dmsg->dc_opt[j++] = 0xff;	/* End of options		*/
+
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }
 
@@ -278,7 +280,7 @@ uint32	getlocalip(void)
 	    }
 	}
 
-	kprintf("DHCP failed to get response\n");
+	kprintf("DHCP failed to get a response\n");
 	udp_release(slot);
 	return (uint32)SYSERR;
 }
