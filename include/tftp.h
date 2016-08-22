@@ -18,7 +18,7 @@
 #define TFTP_ERROR_NO_SUCH_USER        7  /* No such user.                            */
 
 #define TFTP_PORT       69      /* UDP Port for TFTP            */
-#define	TFTP_MAXNAM	    64      /* Max length of a file name    */
+#define	TFTP_MAXNAM	64      /* Max length of a file name    */
 #define	TFTP_MAXDATA    512     /* Max size of a data packet    */
 #define	TFTP_MAXRETRIES	3       /* Number of retranmissions     */
 #define	TFTP_WAIT       5000    /* Time to wait for reply (ms)  */
@@ -63,5 +63,8 @@ struct	tftp_msg {
 };
 #pragma pack()
 
+typedef status (*tftp_recv_cb) (uint16 tf_blk_nbr, char* tf_blk, uint32 dlen, byte last);
+
 status tftpget(uint32 serverip, const char* filename, char* rcv_buf, uint32 rcv_buf_size, byte verbose);
 status tftpget_mb(uint32 serverip, const char* filename, char** rcv_bufs, uint32* rcv_buf_sizes, uint32 rcv_buf_count, byte verbose);
+status tftpget_cb(uint32 serverip, const char* filename, tftp_recv_cb cb, byte verbose);
