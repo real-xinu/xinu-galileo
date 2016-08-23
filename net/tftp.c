@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Prototype for TFTP callback function */
+
+typedef status (*tftp_recv_cb) (uint16, char*, uint32, byte);
+
 /*------------------------------------------------------------------------
  *
  * tftp_send1  -  Internal function to send one outgoing request (RRQ or
@@ -14,14 +18,14 @@
  */
 
 status	tftp_send1 (
-	 int32	sock,			/* UDP socket to use		*/
-	 uint32	remip,			/* Remote IP address		*/
-	 uint16	*remport,		/* Remote port to use/set	*/
-	 struct tftp_msg *msg,		/* Pointer to outgoing message	*/
-	 int32	mlen,			/* Size of ougoing message	*/
-	 struct tftp_msg *inmsg,	/* Pointer to buffer for an	*/
+	  int32		sock,		/* UDP socket to use		*/
+	  uint32	remip,		/* Remote IP address		*/
+	  uint16	*remport,	/* Remote port to use/set	*/
+	  struct tftp_msg *msg,		/* Pointer to outgoing message	*/
+	  int32		mlen,		/* Size of ougoing message	*/
+	  struct tftp_msg *inmsg,	/* Pointer to buffer for an	*/
 					/*   incoming message		*/
-	 uint16	expected		/* Block number expected next	*/
+	  uint16	expected	/* Block number expected next	*/
 	)
 {
 	int32	ret;			/* Return value	for udp_send	*/
@@ -33,7 +37,7 @@ status	tftp_send1 (
 	/*   ------------------------------------------------   */
 	/*  | Opcode |  Filename  |   0  |    Mode    |   0  |  */
 	/*   ------------------------------------------------   */
-	
+
 	/*     TFTP ACK Packet       */
 	/*   2 bytes     2 bytes     */
 	/*   ---------------------   */
@@ -41,7 +45,7 @@ status	tftp_send1 (
 	/*   ---------------------   */
 
 	/* Send the outgoing message */
-	
+
 	ret = udp_sendto(sock, remip, *remport, (char *) msg, mlen);
 
 	if (ret == SYSERR) {
@@ -70,7 +74,7 @@ status	tftp_send1 (
 		}
 
 		/* If Error came back, give up */
-		
+
 		if (ntohs(inmsg->tf_opcode) == TFTP_ERROR) {
 			kprintf("\n[tftp_send1] TFTP Error %d, %s\n",
 					ntohs(inmsg->tf_ercode),
@@ -90,38 +94,19 @@ status	tftp_send1 (
 	}
 }
 
-
 /*------------------------------------------------------------------------
  *
- * tftpget  -  Use TFTP to download a specified file from a server
+ * tftpget  -  Retrieve a file using TFTP
  *
  *------------------------------------------------------------------------
  */
 status  tftpget(
-	uint32	serverip,		/* IP address of server		*/
-	const	char* filename,		/* Name of the file to download	*/
-	char*	rcv_buf,		/* Buffer to hold the file	*/
-	uint32	rcv_buf_size,		/* Size of the buffer		*/
-	byte	verbose			/* Verbosity level		*/
-	)
-{
-	return tftpget_mb(serverip, filename, &rcv_buf, &rcv_buf_size, 1,
-								 verbose);
-}
-
-/*------------------------------------------------------------------------
- *
- * tftpget_mb  -  multibuffer version of TFPT
- *
- *------------------------------------------------------------------------
- */
-status  tftpget_mb(
-	uint32	serverip,		/* IP address of server		*/
-	const	char* filename,		/* Name of the file to download	*/
-	char**	rcv_bufs,		/* Buffer to hold the file	*/
-	uint32*	rcv_buf_sizes,		/* Size of each buffer		*/
-	uint32	rcv_buf_count,		/* Number of buffers		*/
-	byte	verbose			/* Verbosity level		*/
+	  uint32	serverip,	/* IP address of server		*/
+	  const	char*	filename,	/* Name of the file to download	*/
+	  void*		user_ptr,	/* User supplied buffer or	*/
+					/*	function pointer	*/
+	  uint32	user_len	/* Size of buffer or special	*/
+					/*	value for function	*/
 	)
 {
 	int32	nlen;			/* Length of file name		*/
@@ -137,43 +122,26 @@ status  tftpget_mb(
 	int32	mlen;			/* Length of outgoing mesage	*/
 	struct	tftp_msg inmsg;		/* Buffer for response message	*/
 	int32	dlen;			/* Size of data in a response	*/
-	char*   curr_buf;		/* Current buffer being used	*/
-	uint32  curr_buf_ind;		/* Index of current buffer	*/
-	uint32  curr_used;		/* Amount used in buffer	*/
+	char*	bptr;			/* Current user buff position	*/
+	byte	lastpkt;		/* Indicator of last packet	*/
 
 	/* Check args */
-	
-	if(filename == NULL || serverip == 0 || rcv_bufs == NULL ||
-		rcv_buf_sizes == NULL || rcv_buf_count == 0) {
+
+	if(filename == NULL || serverip == 0 || 
+		user_ptr == NULL || user_len == 0) {
 		kprintf("[TFTP GET] ERROR: Invalid argument\n");
 		return SYSERR;
-	}
-	for(i = 0; i < rcv_buf_count; i++) {
-		if(rcv_bufs[i] == NULL || rcv_buf_sizes[i] == 0) {
-			kprintf("[TFTP GET] ERROR: Invalid argument\n");
-			return SYSERR;
-		}
 	}
 
 	nlen = strnlen(filename, TFTP_MAXNAM+1);
 	if ( (nlen <= 0) || (nlen > TFTP_MAXNAM) ) {
 		return SYSERR;
 	}
-	
-	if(verbose & TFTP_VERBOSE) {
-		kprintf("[TFTP Get] Server: %08X File: %s\n",
-						 serverip, filename);
-	}
 
 	/* Generate a local port */
 
 	localport = getport();
 
-	if (verbose & TFTP_VERBOSE) {
-		kprintf("[TFTP Get] Using local port %u\n",
-						0xffff & localport);
-	}
-		
 	/* Register a UDP socket */
 
 	sock = udp_register(serverip, 0, localport);
@@ -189,9 +157,8 @@ status  tftpget_mb(
 	/* Initialize the total file size to zero */
 
 	filesiz = 0;
-	curr_buf_ind = 0;
-	curr_buf = (char*)rcv_bufs[curr_buf_ind];
-	curr_used = 0;
+	bptr = (char*)user_ptr;
+	lastpkt = FALSE;
 
 	/* Form the first message and compute length (a Read Request)	*/
 
@@ -209,81 +176,79 @@ status  tftpget_mb(
 	/*	retransmitting a request up to TFTP_MAXRETRIES times	*/
 
 	while(1) {
-	    for (i=0; i < TFTP_MAXRETRIES; i++) {
-		n = tftp_send1(sock, serverip, &remport, &outmsg, mlen,
-							&inmsg, expected);
-		if (n > 0) {
-			break;
-		} else if (n == SYSERR) {
-			kprintf("\n[TFTP Get] ERROR: TFTP Send fails\n");
+		for (i=0; i < TFTP_MAXRETRIES; i++) {
+			n = tftp_send1(sock, serverip, &remport, &outmsg, 
+					mlen, &inmsg, expected);
+			if (n > 0) {
+				break;
+			} else if (n == SYSERR) {
+				kprintf("\n[TFTP Get] ERROR: TFTP Send "
+					"fails\n");
+				udp_release(sock);
+				return SYSERR;
+			} else if (n == TIMEOUT) {
+				continue;
+
+			}
+		}
+		if (i >= TFTP_MAXRETRIES) {
+			kprintf("\n[TFTP Get] ERROR: Max retries %d "
+				"exceeded\n", TFTP_MAXRETRIES);
 			udp_release(sock);
 			return SYSERR;
-		} else if (n == TIMEOUT) {
-			continue;
-
 		}
-	    }
-	    if (i >= TFTP_MAXRETRIES) {
-		kprintf("\n[TFTP Get] ERROR: Max retries %d exceeded\n",
-							TFTP_MAXRETRIES);
-		udp_release(sock);
-		return SYSERR;
-	    }
-		
-	    if(verbose & TFTP_VERBOSE) {
-		kprintf(".");
-	    }
 
-	    /* Compute size of data in the message */
+		/* Compute size of data in the message */
 
-	    dlen = n - sizeof(inmsg.tf_opcode) - sizeof(inmsg.tf_dblk);
+		dlen = n - sizeof(inmsg.tf_opcode) - 
+			sizeof(inmsg.tf_dblk);
 
-	    /* Move the contents of this block into the file buffer	*/
+		if(dlen < 512) {
+			lastpkt = TRUE;
+		}
 
-	    for (i=0; i<dlen; i++) {
-		if (curr_used >= rcv_buf_sizes[curr_buf_ind]) {
-			curr_buf_ind++;
-			if(curr_buf_ind >= rcv_buf_count) {
-				udp_release(sock);
-				if(verbose & TFTP_VERBOSE) {
-					kprintf("\n");
-				}
-				return filesiz;
+		/* Move the contents of this block into the file buffer	*/
+
+		for (i=0; i<dlen; i++) {
+			if (user_len != TFTP_FUNC_MAGIC && 
+				filesiz < user_len) {
+				*bptr++ = inmsg.tf_data[i];
 			}
-			curr_buf = (char*)rcv_bufs[curr_buf_ind];
-			curr_used = 0;
+			filesiz++;
 		}
-		*curr_buf++ = inmsg.tf_data[i];
-		curr_used++;
-		filesiz++;
-	    }
 
-	    /* Form an ACK */
+		/* Call the user supplied function */
 
-	    outmsg.tf_opcode = htons(TFTP_ACK);
-	    outmsg.tf_ablk = htons(expected);
-	    mlen = sizeof(outmsg.tf_opcode) + sizeof(outmsg.tf_ablk);
+		if(user_len == TFTP_FUNC_MAGIC) {
+			((tftp_recv_cb)user_ptr)(ntohs(inmsg.tf_dblk), 
+				inmsg.tf_data, dlen, lastpkt);
 
-	    /* If this was the last packet, send final ACK */
+		}
 
-	    if (dlen < 512) {
-		ret = udp_sendto(sock, serverip, remport,
+		/* Form an ACK */
+
+		outmsg.tf_opcode = htons(TFTP_ACK);
+		outmsg.tf_ablk = htons(expected);
+		mlen = sizeof(outmsg.tf_opcode) + sizeof(outmsg.tf_ablk);
+
+		/* If this was the last packet, send final ACK */
+
+		if (lastpkt) {
+			ret = udp_sendto(sock, serverip, remport,
 					(char *) &outmsg, mlen);
-		udp_release(sock);
-			
-		if(verbose & TFTP_VERBOSE) {
-			kprintf("\n");
-		}
-			
-		if (ret == SYSERR) {
-			kprintf("\n[TFTP GET] Error on final ack\n");
-			return SYSERR;
-		}
-		return filesiz;
-	    }
+			udp_release(sock);
 
-	    /* Move to next block and continue */
+			if (ret == SYSERR) {
+				kprintf("\n[TFTP GET] Error on final "
+					"ack\n");
+				return SYSERR;
+			}
 
-	    expected++;
+			return filesiz;
+		}
+
+		/* Move to next block and continue */
+
+		expected++;
 	}
 }
