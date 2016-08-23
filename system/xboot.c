@@ -30,6 +30,10 @@ extern struct mbootinfo *bootinfo; 	/* Base address of the 		*/
 
 extern void xbootjmp(void*);
 
+struct  xboot_hdr boot_hdr;		/* Xboot header on the Xinu img	*/
+byte	xinu_image_valid;		/* Indicator of valid Xinu img	*/
+char*	load_ptr;			/* Ptr to load location		*/
+
 /* Values for computing CRC32 used to checksum the Xinu image */
 uint32 crc_table[] = {
 	0x4DBDF21C, 0x500AE278, 0x76D3D2D4, 0x6B64C2B0,
@@ -67,7 +71,7 @@ uint32 crc32(
  *------------------------------------------------------------------------
  */
 status validate_xinuheader(
-	 const struct xboot_hdr* boot_hdr	/* xboot hearder	*/
+	 const struct xboot_hdr* boot_hdr	/* xboot header		*/
 	)
 {
 	int i;
@@ -177,6 +181,67 @@ status validate_xinu_loadaddress(
 }
 
 /*------------------------------------------------------------------------
+ * xboot_cb - TFTP callback function process incomming packets
+ *------------------------------------------------------------------------
+ */
+status xboot_cb(
+	  uint16 blk_nbr,	/* TFTP data block number		*/
+	  char* blk_ptr,	/* Pointer to TFTP block data		*/
+	  uint32 blk_len,	/* Length of TFTP data block		*/
+	  byte last_pkt		/* Indicator of last packet		*/
+	)
+{
+	char* src_ptr;		/* Pointer to the packet start		*/ 
+	uint32 cpy_len;		/* Amount of data to copy		*/
+
+	/* Validate the Xinu header (xboot header and load address)	*/
+	
+	if(blk_nbr == 1) {
+
+		xinu_image_valid = FALSE;
+
+		if(blk_len < sizeof(struct xboot_hdr)) {
+			kprintf("[XBOOT] Error: Xinu image does not "
+				"contain a boot header\n");
+			return SYSERR;
+		}
+	
+		memcpy(&boot_hdr, blk_ptr, sizeof(struct xboot_hdr));
+
+		if(OK != validate_xinuheader(&boot_hdr)) {
+			kprintf("[XBOOT] Error: xboot header is not "
+				"valid\n");
+			return SYSERR;
+		}
+		if(OK != validate_xinu_loadaddress(
+			boot_hdr.xboot_load_addr,
+			boot_hdr.xboot_file_size)) {
+			kprintf("[XBOOT] Error: Xinu load address is "
+				"not valid\n");
+			return SYSERR;
+		}
+
+		load_ptr = (char*)(boot_hdr.xboot_load_addr);
+		src_ptr = blk_ptr + sizeof(struct xboot_hdr);
+		cpy_len = blk_len - sizeof(struct xboot_hdr);
+
+		xinu_image_valid = TRUE;
+	} else {
+		src_ptr = blk_ptr;
+		cpy_len = blk_len;
+	}
+
+	/* Copy the Xinu image data to the load address			*/
+	
+	if(xinu_image_valid && cpy_len > 0) {
+		memcpy(load_ptr, src_ptr, cpy_len);
+		load_ptr += cpy_len;
+	}
+
+	return OK;
+}
+
+/*------------------------------------------------------------------------
  * xboot - Xinu boot main function
  *    - Obtains an IP address over DHCP and retrieves a boot image from
  *      the boot server
@@ -184,16 +249,6 @@ status validate_xinu_loadaddress(
  */
 int32 main(void)
 {
-	struct  xboot_hdr boot_hdr;	/* Xboot header on the Xinu 	*/
-					/*	image 			*/
-	uint32  size;			/* Size downloaded from TFTP 	*/
-					/*	server 			*/
-	char*   tftp_buffers[2];	/* Pointers to buffers used for	*/
-					/*	downloading the Xinu 	*/
-					/*	image 			*/
-	uint32  tftp_buffer_sizes[2]; 	/* Buffer sizes for TFTP 	*/
-					/*	buffers 		*/
-
 	/* Initialize the network stack */
 	net_init();
 	
@@ -205,52 +260,28 @@ int32 main(void)
 	}
 
 	kprintf("[XBOOT] Loading Xinu...\n");
+
+	/* Assume bad Xinu image until it is verified	*/
+
+	xinu_image_valid = FALSE;
 	
 	/* Retrieve the xboot header from the boot server */
-	size = tftpget(NetData.bootserver, NetData.bootfile,
-		(char*)&boot_hdr, sizeof(struct xboot_hdr),
-		TFTP_NON_VERBOSE);
-	if(size == SYSERR) {
-		kprintf("[XBOOT] Load Xinu boot header failed\n");
+	if(tftpget(NetData.bootserver, NetData.bootfile,
+		(void*)&xboot_cb, TFTP_FUNC_MAGIC) == SYSERR) {
+		kprintf("[XBOOT] Xinu load failed\n");
 		return SYSERR;
 	}
-	
-	/* Validate the Xinu header (xboot header and load address) */
-	if(OK != validate_xinuheader(&boot_hdr)) {
-		kprintf("[XBOOT] Error: xboot header is not valid\n");
-		return SYSERR;
+
+	/* Jump to the loaded Xinu image	*/
+
+	if(xinu_image_valid) {
+		
+		xbootjmp((void*)boot_hdr.xboot_branch_addr);
+		
+		/* xbootjmp should not return but if it does, print	*/
+		/*	an error message to the user 			*/
+		kprintf("[XBOOT] Error: branch to Xinu image failed\n");
 	}
-	if(OK != validate_xinu_loadaddress(boot_hdr.xboot_load_addr,
-		boot_hdr.xboot_file_size)) {
-		return SYSERR;
-	}
-	
-	/* Retrieve the Xinu image from the boot server */
-	tftp_buffers[0] = (char*)&boot_hdr;
-	tftp_buffer_sizes[0] = sizeof(struct xboot_hdr);
-	
-	tftp_buffers[1] = (char*)boot_hdr.xboot_load_addr;
-	tftp_buffer_sizes[1] = boot_hdr.xboot_file_size;
-    
-	size = tftpget_mb(NetData.bootserver, NetData.bootfile,
-		tftp_buffers, tftp_buffer_sizes, 2, TFTP_NON_VERBOSE);
-	if(size == SYSERR) {
-		kprintf("[XBOOT] Unable to load Xinu from boot server\n");
-		return SYSERR;
-	}
-	
-	uint32 checksum = crc32((byte*)boot_hdr.xboot_load_addr,
-		boot_hdr.xboot_file_size);
-	if(checksum != boot_hdr.xinu_crc32) {
-		kprintf("[XBOOT] Xinu image - CRC failure %08X != %08X\n",
-			checksum, boot_hdr.xinu_crc32);
-		return SYSERR;
-	}
-	
-	xbootjmp((void*)boot_hdr.xboot_branch_addr);
-	
-	/* xbootjmp should not return but if it does, print an error 	*/
-	/*	message to the user 					*/
-	kprintf("[XBOOT] Error: branch to Xinu image failed\n");
+
 	return SYSERR;
 }
