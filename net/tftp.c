@@ -239,7 +239,8 @@ status  tftpget(
 			udp_release(sock);
 
 			if (ret == SYSERR) {
-				kprintf("\n[TFTP GET] Error on final ack\n");
+				kprintf("\n[TFTP GET] Error on final "
+					"ack\n");
 				return SYSERR;
 			}
 
