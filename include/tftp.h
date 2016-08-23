@@ -23,9 +23,9 @@
 #define	TFTP_MAXRETRIES	3       /* Number of retranmissions     */
 #define	TFTP_WAIT       5000    /* Time to wait for reply (ms)  */
 
-/* Xinu Specific Flags */
-#define TFTP_NON_VERBOSE 0  /* Do not use verbose output */
-#define TFTP_VERBOSE     1  /* Use verbose output        */
+#define TFTP_FUNC_MAGIC	0xFFFFFF00	/* Magic value used to indicate	*/
+					/*	input to tftpget is a	*/
+					/*	function pointer	*/
 
 /* Format of a TFTP message (items following opcode depend on msg type)	*/
 
@@ -63,8 +63,4 @@ struct	tftp_msg {
 };
 #pragma pack()
 
-typedef status (*tftp_recv_cb) (uint16 tf_blk_nbr, char* tf_blk, uint32 dlen, byte last);
-
-status tftpget(uint32 serverip, const char* filename, char* rcv_buf, uint32 rcv_buf_size, byte verbose);
-status tftpget_mb(uint32 serverip, const char* filename, char** rcv_bufs, uint32* rcv_buf_sizes, uint32 rcv_buf_count, byte verbose);
-status tftpget_cb(uint32 serverip, const char* filename, tftp_recv_cb cb, byte verbose);
+status tftpget(uint32, const char*, void*, uint32);

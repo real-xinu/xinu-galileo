@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Prototype for TFTP callback function */
+
+typedef status (*tftp_recv_cb) (uint16, char*, uint32, byte);
+
 /*------------------------------------------------------------------------
  *
  * tftp_send1  -  Internal function to send one outgoing request (RRQ or
@@ -92,18 +96,17 @@ status	tftp_send1 (
 
 /*------------------------------------------------------------------------
  *
- * tftpget_common  -  common function for all tftpget functions
+ * tftpget  -  Retrieve a file using TFTP
  *
  *------------------------------------------------------------------------
  */
-status  tftpget_common(
+status  tftpget(
 	  uint32	serverip,	/* IP address of server		*/
 	  const	char*	filename,	/* Name of the file to download	*/
-	  char**	rcv_bufs,	/* Buffer to hold the file	*/
-	  uint32*	rcv_buf_sizes,	/* Size of each buffer		*/
-	  uint32	rcv_buf_count,	/* Number of buffers		*/
-	  tftp_recv_cb	cb,		/* Call back function		*/
-	  byte	verbose			/* Verbosity level		*/
+	  void*		user_ptr,	/* User supplied buffer or	*/
+					/*	function pointer	*/
+	  uint32	user_len	/* Size of buffer or special	*/
+					/*	value for function	*/
 	)
 {
 	int32	nlen;			/* Length of file name		*/
@@ -119,30 +122,15 @@ status  tftpget_common(
 	int32	mlen;			/* Length of outgoing mesage	*/
 	struct	tftp_msg inmsg;		/* Buffer for response message	*/
 	int32	dlen;			/* Size of data in a response	*/
-	char*   curr_buf;		/* Current buffer being used	*/
-	uint32  curr_buf_ind;		/* Index of current buffer	*/
-	uint32  curr_used;		/* Amount used in buffer	*/
+	char*	bptr;			/* Current user buff position	*/
+	byte	lastpkt;		/* Indicator of last packet	*/
 
 	/* Check args */
 
-	if(filename == NULL || serverip == 0) {
+	if(filename == NULL || serverip == 0 || 
+		user_ptr == NULL || user_len == 0) {
 		kprintf("[TFTP GET] ERROR: Invalid argument\n");
 		return SYSERR;
-	}
-	if(rcv_buf_count > 0) {
-		if(rcv_bufs == NULL || rcv_buf_sizes == NULL || 
-				rcv_buf_count == 0) {
-			kprintf("[TFTP GET] ERROR: Invalid argument\n");
-			return SYSERR;
-		}
-
-		for(i = 0; i < rcv_buf_count; i++) {
-			if(rcv_bufs[i] == NULL || rcv_buf_sizes[i] == 0) {
-				kprintf("[TFTP GET] ERROR: Invalid"
-					"argument\n");
-				return SYSERR;
-			}
-		}
 	}
 
 	nlen = strnlen(filename, TFTP_MAXNAM+1);
@@ -150,19 +138,9 @@ status  tftpget_common(
 		return SYSERR;
 	}
 
-	if(verbose & TFTP_VERBOSE) {
-		kprintf("[TFTP Get] Server: %08X File: %s\n",
-				serverip, filename);
-	}
-
 	/* Generate a local port */
 
 	localport = getport();
-
-	if (verbose & TFTP_VERBOSE) {
-		kprintf("[TFTP Get] Using local port %u\n",
-				0xffff & localport);
-	}
 
 	/* Register a UDP socket */
 
@@ -179,12 +157,8 @@ status  tftpget_common(
 	/* Initialize the total file size to zero */
 
 	filesiz = 0;
-
-	if(rcv_buf_count > 0) {
-		curr_buf_ind = 0;
-		curr_buf = (char*)rcv_bufs[curr_buf_ind];
-		curr_used = 0;
-	}
+	bptr = (char*)user_ptr;
+	lastpkt = FALSE;
 
 	/* Form the first message and compute length (a Read Request)	*/
 
@@ -224,39 +198,31 @@ status  tftpget_common(
 			return SYSERR;
 		}
 
-		if(verbose & TFTP_VERBOSE) {
-			kprintf(".");
-		}
-
 		/* Compute size of data in the message */
 
 		dlen = n - sizeof(inmsg.tf_opcode) - 
 			sizeof(inmsg.tf_dblk);
 
+		if(dlen < 512) {
+			lastpkt = TRUE;
+		}
+
 		/* Move the contents of this block into the file buffer	*/
 
 		for (i=0; i<dlen; i++) {
-			if (rcv_buf_count > 0) {
-				if (curr_used >= 
-					rcv_buf_sizes[curr_buf_ind]) {
-					curr_buf_ind++;
-					if(curr_buf_ind >= 
-						rcv_buf_count) {
-						udp_release(sock);
-						if(verbose & 
-							TFTP_VERBOSE) {
-							kprintf("\n");
-						}
-						return filesiz;
-					}
-					curr_buf = (char*)
-						rcv_bufs[curr_buf_ind];
-					curr_used = 0;
-				}
-				*curr_buf++ = inmsg.tf_data[i];
-				curr_used++;
+			if (user_len != TFTP_FUNC_MAGIC && 
+				filesiz < user_len) {
+				*bptr++ = inmsg.tf_data[i];
 			}
 			filesiz++;
+		}
+
+		/* Call the user supplied function */
+
+		if(user_len == TFTP_FUNC_MAGIC) {
+			((tftp_recv_cb)user_ptr)(ntohs(inmsg.tf_dblk), 
+				inmsg.tf_data, dlen, lastpkt);
+
 		}
 
 		/* Form an ACK */
@@ -267,98 +233,21 @@ status  tftpget_common(
 
 		/* If this was the last packet, send final ACK */
 
-		if (dlen < 512) {
+		if (lastpkt) {
 			ret = udp_sendto(sock, serverip, remport,
 					(char *) &outmsg, mlen);
 			udp_release(sock);
-
-			if(verbose & TFTP_VERBOSE) {
-				kprintf("\n");
-			}
 
 			if (ret == SYSERR) {
 				kprintf("\n[TFTP GET] Error on final ack\n");
 				return SYSERR;
 			}
 
-			/* Invoke the callback function */
-
-			if(cb != NULL) {
-				if(cb(ntohs(inmsg.tf_dblk), inmsg.tf_data, 
-					dlen, TRUE) != OK) {
-					return SYSERR;
-				}
-			}
 			return filesiz;
-		}
-
-		/* Invoke the callback function */
-		
-		if(cb != NULL) {
-			if(cb(ntohs(inmsg.tf_dblk), inmsg.tf_data, dlen, 
-				FALSE) != OK) {
-				udp_release(sock);
-				return SYSERR;
-			}
 		}
 
 		/* Move to next block and continue */
 
 		expected++;
 	}
-}
-
-
-/*------------------------------------------------------------------------
- *
- * tftpget  -  Use TFTP to download a specified file from a server
- *
- *------------------------------------------------------------------------
- */
-status  tftpget(
-		 uint32	serverip,	/* IP address of server		*/
-		 const	char* filename,	/* Name of the file to download	*/
-		 char*	rcv_buf,	/* Buffer to hold the file	*/
-		 uint32	rcv_buf_size,	/* Size of the buffer		*/
-		 byte	verbose		/* Verbosity level		*/
-	       )
-{
-	return tftpget_common(serverip, filename, &rcv_buf, &rcv_buf_size,
-			1, NULL, verbose);
-}
-
-/*------------------------------------------------------------------------
- *
- * tftpget_mb  -  multibuffer version of tftpget
- *
- *------------------------------------------------------------------------
- */
-status  tftpget_mb(
-		  uint32  serverip,	/* IP address of server		*/
-		  const	char* filename,	/* Name of the file to download	*/
-		  char**  rcv_bufs,	/* Buffer to hold the file	*/
-		  uint32* rcv_buf_sizes,/* Size of each buffer		*/
-		  uint32 rcv_buf_count,	/* Number of buffers		*/
-		  byte	 verbose	/* Verbosity level		*/
-		)
-{
-	return tftpget_common(serverip, filename, rcv_bufs, rcv_buf_sizes,
-			rcv_buf_count, NULL, verbose);
-}
-
-/*------------------------------------------------------------------------
- *
- * tftpget_cb  -  callback version of tftpget
- *
- *------------------------------------------------------------------------
- */
-status  tftpget_cb(
-		  uint32 serverip,	/* IP address of server		*/
-		  const	char* filename,	/* Name of the file to download	*/
-		  tftp_recv_cb cb,	/* Call back function		*/
-		  byte	verbose		/* Verbosity level		*/
-		)
-{
-	return tftpget_common(serverip, filename, NULL, NULL, 0, cb, 
-			verbose);
 }
