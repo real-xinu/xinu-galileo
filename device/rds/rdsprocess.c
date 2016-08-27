@@ -1,11 +1,12 @@
-/* rdsprocess.c - rdsprocess */
+/* rdsprocess.c - rdsprocess, rdsrun */
 
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdsprocess  -  High-priority background process to repeatedly extract
- *		  an item from the request queue and send the request to
- *		  the remote disk server
+ * rdsprocess  -  High-priority background process that repeatedly
+ *		  extracts an item from the request queue, sends the
+ *		  request to the remote disk server, and handles the
+ *		  response, including caching responses blocks
  *------------------------------------------------------------------------
  */
 void	rdsprocess (
@@ -204,4 +205,38 @@ void	rdsprocess (
 		break;
 	   }
 	}
+}
+
+/*------------------------------------------------------------------------
+ * rdsrun  -  Run the rdsprocess if it is not already running
+ *------------------------------------------------------------------------
+ */
+void	rdsrun (
+	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
+	)
+{
+	intmask		mask;		/* Saved interrupt mask		*/
+
+	mask = disable();
+
+	if (rdptr->rd_comruns) {
+		restore(mask);
+		return;
+	}
+
+	/* Create and resume resprocess */
+
+	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
+						"rdsproc", 1, rdptr);
+	if (rdptr->rd_comproc == SYSERR) {
+		panic("Cannot create remote disk process");
+	}
+
+	/* Indicate a process running before resuming the process */
+
+	rdptr->rd_comruns = TRUE;
+	resume(rdptr->rd_comproc);
+
+	restore(mask);
+	return;
 }

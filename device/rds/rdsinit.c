@@ -27,6 +27,7 @@ devcall	rdsinit (
 	/* Set control block to unused */
 
 	rdptr->rd_state = RD_FREE;
+	rdptr->rd_comruns = FALSE;
 	rdptr->rd_id[0] = NULLCH;
 	
 	/* Set initial message sequence number */
@@ -90,16 +91,6 @@ devcall	rdsinit (
 	/* Specify that the server port is not yet registered */
 
 	rdptr->rd_registered = FALSE;
-
-	/* Create a communication process */
-
-	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
-						"rdsproc", 1, rdptr);
-
-	if (rdptr->rd_comproc == SYSERR) {
-		panic("Cannot create remote disk process");
-	}
-	resume(rdptr->rd_comproc);
 
 	return OK;
 }

@@ -25,6 +25,12 @@ devcall	rdswrite (
 		return SYSERR;
 	}
 
+	/* Ensure rdsprocess is runnning */
+
+	if ( ! rdptr->rd_comruns ) {
+		rdsrun(rdptr);
+	}
+
 	/* If request queue already contains a write request */
 	/*    for the block, replace the contents	     */
 
@@ -38,7 +44,6 @@ devcall	rdswrite (
 		bptr = bptr->rd_next;
 	}
 
-	
 	/* Search cache for cached copy of block */
 
 	bptr = rdptr->rd_chnext;

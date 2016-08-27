@@ -16,32 +16,42 @@ status	rdscomm (
 	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
 	)
 {
-	int32	i;			/* Counts retries		*/
-	int32	retval;			/* Return value			*/
-	int32	seq;			/* Sequence for this exchange	*/
-	uint32	localip;		/* Local IP address		*/
-	int16	rtype;			/* Reply type in host byte order*/
-	bool8	xmit;			/* Should we transmit again?	*/
-	int32	slot;			/* UDP slot			*/
+	intmask		mask;		/* Saved interrupt mask		*/
+	int32		i;		/* Counts retries		*/
+	int32		retval;		/* Return value			*/
+	int32		seq;		/* Sequence for this exchange	*/
+	uint32		localip;	/* Local IP address		*/
+	int16		rtype;		/* Reply type in host byte order*/
+	bool8		xmit;		/* Should we transmit again?	*/
+	int32		slot;		/* UDP slot			*/
 
-	/* For the first time after reboot, register the server port */
+	/* Disable interrupts while testing status */
+
+	mask = disable();
+
+	/* Register the server port, if not registered */
 
 	if ( ! rdptr->rd_registered ) {
 		slot = udp_register(0, rdptr->rd_ser_port,
-                                rdptr->rd_loc_port);
+						rdptr->rd_loc_port);
 		if(slot == SYSERR) {
+			restore(mask);
 			return SYSERR;
 		}
 		rdptr->rd_udpslot = slot;
 		rdptr->rd_registered = TRUE;
 	}
 
+	/* Get the local IP address */
+
 	if ( NetData.ipvalid == FALSE ) {
 		localip = getlocalip();
 		if((int32)localip == SYSERR) {
+			restore(mask);
 			return SYSERR;
 		}
 	}
+	restore(mask);
 
 	/* Retrieve the saved UDP slot number  */
 
