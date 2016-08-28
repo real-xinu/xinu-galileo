@@ -11,32 +11,39 @@
 syscall kputc(byte c)	/* Character to write	*/
 {
 	struct	dentry	*devptr;
-	volatile struct uart_csreg *regptr;
+	volatile struct uart_csreg *csrptr;
+	intmask	mask;
+
+	/* Disable interrupts */
+	mask = disable();
 
 	devptr = (struct dentry *) &devtab[CONSOLE];
-	regptr = (struct uart_csreg *)devptr->dvcsr;
+	csrptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Fail if no console device was found */
-	if (regptr == NULL) {
+	if (csrptr == NULL) {
+		restore(mask);
 		return SYSERR;
 	}
 
 	/* Repeatedly poll the device until it becomes nonbusy */
-	while ((regptr->lsr & UART_LSR_THRE) == 0) {
+	while ((csrptr->lsr & UART_LSR_THRE) == 0) {
 		;
 	}
 
 	/* Write the character */
-	regptr->buffer = c;
+	csrptr->buffer = c;
 
 	/* Honor CRLF - when writing NEWLINE also send CARRIAGE RETURN	*/
 	if (c == '\n') {
 		/* Poll until transmitter queue is empty */
-		while ((regptr->lsr & UART_LSR_THRE) == 0) {
+		while ((csrptr->lsr & UART_LSR_THRE) == 0) {
 			;
 		}
-		regptr->buffer = '\r';
+		csrptr->buffer = '\r';
 	}
+
+	restore(mask);
 	return OK;
 }
 
@@ -47,28 +54,38 @@ syscall kputc(byte c)	/* Character to write	*/
 syscall kgetc(void)
 {
 	int irmask;
-	volatile struct uart_csreg *regptr;
+	volatile struct uart_csreg *csrptr;
 	byte c;
 	struct	dentry	*devptr;
+	intmask	mask;
+
+	/* Disable interrupts */
+	mask = disable();
 
 	devptr = (struct dentry *) &devtab[CONSOLE];
-	regptr = (struct uart_csreg *)devptr->dvcsr;
+	csrptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Fail if no console device was found */
-	if (regptr == NULL) {
+	if (csrptr == NULL) {
+		restore(mask);
 		return SYSERR;
 	}
 
-	irmask = regptr->ier;		/* Save UART interrupt state.   */
-	regptr->ier = 0;		/* Disable UART interrupts.     */
+	irmask = csrptr->ier;		/* Save UART interrupt state.   */
+	csrptr->ier = 0;		/* Disable UART interrupts.     */
 
-	while (0 == (regptr->lsr & UART_LSR_DR)) {
+	/* wait for UART transmit queue to empty */
+
+	while (0 == (csrptr->lsr & UART_LSR_DR)) {
 		; /* Do Nothing */
 	}
 
 	/* Read character from Receive Holding Register */
-	c = regptr->rbr;
-	regptr->ier = irmask;		/* Restore UART interrupts.     */
+
+	c = csrptr->rbr;
+	csrptr->ier = irmask;		/* Restore UART interrupts.     */
+
+	restore(mask);
 	return c;
 }
 
