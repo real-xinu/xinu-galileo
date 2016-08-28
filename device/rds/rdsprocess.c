@@ -1,4 +1,4 @@
-/* rdsprocess.c - rdsprocess, rdsrun */
+/* rdsprocess.c - rdsprocess */
 
 #include <xinu.h>
 
@@ -207,36 +207,6 @@ void	rdsprocess (
 	}
 }
 
-/*------------------------------------------------------------------------
- * rdsrun  -  Run the rdsprocess if it is not already running
- *------------------------------------------------------------------------
- */
-void	rdsrun (
-	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
-	)
-{
-	intmask		mask;		/* Saved interrupt mask		*/
 
-	mask = disable();
 
-	if (rdptr->rd_comruns) {
-		restore(mask);
-		return;
-	}
 
-	/* Create and resume resprocess */
-
-	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
-						"rdsproc", 1, rdptr);
-	if (rdptr->rd_comproc == SYSERR) {
-		panic("Cannot create remote disk process");
-	}
-
-	/* Indicate a process running before resuming the process */
-
-	rdptr->rd_comruns = TRUE;
-	resume(rdptr->rd_comproc);
-
-	restore(mask);
-	return;
-}

@@ -27,7 +27,19 @@ devcall	rdsinit (
 	/* Set control block to unused */
 
 	rdptr->rd_state = RD_FREE;
+
+	/* Create the resprocess and leave it suspended.	*/
+	/*	Note: the process cannot be resumed because	*/
+	/*	device initialization occurs before interrupts	*/
+	/*	are enabled.					*/
+
+	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
+						"rdsproc", 1, rdptr);
+	if (rdptr->rd_comproc == SYSERR) {
+		panic("Cannot create remote disk process");
+	}
 	rdptr->rd_comruns = FALSE;
+
 	rdptr->rd_id[0] = NULLCH;
 	
 	/* Set initial message sequence number */

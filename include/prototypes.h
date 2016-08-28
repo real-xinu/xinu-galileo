@@ -410,7 +410,6 @@ extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
 
 /* in file rdsprocess.c */
 extern	void	rdsprocess(struct rdscblk *);
-extern	void	rdsrun(struct rdscblk *);
 
 /* in file sdmcclose.c */
 extern	devcall	sdmcclose(struct dentry *);

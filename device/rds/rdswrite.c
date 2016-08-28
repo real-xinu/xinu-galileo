@@ -28,7 +28,8 @@ devcall	rdswrite (
 	/* Ensure rdsprocess is runnning */
 
 	if ( ! rdptr->rd_comruns ) {
-		rdsrun(rdptr);
+		rdptr->rd_comruns = TRUE;
+		resume(rdptr->rd_comproc);
 	}
 
 	/* If request queue already contains a write request */

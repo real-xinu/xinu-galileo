@@ -31,7 +31,8 @@ devcall	rdsread (
 	/* Ensure rdsprocess is runnning */
 
 	if ( ! rdptr->rd_comruns ) {
-		rdsrun(rdptr);
+		rdptr->rd_comruns = TRUE;
+		resume(rdptr->rd_comproc);
 	}
 
 	/* Search the cache for specified block */

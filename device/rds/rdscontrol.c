@@ -30,17 +30,18 @@ devcall	rdscontrol (
 		return SYSERR;
 	}
 
+	/* Ensure rdsprocess is runnning */
+
+	if ( ! rdptr->rd_comruns ) {
+		rdptr->rd_comruns = TRUE;
+		resume(rdptr->rd_comproc);
+	}
+
 	switch (func) {
 
 	/* Synchronize writes */
 
 	case RDS_CTL_SYNC:
-
-		/* Ensure rdsprocess is runnning */
-
-		if ( ! rdptr->rd_comruns ) {
-			rdsrun(rdptr);
-		}
 
 		/* Allocate a buffer to use for the request list */
 
