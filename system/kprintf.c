@@ -12,12 +12,17 @@ syscall kputc(byte c)	/* Character to write	*/
 {
 	struct	dentry	*devptr;
 	volatile struct uart_csreg *csrptr;
+	intmask	mask;
+
+	/* Disable interrupts */
+	mask = disable();
 
 	devptr = (struct dentry *) &devtab[CONSOLE];
 	csrptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Fail if no console device was found */
 	if (csrptr == NULL) {
+		restore(mask);
 		return SYSERR;
 	}
 
@@ -37,6 +42,8 @@ syscall kputc(byte c)	/* Character to write	*/
 		}
 		csrptr->buffer = '\r';
 	}
+
+	restore(mask);
 	return OK;
 }
 
@@ -50,12 +57,17 @@ syscall kgetc(void)
 	volatile struct uart_csreg *csrptr;
 	byte c;
 	struct	dentry	*devptr;
+	intmask	mask;
+
+	/* Disable interrupts */
+	mask = disable();
 
 	devptr = (struct dentry *) &devtab[CONSOLE];
 	csrptr = (struct uart_csreg *)devptr->dvcsr;
 
 	/* Fail if no console device was found */
 	if (csrptr == NULL) {
+		restore(mask);
 		return SYSERR;
 	}
 
@@ -72,6 +84,8 @@ syscall kgetc(void)
 
 	c = csrptr->rbr;
 	csrptr->ier = irmask;		/* Restore UART interrupts.     */
+
+	restore(mask);
 	return c;
 }
 
