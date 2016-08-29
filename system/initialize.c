@@ -13,7 +13,7 @@ extern	void	*_end;		/* End of Xinu code			*/
 extern	void main(void);	/* Main is the first process created	*/
 static	void sysinit(); 	/* Internal system initialization	*/
 extern	void meminit(void);	/* Initializes the free memory list	*/
-local	process startup(pid32);	/* Process to finish startup		*/ 
+local	process startup(void);	/* Process to finish startup tasks	*/
 
 /* Declarations of major kernel variables */
 
@@ -28,7 +28,7 @@ pid32	currpid;		/* ID of currently executing process	*/
 
 /* Control sequence to reset the console colors and cusor positiion	*/
 
-#define CONSOLE_RESET " \033[0m\033[2J\033[;H"
+#define	CONSOLE_RESET	" \033[0m\033[2J\033[;H"
 
 /*------------------------------------------------------------------------
  * nulluser - initialize the system and become the null process
@@ -48,12 +48,11 @@ void	nulluser()
 {	
 	struct	memblk	*memptr;	/* Ptr to memory block		*/
 	uint32	free_mem;		/* Total amount of free memory	*/
-	pid32	mainpid;		/* Process ID of main process	*/
 	
 	/* Initialize the system */
-		
+
 	sysinit();
-	
+
 	/* Output Xinu memory layout */
 	free_mem = 0;
 	for (memptr = memlist.mnext; memptr != NULL;
@@ -62,7 +61,7 @@ void	nulluser()
 	}
 	kprintf("%10d bytes of free memory.  Free list:\n", free_mem);
 	for (memptr=memlist.mnext; memptr!=NULL;memptr = memptr->mnext) {
-	    kprintf("           [0x%08X to 0x%08X]\r\n",
+	    kprintf("           [0x%08X to 0x%08X]\n",
 		(uint32)memptr, ((uint32)memptr) + memptr->mlength - 1);
 	}
 
@@ -79,16 +78,14 @@ void	nulluser()
 
 	enable();
 
-	/* Initialize the network stack and processes */
+	/* Initialize the network stack and start processes */
 
 	net_init();
 
-	/* Create a process to execute function main() */
+	/* Create a process to finish startup and start main */
 
-	mainpid = create((void *)main, INITSTK, INITPRIO,
-					"Main process", 0, NULL);
 	resume(create((void *)startup, INITSTK, INITPRIO,
-					"Startup process", 1, mainpid));
+					"Startup process", 0, NULL));
 
 	/* Become the Null process (i.e., guarantee that the CPU has	*/
 	/*  something to run when no other process is ready to execute)	*/
@@ -99,22 +96,21 @@ void	nulluser()
 
 }
 
+
 /*------------------------------------------------------------------------
  *
  * startup  -  Finish startup takss that cannot be run from the Null
- *			process and then resume the main process
+ *		  process and then create and resumethe main process
  *
  *------------------------------------------------------------------------
  */
-local process	startup(
-		  pid32	mainpid		/* Process ID of "main"	process	*/
-		)
+local process	startup(void)
 {
 	uint32	ipaddr;			/* Computer's IP address	*/
 	char	str[128];		/* String used to format output	*/
 
 
-	/* Use DHCP to obtain an IP address */
+	/* Use DHCP to obtain an IP address and format it */
 
 	ipaddr = getlocalip();
 	if ((int32)ipaddr == SYSERR) {
@@ -129,9 +125,13 @@ local process	startup(
 		kprintf("Obtained IP address  %s   (0x%08x)\n", str,
 								ipaddr);
 	}
-	resume(mainpid);
+	/* Create a process to execute function main() */
+
+	resume(create((void *)main, INITSTK, INITPRIO,
+					"Main process", 0, NULL));
 
 	/* Startup process exits at this point */
+
 	return OK;
 }
 
@@ -151,11 +151,11 @@ static	void	sysinit()
 	/* Platform Specific Initialization */
 
 	platinit();
-	
+
 	/* Reset the console */
 
-	kprintf(CONSOLE_RESET);	
-	kprintf("\n\r%s\n\n\r", VERSION);
+	kprintf(CONSOLE_RESET);
+	kprintf("\n%s\n\n", VERSION);
 
 	/* Initialize the interrupt vectors */
 
