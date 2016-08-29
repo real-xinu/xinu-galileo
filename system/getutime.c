@@ -26,8 +26,6 @@ status	getutime(
 		uint32	oritimestamp[2];/* Originate timestamp		*/
 		uint32	rectimestamp[2];/* Receive timestamp		*/
 		uint32	trntimestamp[2];/* Transmit timestamp		*/
-		uint32	keyid;		/* Key Identifier (optional)	*/
-		byte	digest[16];	/* Message digest (optional)	*/
 	} ntpmsg;
 
 	if (Date.dt_bootvalid) {	/* Return time from local info	*/
@@ -62,7 +60,7 @@ status	getutime(
 	/* Send a request message to the NTP server */
 
 	memset((char *)&ntpmsg, 0x00, sizeof(ntpmsg));
-	ntpmsg.livn = 0x23;	/* Client request, protocol version 4 */
+	ntpmsg.livn = 0x1b;	/* Client request, protocol version 3 */
 	retval = udp_send(slot,	(char *)&ntpmsg, sizeof(ntpmsg));
 	if (retval == SYSERR) {
 		fprintf(stderr,"getutime: cannot send to the server\n");
