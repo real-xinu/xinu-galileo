@@ -11,9 +11,9 @@ extern	void	*_end;		/* End of Xinu code			*/
 /* Function prototypes */
 
 extern	void main(void);	/* Main is the first process created	*/
-extern	void xdone(void);	/* System "shutdown" procedure		*/
 static	void sysinit(); 	/* Internal system initialization	*/
 extern	void meminit(void);	/* Initializes the free memory list	*/
+local	process startup(pid32);	/* Process to finish startup		*/ 
 
 /* Declarations of major kernel variables */
 
@@ -48,6 +48,7 @@ void	nulluser()
 {	
 	struct	memblk	*memptr;	/* Ptr to memory block		*/
 	uint32	free_mem;		/* Total amount of free memory	*/
+	pid32	mainpid;		/* Process ID of main process	*/
 	
 	/* Initialize the system */
 		
@@ -84,9 +85,10 @@ void	nulluser()
 
 	/* Create a process to execute function main() */
 
-	resume (
-	   create((void *)main, INITSTK, INITPRIO, "Main process", 0,
-           NULL));
+	mainpid = create((void *)main, INITSTK, INITPRIO,
+					"Main process", 0, NULL);
+	resume(create((void *)startup, INITSTK, INITPRIO,
+					"Startup process", 1, mainpid));
 
 	/* Become the Null process (i.e., guarantee that the CPU has	*/
 	/*  something to run when no other process is ready to execute)	*/
@@ -96,6 +98,43 @@ void	nulluser()
 	}
 
 }
+
+/*------------------------------------------------------------------------
+ *
+ * startup  -  Finish startup takss that cannot be run from the Null
+ *			process and then resume the main process
+ *
+ *------------------------------------------------------------------------
+ */
+local process	startup(
+		  pid32	mainpid		/* Process ID of "main"	process	*/
+		)
+{
+	uint32	ipaddr;			/* Computer's IP address	*/
+	char	str[128];		/* String used to format output	*/
+
+
+	/* Use DHCP to obtain an IP address */
+
+	ipaddr = getlocalip();
+	if ((int32)ipaddr == SYSERR) {
+		kprintf("Cannot obtain an IP address\n");
+	} else {
+		/* Print the IP in dotted decimal and hex */
+		ipaddr = NetData.ipucast;
+		sprintf(str, "%d.%d.%d.%d",
+			(ipaddr>>24)&0xff, (ipaddr>>16)&0xff,
+			(ipaddr>>8)&0xff,        ipaddr&0xff);
+	
+		kprintf("Obtained IP address  %s   (0x%08x)\n", str,
+								ipaddr);
+	}
+	resume(mainpid);
+
+	/* Startup process exits at this point */
+	return OK;
+}
+
 
 /*------------------------------------------------------------------------
  *

@@ -77,7 +77,3 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define CLKFREQ      200000000	/* 200 MHz clock			*/
 
 #define	LF_DISK_DEV	RAM0
-#define RD_SERVER_ID	128.10.3.50
-
-
-

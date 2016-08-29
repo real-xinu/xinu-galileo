@@ -190,9 +190,6 @@ extern	void	eth_hton(struct netpacket *);
 extern	void	eth_ntoh(struct netpacket *);
 extern	uint16	getport(void);
 
-/* in file netstart.c */
-extern	void	netstart(void);
-
 /* in file kill.c */
 extern	syscall	kill(pid32);
 

@@ -4,9 +4,6 @@
 
 process	main(void)
 {
-	/* Obtain an IP address */
-
-	netstart();
 
 	/* Run the Xinu shell */
 
