@@ -5,7 +5,7 @@
 #define PEFGHRC_OFFSET	0x64	/* PIRQ E-H Routing control offset	*/
 
 #define PABCDRC_VALUE	0x06050403	/* PIRQ A-D routed to 8259 IRQ 2-5 resp. */
-#define PEFGHRC_VALUE	0x0C0B0A09	/* PIRQ E-H routed to 8259 IRQ 6-9 resp. */
+#define PEFGHRC_VALUE	0x0C0B0A09	/* PIRQ E-H routed to 8259 IRQ 9-12 resp.*/
 
 #define RCBA_OFFSET	0xF0	/* RCBA offset in PCI config space */
 #define RCBA_MASK	0xffffc000

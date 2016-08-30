@@ -21,7 +21,7 @@ int32	quark_irq_routing(void)
 
 	pci_write_config_dword(pciinfo, PABCDRC_OFFSET, PABCDRC_VALUE);
 
-	/* Route PIRQ E-H to 8259 IRQ 6-9 respectively */
+	/* Route PIRQ E-H to 8259 IRQ 9-12 respectively */
 
 	pci_write_config_dword(pciinfo, PEFGHRC_OFFSET, PEFGHRC_VALUE);
 
