@@ -700,6 +700,7 @@ void	newdev(char *name)
 int	newtype(char *name)
 {
 	struct	dev_ent	*dptr;		/* Ptr. to an entry in dtypes	*/
+	int	i;			/* Index into the type table	*/
 
 	if (ntypes >= NTYPES) {
 		fprintf(stderr,"Too many types on line %d", linectr);
@@ -709,6 +710,16 @@ int	newtype(char *name)
 		fprintf(stderr,"Type name %s is too long on line %d\n",
 				name, linectr);
 		exit(1);
+	}
+
+	/* Verify that the type name is unique */
+
+	for (i=0; i<ntypes; i++) {
+		if (strcmp(name, dtypes[i].tname) == 0) {
+			fprintf(stderr, "Duplicate type name %s on line %d\n",
+				name, linectr);
+			exit(1);
+		}
 	}
 
 	dptr = &dtypes[ntypes];
