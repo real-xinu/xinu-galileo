@@ -59,8 +59,7 @@ int	brkcount = 0;			/* Count of %% separators till now in	*/
 					/*  the input file			*/
 char	*doing = "device type declarations";
 
-struct	dev_ent				/* Entry for a device or device type	*/
-{
+struct	dev_ent	{			/* Entry for a device or device type	*/
 	char	name[MAXNAME];		/* device name (unused in a type)	*/
 	char	tname[MAXNAME];		/* Type name				*/
 	char	ison[MAXNAME];		/* Name is "on" XXX			*/
@@ -88,8 +87,7 @@ int	ntypes	= 0;			/* Number of device types found		*/
 struct	dev_ent		devs[NDEVS];	/* Table of all devices			*/
 int	ndevs = 0;			/* Number of devices found		*/
 
-char *devstab[] =
-{
+char *devstab[] = {
 	"/* Device table entry */",
 	"struct\tdentry\t{",
 	"\tint32   dvnum;",
@@ -238,8 +236,7 @@ devonid:	IDENT { devonid(yytext); }
 /************************************************************************/
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	int n, i, j, l, fcount;
 	struct dev_ent *s;
 	int   verbose = 0;
@@ -444,8 +441,7 @@ int main(int argc, char **argv)
 /*									*/
 /************************************************************************/
 
-void	addattr(int tok, int val)
-{
+void	addattr(int tok, int val) {
 	struct dev_ent *s;
 	char *c;
 
@@ -481,8 +477,7 @@ void	addattr(int tok, int val)
 /*									*/
 /************************************************************************/
 
-int	addton(char *tonid)
-{
+int	addton(char *tonid) {
 	int	currtype;		/* The current type		*/
 
 	if (strlen(tonid) >= MAXNAME) {
@@ -504,8 +499,7 @@ int	addton(char *tonid)
 /*									*/
 /************************************************************************/
 
-int	config_atoi(char *p, int len)
-{
+int	config_atoi(char *p, int len) {
 	int base, rv;
 
 	if (*p == '0')
@@ -545,8 +539,7 @@ int	config_atoi(char *p, int len)
 /*									*/
 /************************************************************************/
 
-void	devisid(char *tname)
-{
+void	devisid(char *tname) {
 	int	currdev;		/* The current device		*/
 	int	i;
 
@@ -581,8 +574,7 @@ void	devisid(char *tname)
 /*									*/
 /************************************************************************/
 
-void	devonid(char *onname)
-{
+void	devonid(char *onname) {
 	int	currdev;		/* The current device		*/
 	int	i;
 	struct	dev_ent	*dptr;		/* Pointer to current device	*/
@@ -636,8 +628,7 @@ void	devonid(char *onname)
 /*									*/
 /************************************************************************/
 
-void	getattrid(char *str)
-{
+void	getattrid(char *str) {
 
 	if (strlen(str) >= MAXNAME) {
 		fprintf(stderr,"atribute string %s is too long on line %d\n",
@@ -655,8 +646,8 @@ void	getattrid(char *str)
 /*									*/
 /************************************************************************/
 
-void	newdev(char *name)
-{
+void	newdev(char *name) {
+
 	struct	dev_ent	*dptr;		/* Ptr. to an entry in devs	*/
 	int	i;
 
@@ -697,8 +688,8 @@ void	newdev(char *name)
 /*									*/
 /************************************************************************/
 
-int	newtype(char *name)
-{
+int	newtype(char *name) {
+
 	struct	dev_ent	*dptr;		/* Ptr. to an entry in dtypes	*/
 	int	i;			/* Index into the type table	*/
 
@@ -749,7 +740,7 @@ int	newtype(char *name)
 /*									*/
 /************************************************************************/
 
-void yyerror(char *s)
-{
+void yyerror(char *s) {
+
 	fprintf(stderr, "Syntax error in %s on line %d\n", doing, linectr);
 }
