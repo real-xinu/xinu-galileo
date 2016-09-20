@@ -56,16 +56,6 @@ ram:
 		-w ramwrite	-s ioerr	-n ioerr
 		-intr ionull
 
-/* type of SD memory card */
-/* 
-sdmc:
-	on sd
-		-i sdmcinit	-o sdmcopen	-c sdmcclose
-		-r sdmcread	-g ioerr	-p ioerr
-		-w sdmcwrite	-s ioerr	-n ioerr
-		-intr sdmcdispatch
-*/
-
 /* type of a remote file system device */
 rfs:
 	on udp
@@ -158,11 +148,6 @@ nam:
    LFILE3 is lfl on lfs
    LFILE4 is lfl on lfs
    LFILE5 is lfl on lfs
-   
-   /* Define a SD memory card device */
-   /*
-   SDMC is sdmc on sd csr 0 -irq 0051
-   */
 
 %%
 
