@@ -87,7 +87,15 @@ lfl:
 		-r lflread	-g lflgetc	-p lflputc
 		-w lflwrite	-s lflseek	-n lflcontrol
 		-intr ionull
-		
+
+/* type of SD memory card */		
+sdmc:		
+	on sd		
+		-i sdmcinit	-o sdmcopen	-c sdmcclose		
+		-r sdmcread	-g ioerr	-p ioerr		
+		-w sdmcwrite	-s ioerr	-n ioerr		
+		-intr sdmcdispatch		
+
 /* type of namespace device */
 nam:
 	on top
@@ -148,6 +156,10 @@ nam:
    LFILE3 is lfl on lfs
    LFILE4 is lfl on lfs
    LFILE5 is lfl on lfs
+
+   /* Define a SD memory card device */		
+
+   SDMC is sdmc on sd csr 0 -irq 0051		
 
 %%
 
