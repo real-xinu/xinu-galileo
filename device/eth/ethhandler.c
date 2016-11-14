@@ -6,8 +6,11 @@
  * ethhandler  -  Interrupt handler for Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-interrupt	ethhandler(void)
+void	ethhandler (
+		int32	arg	/* Interrupt handler argument	*/
+		)
 {
+	struct	dentry *devptr;		/* Device table entry pointer	*/
 	struct	ethcblk	*ethptr;	/* Ethertab entry pointer	*/
 	struct	eth_q_csreg *csrptr;	/* Pointer to Ethernet CRSs	*/
 	struct	eth_q_tx_desc *tdescptr;/* Pointer to tx descriptor	*/
@@ -15,7 +18,8 @@ interrupt	ethhandler(void)
 	volatile uint32	sr;		/* Copy of status register	*/
 	uint32	count;			/* Variable used to count pkts	*/
 
-	ethptr = &ethertab[devtab[ETHER0].dvminor];
+	devptr = (struct dentry *)arg;
+	ethptr = &ethertab[devptr->dvminor];
 
 	csrptr = (struct eth_q_csreg *)ethptr->csr;
 

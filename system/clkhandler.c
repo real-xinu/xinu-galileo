@@ -6,7 +6,9 @@
  * clkhandler - high level clock interrupt handler
  *------------------------------------------------------------------------
  */
-void	clkhandler()
+void	clkhandler(
+		int32	arg	/* Interrupt handler argument	*/
+		)
 {
 	static	uint32	count1000 = 1000;	/* Count to 1000 ms	*/
 

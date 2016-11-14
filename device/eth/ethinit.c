@@ -186,7 +186,7 @@ int32	ethinit (
 	csrptr->omr |= ETH_QUARK_OMR_TSF;
 
 	/* Set the interrupt handler */
-	set_evec(devptr->dvirq, (uint32)devptr->dvintr);
+	set_ivec(devptr->dvirq, devptr->dvintr, (int32)devptr);
 
 	/* Set the MAC Speed = 100Mbps, Full Duplex mode */
 	csrptr->maccr |= (ETH_QUARK_MACCR_RMIISPD100 |

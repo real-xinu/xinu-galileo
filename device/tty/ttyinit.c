@@ -61,9 +61,9 @@ devcall	ttyinit(
 	uptr->lcr = UART_LCR_8N1;	/* 8 bit char, No Parity, 1 Stop*/
 	uptr->fcr = 0x00;		/* Disable FIFO for now		*/
 
-	/* Register the interrupt dispatcher for the tty device */
+	/* Register the interrupt handler for the tty device */
 
-	set_evec( devptr->dvirq, (uint32)devptr->dvintr );
+	set_ivec( devptr->dvirq, devptr->dvintr, (int32)devptr );
 
 	/* Enable interrupts on the device: reset the transmit and	*/
 	/*   receive FIFOS, and set the interrupt trigger level		*/
