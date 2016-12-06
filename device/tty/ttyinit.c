@@ -49,6 +49,12 @@ devcall	ttyinit(
 	typtr->tyifullc = TY_FULLCH;		/* Send ^G when buffer	*/
 						/*   is full		*/
 
+	uint32	pcidev;
+
+	pcidev = find_pci_device(INTEL_QUARK_UART_PCI_DID,
+				 INTEL_QUARK_UART_PCI_VID,
+				 1);
+
 	/* Initialize the UART */
 
 	uptr = (struct uart_csreg *)devptr->dvcsr;
@@ -63,7 +69,8 @@ devcall	ttyinit(
 
 	/* Register the interrupt handler for the tty device */
 
-	set_ivec( devptr->dvirq, devptr->dvintr, (int32)devptr );
+	pci_set_ivec( pcidev, devptr->dvirq, devptr->dvintr,
+							(int32)devptr );
 
 	/* Enable interrupts on the device: reset the transmit and	*/
 	/*   receive FIFOS, and set the interrupt trigger level		*/

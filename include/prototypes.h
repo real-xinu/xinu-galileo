@@ -86,6 +86,7 @@ extern int remove_irm_protections(void);
 extern	int32	initevec(void);
 extern	int32	set_evec(uint32, uint32);
 extern	int32	set_ivec(uint32, void *, int32);
+extern	int32	ioapic_irq2vec(int32, int32);
 extern	void	trap(int32, long *);
 
 /* in file exception.c */

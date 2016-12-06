@@ -37,12 +37,16 @@ uint16	girmask;
 #define	IGDT_TRAPG	15	/* Trap Gate				*/
 #define	IGDT_INTRG	0xe	/* Interrupt Gate			*/
 
-void	setirmask(void);	/* Set interrupt mask			*/
+void	_8259_setirmask(void);	/* Set interrupt mask			*/
 
 struct	int_entry int_actions[MAX_EXT_IRQS];
 
 extern	struct	idt idt[NID];	/* Interrupt descriptor table		*/
 extern	long	defevec[];	/* Default exception vector		*/
+
+/* Local APIc registers */
+volatile struct lapic_csreg *lapic = (struct lapic_csreg *)
+						LAPIC_BASE_ADDR;
 
 /*------------------------------------------------------------------------
  * initevec  -  Initialize exception vectors to a default handler
@@ -66,10 +70,8 @@ int32	initevec()
 
 	lidt();
 
-	/*
-	 * "girmask" masks all (bus) interrupts with the default handler.
-	 * initially, all, then cleared as handlers are set via set_ivec()
-	 */
+	/* Mask off all interrupts in legacy controller */
+
 	girmask = 0xfffb;	/* Leave bit 2 enabled for IC cascade */
 
 	/* Initialize the 8259A interrupt controllers */
@@ -88,7 +90,14 @@ int32	initevec()
 	outb(ICU2+1, 0xb);	/* ICW4: buf. slave, 808x mode	*/
 	outb(ICU2, 0xb);	/* OCW3: set ISR on read	*/
 
-	setirmask();
+	_8259_setirmask();
+
+	/* Mask all interrupt inputs in IO APIC */
+
+	for(i = 0; i < 24; i++) {
+		*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * i);
+		*((uint32 *)IOAPIC_WIN_ADDR) |= 0x00010000;
+	}
 
         return OK;
 }
@@ -151,14 +160,25 @@ int	set_ivec (
 	iinfo->int_handler = (void (*)(int32))handler;
 	iinfo->int_arg = arg;
 
-	/* If this is the first handler, enable interrupt in controller */
-
-	if(ient->nitems == 1) {
-		girmask &= ~(1 << (inum-IRQBASE));
-		setirmask();
-	}
-
 	restore(mask);
+	return OK;
+}
+
+/*------------------------------------------------------------------------
+ * ioapic_irq2vec  -  Map input irq to a vector
+ *------------------------------------------------------------------------
+ */
+int32	ioapic_irq2vec (
+		int32	irq,
+		int32	vec
+		)
+{
+	*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * irq) + 1;
+	*((uint32 *)IOAPIC_WIN_ADDR) = 0;
+
+	*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * irq);
+	*((uint32 *)IOAPIC_WIN_ADDR) = 0x00008000 | vec;
+
 	return OK;
 }
 
@@ -195,13 +215,17 @@ void	int_dispatch (
 		iinfo = &ient->int_items[i];
 		iinfo->int_handler(iinfo->int_arg);
 	}
+
+	/* Acknowledge interrupt in local APIC */
+
+	lapic->eoi = 0;
 }
 
 /*------------------------------------------------------------------------
- * setirmask  -  Set the interrupt mask in the controller
+ * _8259_setirmask  -  Set the interrupt mask in the controller
  *------------------------------------------------------------------------
  */
-void	setirmask(void)
+void	_8259_setirmask(void)
 {
 	if (girmask == 0) {	/* Skip until girmask initialized */
 		return;

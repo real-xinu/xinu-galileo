@@ -367,12 +367,6 @@ _extint:
 	/* Save all general purpose registers */
 	pushal
 
-	/* Acknowledge interrupt in the controller */
-	movb	$EOI,%al
-	outb	%al,$OCW1_2
-	movb	$EOI,%al
-	outb	%al,$OCW2_2
-
 	/* Push the current stack pointer as an arg to int_dispatch	*/
 	movl	%esp,%eax
 	pushl	%eax

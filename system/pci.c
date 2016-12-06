@@ -254,3 +254,46 @@ int pci_get_dev_mmio_base_addr(uint32 encodedDev, int barIndex,
 				       PCI_BAR_BASE_ADDRESS_MASK);
 	return OK;
 }
+
+int32	pci_set_ivec (
+		uint32	pcidev,
+		int32	inum,
+		void	*handler,
+		int32	arg
+		)
+{
+	uint16	pci_ctrl, msi_ctrl;
+	byte	cap, next;
+
+	pci_read_config_byte(pcidev, 0x34, &next);
+
+	while(next != 0) {
+
+		pci_read_config_byte(pcidev, next, &cap);
+
+		if(cap == 0x05) {
+			break;
+		}
+
+		pci_read_config_byte(pcidev, next+1, &next);
+	}
+
+	if(next == 0) {
+		panic("PCI device does not support MSI");
+	}
+
+	set_ivec(inum, handler, arg);
+
+	pci_read_config_word(pcidev, 0x04, &pci_ctrl);
+	pci_ctrl &= 0xFBFF;
+	pci_write_config_word(pcidev, 0x04, pci_ctrl);
+
+	pci_write_config_dword(pcidev, next+4, 0xFEE00000);
+	pci_write_config_dword(pcidev, next+8, inum);
+
+	pci_read_config_word(pcidev, next+2, &msi_ctrl);
+	msi_ctrl |= 0x0001;
+	pci_write_config_word(pcidev, next+2, msi_ctrl);
+
+	return OK;
+}
