@@ -87,6 +87,7 @@ void	ttyhandle_in (
 			if (typtr->tyiecho) {	/* Are we echoing chars?*/
 				echoch(ch, typtr, csrptr);
 			}
+			signal(typtr->tyisem);
 		}
 		return;
 
