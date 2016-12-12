@@ -31,9 +31,9 @@ devcall	nammap(
 	for (iter=0; iter<nnames ; iter++) {
 		newdev = namrepl(tmpname, newname);
 		if (newdev != namdev) {
-                        namcpy(tmpname, newname, NM_MAXLEN);
 			return newdev;	/* Either valid ID or SYSERR	*/
 		}
+		namcpy(tmpname, newname, NM_MAXLEN);
 	}
 	return SYSERR;
 }
