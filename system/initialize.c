@@ -28,11 +28,7 @@ pid32	currpid;		/* ID of currently executing process	*/
 
 /* Control sequence to reset the console colors and cusor positiion	*/
 
-<<<<<<< 075fa9b603f2d8c4d995ebac57a0f1cab8f40e51
 #define	CONSOLE_RESET	" \033[0m\033[2J\033[;H"
-=======
-#define CONSOLE_RESET " \033[0m\033[2J\033[;H"
->>>>>>> updates to initialize.c
 
 /*------------------------------------------------------------------------
  * nulluser - initialize the system and become the null process
@@ -51,7 +47,6 @@ pid32	currpid;		/* ID of currently executing process	*/
 void	nulluser()
 {	
 	/* Initialize the system */
-
 	sysinit();
 
 	/* Enable interrupts */
