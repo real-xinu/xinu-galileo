@@ -14,6 +14,7 @@ devcall	ttyinit(
 {
 	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/
 	struct	uart_csreg *uptr;	/* Address of UART's CSRs	*/
+	uint32	pcidev;			/* Encoded PCI device		*/
 
 	typtr = &ttytab[ devptr->dvminor ];
 
@@ -49,7 +50,7 @@ devcall	ttyinit(
 	typtr->tyifullc = TY_FULLCH;		/* Send ^G when buffer	*/
 						/*   is full		*/
 
-	uint32	pcidev;
+	/* Get the encoded PCI for the UART device */
 
 	pcidev = find_pci_device(INTEL_QUARK_UART_PCI_DID,
 				 INTEL_QUARK_UART_PCI_VID,
