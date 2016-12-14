@@ -47,7 +47,6 @@ pid32	currpid;		/* ID of currently executing process	*/
 void	nulluser()
 {	
 	/* Initialize the system */
-
 	sysinit();
 
 	/* Enable interrupts */
