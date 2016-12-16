@@ -134,7 +134,7 @@ int32	eth_phy_reset	(
 
 	DELAY(100000);
 
-	kprintf("Ethernet Link is Up\n");
+	kprintf("\nEthernet Link is Up\n");
 
 	return OK;
 }
@@ -186,7 +186,8 @@ int32	ethinit (
 	csrptr->omr |= ETH_QUARK_OMR_TSF;
 
 	/* Set the interrupt handler */
-	set_evec(devptr->dvirq, (uint32)devptr->dvintr);
+	pci_set_ivec(ethptr->pcidev, devptr->dvirq,
+				devptr->dvintr, (int32)devptr);
 
 	/* Set the MAC Speed = 100Mbps, Full Duplex mode */
 	csrptr->maccr |= (ETH_QUARK_MACCR_RMIISPD100 |

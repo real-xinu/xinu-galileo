@@ -24,7 +24,7 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)ttyinit, (void *)ionull, (void *)ionull,
 	  (void *)ttyread, (void *)ttywrite, (void *)ioerr,
 	  (void *)ttygetc, (void *)ttyputc, (void *)ttycontrol,
-	  (void *)0x3f8, (void *)ttydispatch, 42 },
+	  (void *)0x3f8, (void *)ttyhandler, 33 },
 
 /* NULLDEV is null */
 	{ 1, 0, "NULLDEV",
@@ -38,7 +38,7 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)ethinit, (void *)ioerr, (void *)ioerr,
 	  (void *)ethread, (void *)ethwrite, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)ethcontrol,
-	  (void *)0x0, (void *)ethdispatch, 43 },
+	  (void *)0x0, (void *)ethhandler, 34 },
 
 /* NAMESPACE is nam */
 	{ 3, 0, "NAMESPACE",

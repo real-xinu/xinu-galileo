@@ -78,3 +78,4 @@ extern int pci_write_config_byte(uint32, int, unsigned char);
 extern int pci_write_config_word(uint32, int, uint16);
 extern int pci_write_config_dword(uint32, int, uint32);
 extern int pci_get_dev_mmio_base_addr(uint32, int, void **);
+extern int32 pci_set_ivec(uint32, int32, void *, int32);

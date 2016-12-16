@@ -9,12 +9,14 @@
 #include <semaphore.h>
 #include <memory.h>
 #include <bufpool.h>
+#include <hpet.h>
 #include <clock.h>
 #include <ports.h>
 #include <uart.h>
 #include <tty.h>
 #include <device.h>
 #include <interrupt.h>
+#include <apic.h>
 #include <file.h>
 #include <rfilesys.h>
 #include <rdisksys.h>

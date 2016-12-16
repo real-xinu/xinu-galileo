@@ -30,7 +30,7 @@ tty:
 		-i ttyinit      -o ionull       -c ionull
 		-r ttyread      -g ttygetc      -p ttyputc
 		-w ttywrite     -s ioerr        -n ttycontrol
-		-intr ttydispatch
+		-intr ttyhandler
 
 /* type of a ethernet device */
 eth:
@@ -38,7 +38,7 @@ eth:
 		-i ethinit	-o ioerr	-c ioerr
 		-r ethread	-g ioerr	-p ioerr
 		-w ethwrite	-s ioerr	-n ethcontrol
-		-intr ethdispatch
+		-intr ethhandler
 
 /* type of a remote disk system device */
 rds:
@@ -102,13 +102,13 @@ nam:
 /*   will be present in the system					*/
 
    /* Define the console device to be a tty and specify CSR*/
-   CONSOLE is tty  on uart  csr 0001770 -irq 0052
+   CONSOLE is tty  on uart  csr 0001770 -irq 0041
 
    /* Define a null device */
    NULLDEV is null on nothing
 
    /* Physical Ethernet (raw packet transfer) */
-   ETHER0 is eth   on quark_eth csr 0 -irq 0053
+   ETHER0 is eth   on quark_eth csr 0 -irq 0042
 
    /* Define a namespace device */
    NAMESPACE is nam on top

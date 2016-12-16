@@ -22,7 +22,7 @@ extern	pri16	chprio(pid32, pri16);
 extern	uint32	clkcount(void);
 
 /* in file clkhandler.c */
-extern	interrupt clkhandler(void);
+extern	interrupt clkhandler(int32);
 
 /* in file clkinit.c */
 extern	void	clkinit(void);
@@ -55,7 +55,7 @@ extern	uint32	dot2ip(char *, uint32 *);
 extern 	int32	ethinit(struct dentry *);
 
 /* in file ethhandler.c */
-extern 	interrupt	ethhandler(void);
+extern 	interrupt	ethhandler(int32);
 
 /* in file ethcontrol.c */
 extern 	devcall ethcontrol(struct dentry *, int32, int32, int32);
@@ -85,6 +85,8 @@ extern int remove_irm_protections(void);
 /* in file evec.c */
 extern	int32	initevec(void);
 extern	int32	set_evec(uint32, uint32);
+extern	int32	set_ivec(uint32, void *, int32);
+extern	int32	ioapic_irq2vec(int32, int32);
 extern	void	trap(int32, long *);
 
 /* in file exception.c */
@@ -560,7 +562,7 @@ extern	void	ttyhandle_in(struct ttycblk *, struct uart_csreg *);
 extern	void	ttyhandle_out(struct ttycblk *, struct uart_csreg *);
 
 /* in file ttyhandler.c */
-extern	void	ttyhandler(void);
+extern	void	ttyhandler(int32);
 
 /* in file ttyinit.c */
 extern	devcall	ttyinit(struct dentry *);
