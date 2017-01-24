@@ -177,7 +177,7 @@ int32	ioapic_irq2vec (
 	*((uint32 *)IOAPIC_WIN_ADDR) = 0;
 
 	*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * irq);
-	*((uint32 *)IOAPIC_WIN_ADDR) = 0x00008000 | vec;
+	*((uint32 *)IOAPIC_WIN_ADDR) = 0x0000a000 | vec;
 
 	return OK;
 }
@@ -194,6 +194,8 @@ void	int_dispatch (
 	struct	int_entry *ient;	/* Interrupt action entry	*/
 	struct	int_info *iinfo;	/* Interrupt item entry		*/
 	int32	i;			/* Loop index			*/
+
+	lapic->eoi = 0;
 
 	/* Sanity check on interrupt number */
 
@@ -218,7 +220,7 @@ void	int_dispatch (
 
 	/* Acknowledge interrupt in local APIC */
 
-	lapic->eoi = 0;
+	//lapic->eoi = 0;
 }
 
 /*------------------------------------------------------------------------
