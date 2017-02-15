@@ -44,7 +44,6 @@ struct	netpacket	{
 	  byte		net_icdata[1500-28];/* ICMP payload (1500-above)*/
 	 };
 	};
-	uint32	net_ethcrc;		/* Ethernet CRC			*/
 };
 #pragma pack()
 

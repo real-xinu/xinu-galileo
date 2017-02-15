@@ -229,7 +229,7 @@ int32	ethinit (
 	ethptr->txRing = (void *)(((uint32)temptr + 3) & (~3));
 
 	/* Allocate memory for transmit buffers */
-	ethptr->txBufs = (void *)getmem(sizeof(struct netpacket) *
+	ethptr->txBufs = (void *)getmem(ETH_BUF_SIZE *
 					(ethptr->txRingSize+1));
 	if((int)ethptr->txBufs == SYSERR) {
 		return SYSERR;
@@ -267,7 +267,7 @@ int32	ethinit (
 					(((uint32)temptr + 3) & (~3));
 
 	/* Allocate memory for the receive buffers */
-	ethptr->rxBufs = (void *)getmem(sizeof(struct netpacket) *
+	ethptr->rxBufs = (void *)getmem(ETH_BUF_SIZE *
 						(ethptr->rxRingSize+1));
 	if((int)ethptr->rxBufs == SYSERR) {
 		return SYSERR;
@@ -286,7 +286,7 @@ int32	ethinit (
 	for(i = 0; i < ethptr->rxRingSize; i++) {
 
 		rx_descs[i].status   = ETH_QUARK_RDST_OWN;
-		rx_descs[i].buf1size = (uint32)sizeof(struct netpacket);
+		rx_descs[i].buf1size = (uint32)ETH_BUF_SIZE;
 		rx_descs[i].buffer1  = (uint32)(pktptr + i);
 	}
 

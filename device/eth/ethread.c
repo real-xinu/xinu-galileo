@@ -119,7 +119,7 @@ devcall	ethread	(
 
 		/* Reset the descriptor to max possible frame len */
 
-		rdescptr->buf1size = sizeof(struct netpacket);
+		rdescptr->buf1size = ETH_BUF_SIZE;
 
 		/* If we reach the end of the ring, mark the descriptor	*/
 
