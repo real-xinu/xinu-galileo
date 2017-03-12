@@ -10,7 +10,6 @@ void	clkhandler(
 		int32	arg	/* Interrupt handler argument	*/
 		)
 {
-	static	uint32	count1000 = 1000;	/* Count to 1000 ms	*/
 
 	if(!(hpet->gis & HPET_GIS_T0)) {
 		return;
@@ -20,7 +19,7 @@ void	clkhandler(
 
 	/* Decrement the ms counter, and see if a second has passed */
 
-	if((--count1000) <= 0) {
+	if((++count1000) >= 1000) {
 
 		/* One second has passed, so increment seconds count */
 
@@ -28,7 +27,7 @@ void	clkhandler(
 
 		/* Reset the local ms counter for the next second */
 
-		count1000 = 1000;
+		count1000 = 0;
 	}
 
 	/* Handle sleeping processes if any exist */

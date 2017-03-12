@@ -3,7 +3,7 @@
 #include <xinu.h>
 
 uint32	clktime;		/* Seconds since boot			*/
-uint32	ctr1000 = 0;		/* Milliseconds since boot		*/
+uint32	count1000;		/* Milliseconds since last clock tick   */
 qid16	sleepq;			/* Queue of sleeping processes		*/
 uint32	preempt;		/* Preemption counter			*/
 
@@ -27,7 +27,7 @@ void	clkinit(void)
 	/* Initialize the time since boot to zero */
 
 	clktime = 0;
-
+        count1000 = 0;
 	/* Set interrupt vector for the clock to invoke clkdisp */
 
 	ioapic_irq2vec(2, IRQBASE);
