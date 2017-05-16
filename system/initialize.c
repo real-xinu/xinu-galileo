@@ -91,7 +91,10 @@ void	nulluser()
 	/*  something to run when no other process is ready to execute)	*/
 
 	while (TRUE) {
-		;		/* Do nothing */
+
+		/* Halt until there is an external interrupt */
+
+		asm volatile ("hlt");
 	}
 
 }
