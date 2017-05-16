@@ -26,7 +26,7 @@ Examples:
 
 		slot = tcp_register (serverip, 50000, 1);
 
-tcp_recv :	This function has different effect of different TCP states. When
+tcp_recv :	This function has different effect on different TCP states. When
 		called on a listening slot, it acts like accept() in UNIX. When
 		called on an established connection, it acts like a normal recv()
 		call.
@@ -42,7 +42,7 @@ Examples:
 
 		rv = tcp_recv(listen_slot, (char *)&client_slot, 4);
 
-		/* client_slot will not be used to communicate with the connected client */
+		/* client_slot will now be used to communicate with the connected client */
 
 		tcp_send(client_slot, ...);
 		tcp_recv(client_slot, ...);
