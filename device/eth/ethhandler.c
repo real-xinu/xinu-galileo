@@ -16,7 +16,8 @@ void	ethhandler (
 	struct	eth_q_tx_desc *tdescptr;/* Pointer to tx descriptor	*/
 	struct	eth_q_rx_desc *rdescptr;/* Pointer to rx descriptor	*/
 	volatile uint32	sr;		/* Copy of status register	*/
-	uint32	count;			/* Variable used to count pkts	*/
+	int32	count;			/* Variable used to count pkts	*/
+	int32	curr_ringsize;		/* Current ring size		*/
 
 	devptr = (struct dentry *)arg;
 	ethptr = &ethertab[devptr->dvminor];
@@ -46,13 +47,24 @@ void	ethhandler (
 		tdescptr = (struct eth_q_tx_desc *)ethptr->txRing +
 							ethptr->txHead;
 
-		/* Start packet count at zero */
+		/* Compute the current ring size */
+
+		count = semcount(ethptr->osem);
+
+		if(count < 0) {
+			curr_ringsize = ethptr->txRingSize;
+		}
+		else {
+			curr_ringsize = ethptr->txRingSize - count;
+		}
+
+		/* Start the packet count at zero */
 
 		count = 0;
 
 		/* Repeat until we process all the descriptor slots */
 
-		while(ethptr->txHead != ethptr->txTail) {
+		while(curr_ringsize > 0) {
 
 			/* If the descriptor is owned by DMA, stop here */
 
@@ -63,6 +75,10 @@ void	ethhandler (
 			/* Descriptor was processed; increment count	*/
 
 			count++;
+
+			/* Decrement the current ring size */
+
+			curr_ringsize--;
 
 			/* Go to the next descriptor */
 
