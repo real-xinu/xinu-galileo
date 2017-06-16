@@ -11,13 +11,18 @@ void	*memcpy(
 	  int		n	/* number of bytes to copy		*/
 	)
 {
-    register int i;
-    char *dst = (char *)s;
-    char *src = (char *)ct;
+	if(n <= 0) {
+		return s;
+	}
 
-    for (i = 0; i < n; i++)
-    {
-        *dst++ = *src++;
-    }
-    return s;
+	asm volatile (
+			/* Source address is loaded in esi */
+			/* Dest address is loaded in edi   */
+			/* Count is loaded in ecx	   */
+			"rep	movsb\n\t"
+			:				/* Output	*/
+			: "S" (ct), "D" (s), "c" (n)	/* Input	*/
+			:				/* Clobber	*/
+		     );
+	return s;
 }
