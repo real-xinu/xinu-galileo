@@ -81,6 +81,19 @@ struct eth_q_csreg {
 
 /* Bus Mode Register */
 #define ETH_QUARK_BMR_SWR	0x00000001	/* Software Reset	*/
+#define	ETH_QUARK_BMR_DA	0x00000002	/* DMA Arbitration Fixed*/
+#define	ETH_QUARK_BMR_DSL_MASK	0x0000007C	/* Desc. skip length	*/
+#define	ETH_QUARK_BMR_ATDC	0x00000080	/* Alternate desc. size	*/
+#define	ETH_QUARK_BMR_PBL_MASK	0x00003F00	/* Program. burst length*/
+#define	ETH_QUARK_BMR_PBL1	0x00000100	/* PBL = 1 beat		*/
+#define	ETH_QUARK_BMR_PBL2	0x00000200	/* PBL = 2 beats	*/
+#define	ETH_QUARK_BMR_PBL4	0x00000400	/* PBL = 4 beats	*/
+#define	ETH_QUARK_BMR_PBL8	0x00000800	/* PBL = 8 beats	*/
+#define	ETH_QUARK_BMR_PBL16	0x00001000	/* PBL = 16 beats	*/
+#define	ETH_QUARK_BMR_PBL32	0x00002000	/* PBL = 32 beats	*/
+#define	ETH_QUARK_BMR_FB	0x00010000	/* Fixed burst		*/
+#define	ETH_QUARK_BMR_MB	0x04000000	/* Mixed burst		*/
+#define	ETH_QUARK_BMR_RIX	0x80000000	/* Rebuid INCRx burst	*/
 
 /* Status Register */
 #define ETH_QUARK_SR_MMCI	0x08000000	/* MAC MMC interrupt	*/
@@ -93,6 +106,7 @@ struct eth_q_csreg {
 /* Operation Mode Register */
 #define ETH_QUARK_OMR_TSF	0x00200000	/* Tx store and forward	*/
 #define ETH_QUARK_OMR_ST	0x00002000	/* Start/Stop TX	*/
+#define	ETH_QUARK_OMR_OSF	0x00000004	/* Operate on 2nd frame	*/
 #define ETH_QUARK_OMR_SR	0x00000002	/* Start/Stop RX	*/
 
 /* Interrupt Enable Register */

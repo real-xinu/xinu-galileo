@@ -153,6 +153,7 @@ int32	ethinit (
 	struct	eth_q_rx_desc *rx_descs;	/* Array of rx descs	*/
 	struct	netpacket *pktptr;		/* Pointer to a packet	*/
 	void	*temptr;			/* Temp. pointer	*/
+	uint32	bmr;				/* Bus Mode register	*/
 	uint32	retries;		 	/* Retry count for reset*/
 	int32	retval;
 	int32	i;
@@ -182,8 +183,15 @@ int32	ethinit (
 			return SYSERR;
 	}
 
-	/* Transmit Store and Forward */
-	csrptr->omr |= ETH_QUARK_OMR_TSF;
+	bmr = csrptr->bmr;
+	bmr &= ~(ETH_QUARK_BMR_PBL_MASK | ETH_QUARK_BMR_MB);
+	bmr |= ETH_QUARK_BMR_PBL16 |
+	       ETH_QUARK_BMR_FB |
+	       ETH_QUARK_BMR_RIX;
+	csrptr->bmr = bmr;
+
+	/* Transmit Store and Forward, Operate on second frame */
+	csrptr->omr |= ETH_QUARK_OMR_TSF | ETH_QUARK_OMR_OSF;
 
 	/* Set the interrupt handler */
 	pci_set_ivec(ethptr->pcidev, devptr->dvirq,
