@@ -33,4 +33,4 @@ extern	struct qentry	queuetab[];
 
 /* Inline to check queue id assumes interrupts are disabled */
 
-#define	isbadqid(x)	(((int32)(x) < 0) || (int32)(x) >= NQENT-1)
+#define	isbadqid(x)	(((int32)(x) < NPROC) || (int32)(x) >= NQENT-1)

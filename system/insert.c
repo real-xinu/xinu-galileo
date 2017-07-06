@@ -12,8 +12,8 @@ status	insert(
 	  int32		key		/* Key for the inserted process	*/
 	)
 {
-	int16	curr;			/* Runs through items in a queue*/
-	int16	prev;			/* Holds previous node index	*/
+	qid16	curr;			/* Runs through items in a queue*/
+	qid16	prev;			/* Holds previous node index	*/
 
 	if (isbadqid(q) || isbadpid(pid)) {
 		return SYSERR;

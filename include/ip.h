@@ -15,6 +15,7 @@
 #define	IP_OQSIZ	8		/* Size of IP output queue	*/
 
 #define IP_HLEN(x)	(20)
+
 /* Queue of outgoing IP packets waiting for ipout process */
 
 struct	iqentry	{

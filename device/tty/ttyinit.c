@@ -14,6 +14,7 @@ devcall	ttyinit(
 {
 	struct	ttycblk	*typtr;		/* Pointer to ttytab entry	*/
 	struct	uart_csreg *uptr;	/* Address of UART's CSRs	*/
+	uint32	pcidev;			/* Encoded PCI device		*/
 
 	typtr = &ttytab[ devptr->dvminor ];
 
@@ -49,6 +50,12 @@ devcall	ttyinit(
 	typtr->tyifullc = TY_FULLCH;		/* Send ^G when buffer	*/
 						/*   is full		*/
 
+	/* Get the encoded PCI for the UART device */
+
+	pcidev = find_pci_device(INTEL_QUARK_UART_PCI_DID,
+				 INTEL_QUARK_UART_PCI_VID,
+				 1);
+
 	/* Initialize the UART */
 
 	uptr = (struct uart_csreg *)devptr->dvcsr;
@@ -61,9 +68,10 @@ devcall	ttyinit(
 	uptr->lcr = UART_LCR_8N1;	/* 8 bit char, No Parity, 1 Stop*/
 	uptr->fcr = 0x00;		/* Disable FIFO for now		*/
 
-	/* Register the interrupt dispatcher for the tty device */
+	/* Register the interrupt handler for the tty device */
 
-	set_evec( devptr->dvirq, (uint32)devptr->dvintr );
+	pci_set_ivec( pcidev, devptr->dvirq, devptr->dvintr,
+							(int32)devptr );
 
 	/* Enable interrupts on the device: reset the transmit and	*/
 	/*   receive FIFOS, and set the interrupt trigger level		*/

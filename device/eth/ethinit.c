@@ -134,7 +134,7 @@ int32	eth_phy_reset	(
 
 	DELAY(100000);
 
-	kprintf("Ethernet Link is Up\n");
+	kprintf("\nEthernet Link is Up\n");
 
 	return OK;
 }
@@ -153,6 +153,7 @@ int32	ethinit (
 	struct	eth_q_rx_desc *rx_descs;	/* Array of rx descs	*/
 	struct	netpacket *pktptr;		/* Pointer to a packet	*/
 	void	*temptr;			/* Temp. pointer	*/
+	uint32	bmr;				/* Bus Mode register	*/
 	uint32	retries;		 	/* Retry count for reset*/
 	int32	retval;
 	int32	i;
@@ -182,11 +183,19 @@ int32	ethinit (
 			return SYSERR;
 	}
 
-	/* Transmit Store and Forward */
-	csrptr->omr |= ETH_QUARK_OMR_TSF;
+	bmr = csrptr->bmr;
+	bmr &= ~(ETH_QUARK_BMR_PBL_MASK | ETH_QUARK_BMR_MB);
+	bmr |= ETH_QUARK_BMR_PBL16 |
+	       ETH_QUARK_BMR_FB |
+	       ETH_QUARK_BMR_RIX;
+	csrptr->bmr = bmr;
+
+	/* Transmit Store and Forward, Operate on second frame */
+	csrptr->omr |= ETH_QUARK_OMR_TSF | ETH_QUARK_OMR_OSF;
 
 	/* Set the interrupt handler */
-	set_evec(devptr->dvirq, (uint32)devptr->dvintr);
+	pci_set_ivec(ethptr->pcidev, devptr->dvirq,
+				devptr->dvintr, (int32)devptr);
 
 	/* Set the MAC Speed = 100Mbps, Full Duplex mode */
 	csrptr->maccr |= (ETH_QUARK_MACCR_RMIISPD100 |
@@ -228,7 +237,7 @@ int32	ethinit (
 	ethptr->txRing = (void *)(((uint32)temptr + 3) & (~3));
 
 	/* Allocate memory for transmit buffers */
-	ethptr->txBufs = (void *)getmem(sizeof(struct netpacket) *
+	ethptr->txBufs = (void *)getmem(ETH_BUF_SIZE *
 					(ethptr->txRingSize+1));
 	if((int)ethptr->txBufs == SYSERR) {
 		return SYSERR;
@@ -266,7 +275,7 @@ int32	ethinit (
 					(((uint32)temptr + 3) & (~3));
 
 	/* Allocate memory for the receive buffers */
-	ethptr->rxBufs = (void *)getmem(sizeof(struct netpacket) *
+	ethptr->rxBufs = (void *)getmem(ETH_BUF_SIZE *
 						(ethptr->rxRingSize+1));
 	if((int)ethptr->rxBufs == SYSERR) {
 		return SYSERR;
@@ -285,7 +294,7 @@ int32	ethinit (
 	for(i = 0; i < ethptr->rxRingSize; i++) {
 
 		rx_descs[i].status   = ETH_QUARK_RDST_OWN;
-		rx_descs[i].buf1size = (uint32)sizeof(struct netpacket);
+		rx_descs[i].buf1size = (uint32)ETH_BUF_SIZE;
 		rx_descs[i].buffer1  = (uint32)(pktptr + i);
 	}
 

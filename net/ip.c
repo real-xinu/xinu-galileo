@@ -19,13 +19,7 @@ void	ip_in(
 	/* Verify checksum */
 
 	if (ipcksum(pktptr) != 0) {
-		kprintf("IP header checksum failed %x\n\r", pktptr->net_ipcksum);
-		//kprintf("IP checksum: %x\n", ipcksum(pktptr));
-		ip_hton(pktptr);
-		kprintf("IP checksum %x\n", ipcksum(pktptr));
-		//tcp_ntoh(pktptr);
-		pdumph(pktptr);
-		panic("!");
+		kprintf("IP header checksum failed\n\r");
 		freebuf((char *)pktptr);
 		return;
 	}
@@ -53,7 +47,7 @@ void	ip_in(
 		break;
 
 	    case IP_TCP:
-	    	tcp_ntoh(pktptr);
+		tcp_ntoh(pktptr);
 		break;
 
 	    case IP_ICMP:
@@ -167,7 +161,7 @@ status	ip_send(
 		nxthop = NetData.iprouter;
 
 	}
-	//kprintf("ip_send: nxthop = %x\n", nxthop);
+
 	if (nxthop == 0) {	/* Dest. invalid or no default route	*/
 		freebuf((char *)pktptr);
 		return SYSERR;
@@ -177,7 +171,6 @@ status	ip_send(
 
 	retval = arp_resolve(nxthop, pktptr->net_ethdst);
 	if (retval != OK) {
-		kprintf("ip_send: arp_resolve failed\n");
 		freebuf((char *)pktptr);
 		return SYSERR;
 	}
@@ -207,7 +200,7 @@ void	ip_local(
 		return;
 
 	    case IP_TCP:
-	    	tcp_in(pktptr);
+		tcp_in(pktptr);
 		return;
 
 	    case IP_ICMP:
@@ -230,7 +223,7 @@ status	ip_out(
 	)
 {
 	uint16	cksum;			/* Checksum in host byte order	*/
-	int32	len;			/* Length of ICMP message	*/
+	int32	len;			/* Length of ICMP message	*/	
 	int32	pktlen;			/* Length of entire packet	*/
 	int32	retval;			/* Value returned by write	*/
 
@@ -251,6 +244,12 @@ status	ip_out(
 
 			break;
 
+	    case IP_TCP:
+			tcp_hton(pktptr);
+			cksum = tcpcksum(pktptr);
+			pktptr->net_tcpcksum = htons(cksum) & 0xffff;
+			break;
+
 	    case IP_ICMP:
 			icmp_hton(pktptr);
 
@@ -261,12 +260,6 @@ status	ip_out(
 			cksum = icmp_cksum((char *)&pktptr->net_ictype,
 								len);
 			pktptr->net_iccksum = 0xffff & htons(cksum);
-			break;
-
-	    case IP_TCP:
-	    		tcp_hton(pktptr);
-			cksum = tcpcksum(pktptr);
-			pktptr->net_tcpcksum = htons(cksum) & 0xffff;
 			break;
 
 	    default:
@@ -288,7 +281,7 @@ status	ip_out(
 	eth_hton(pktptr);
 
 	/* Send packet over the Ethernet */
-	//kprintf("sending packet\n");
+
 	retval = write(ETHER0, (char*)pktptr, pktlen);
 	freebuf((char *)pktptr);
 
@@ -483,5 +476,5 @@ status	ip_enqueue(
 	}
 	signal(iptr->iqsem);
 	restore(mask);
-	return OK;
+	return OK;	
 }

@@ -47,7 +47,7 @@
 #define	MULTIBOOT_HEADER_FLAGS  0x00010003
 #define MULTIBOOT_SIGNATURE	0x2BADB002	/* Multiboot signature verification	*/
 #define MULTIBOOT_BOOTINFO_MMAP	0x00000040	/* mmap_length mmap_addr valid		*/
-#define	GDT_ENTRIES		8
+#define	GDT_ENTRIES		4
 #define	GDT_ENTRY_SIZE		8
 #define	GDT_BYTES		(GDT_ENTRIES * GDT_ENTRY_SIZE)
 #define	IDT_ENTRIES		256
@@ -278,10 +278,7 @@ ___divsi3:
 	idivl 8(%esp)
 	ret
 
-	#
 	# sbzero (base, cnt)
-	#
-
 	.globl sbzero
 sbzero:
 	pushl	%edi
@@ -292,25 +289,6 @@ sbzero:
 	rep
 	stosb
 	popl	%edi
-	ret
-
-	#
-	# bcopy(src, dst, count)
-	#
-
-	.globl	bcopy
-bcopy:
-	pushl	%esi
-	pushl	%edi
-	movl	12(%esp), %esi
-	movl	16(%esp), %edi
-L1:
-	movl	20(%esp), %ecx
-	cld
-	rep
-	movsb
-	popl	%edi
-	popl	%esi
 	ret
 
 	# insw(port, addr, cnt)
@@ -339,10 +317,34 @@ outsw:
 	popl	%esi
 	ret
 
-	#
+	# bcopy(src, dst, count)
+	.globl	bcopy
+bcopy:
+	pushl	%esi
+	pushl	%edi
+	movl	12(%esp), %esi
+	movl	16(%esp), %edi
+L1:
+	movl	20(%esp), %ecx
+	cld
+	rep
+	movsb
+	popl	%edi
+	popl	%esi
+	ret
+
 	# lidt() - load interrupt descriptor table from idtr
-	#
 	.globl	lidt
 lidt:
 	lidt	idtr
 	ret
+
+	# cpuid() - report basic CPU type information
+	.globl	cpuid
+cpuid:
+	pushl	%ebx
+	movl	$1, %eax	# request basic CPU type
+	xorl	%ecx, %ecx
+	cpuid
+	popl	%ebx
+	ret			# return value in %eax

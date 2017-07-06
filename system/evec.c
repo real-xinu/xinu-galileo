@@ -35,12 +35,18 @@ uint16	girmask;
 
 #define NID		48	/* Number of interrupt descriptors	*/
 #define	IGDT_TRAPG	15	/* Trap Gate				*/
+#define	IGDT_INTRG	0xe	/* Interrupt Gate			*/
 
-void	setirmask(void);	/* Set interrupt mask			*/
+void	_8259_setirmask(void);	/* Set interrupt mask			*/
+
+struct	int_entry int_actions[MAX_EXT_IRQS];
 
 extern	struct	idt idt[NID];	/* Interrupt descriptor table		*/
 extern	long	defevec[];	/* Default exception vector		*/
-extern	int	lidt();		/* Load the interrupt descriptor table	*/
+
+/* Local APIc registers */
+volatile struct lapic_csreg *lapic = (struct lapic_csreg *)
+						LAPIC_BASE_ADDR;
 
 /*------------------------------------------------------------------------
  * initevec  -  Initialize exception vectors to a default handler
@@ -50,20 +56,24 @@ int32	initevec()
 {
 	int	i;
 
-	girmask = 0;	/* Until vectors initialized */
-
-	for (i=0; i<NID; ++i) {
-		set_evec(i, (long)defevec[i]);	
+	for(i = 0; i < MAX_EXT_IRQS; i++) {
+		int_actions[i].nitems = 0;
 	}
 
-	/*
-	 * "girmask" masks all (bus) interrupts with the default handler.
-	 * initially, all, then cleared as handlers are set via set_evec()
-	 */
-	girmask = 0xfffb;	/* Leave bit 2 enabled for IC cascade */
+	/* Set default exception vectors */
+
+	for(i = 0; i < NID; i++) {
+		set_evec(i, defevec[i]);
+	}
+
+	/* Load the interrupt descriptor table */
 
 	lidt();
-	
+
+	/* Mask off all interrupts in legacy controller */
+
+	girmask = 0xfffb;	/* Leave bit 2 enabled for IC cascade */
+
 	/* Initialize the 8259A interrupt controllers */
 	
 	/* Master device */
@@ -80,8 +90,15 @@ int32	initevec()
 	outb(ICU2+1, 0xb);	/* ICW4: buf. slave, 808x mode	*/
 	outb(ICU2, 0xb);	/* OCW3: set ISR on read	*/
 
-	setirmask();
-	
+	_8259_setirmask();
+
+	/* Mask all interrupt inputs in IO APIC */
+
+	for(i = 0; i < 24; i++) {
+		*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * i);
+		*((uint32 *)IOAPIC_WIN_ADDR) |= 0x00010000;
+	}
+
         return OK;
 }
 
@@ -97,25 +114,120 @@ int32	set_evec(uint32 xnum, uint32 handler)
 	pidt->igd_loffset = handler;
 	pidt->igd_segsel = 0x8;		/* Kernel code segment */
 	pidt->igd_mbz = 0;
-	pidt->igd_type = IGDT_TRAPG;
+	pidt->igd_type = IGDT_INTRG;
 	pidt->igd_dpl = 0;
 	pidt->igd_present = 1;
 	pidt->igd_hoffset = handler >> 16;
 
-	if (xnum > 31 && xnum < 48) {
-		/* Enable the interrupt in the global IR mask */
-		xnum -= 32;
-		girmask &= ~(1<<xnum);
-		setirmask();	/* Pass it to the hardware */
-	}
         return OK;
 }
 
 /*------------------------------------------------------------------------
- * setirmask  -  Set the interrupt mask in the controller
+ * set_ivec  -  Set a high level interrupt handler
  *------------------------------------------------------------------------
  */
-void	setirmask(void)
+int	set_ivec (
+		uint32	inum,			/* Interrupt number	*/
+		void	*handler,		/* Interrupt handler	*/
+		int32	arg			/* Handler argument	*/
+		)
+{
+	struct	int_entry *ient;	/* Interrupt action entry	*/
+	struct	int_info *iinfo;	/* Interrupt item entry		*/
+	intmask	mask;			/* Saved interrupt mask		*/
+
+	/* Sanity check on interrupt number */
+
+	if( (inum < IRQBASE) || (inum >= (IRQBASE + MAX_EXT_IRQS)) ) {
+		return SYSERR;
+	}
+
+	mask = disable();
+
+	ient = &int_actions[inum-IRQBASE];
+
+	/* If maximum no. of handlers already registered, return error */
+
+	if(ient->nitems >= MAX_IRQ_SHARING) {
+		restore(mask);
+		return SYSERR;
+	}
+
+	iinfo = &ient->int_items[ient->nitems++];
+
+	/* Add the interrupt handler and its argument */
+
+	iinfo->int_handler = (void (*)(int32))handler;
+	iinfo->int_arg = arg;
+
+	restore(mask);
+	return OK;
+}
+
+/*------------------------------------------------------------------------
+ * ioapic_irq2vec  -  Map input irq to a vector
+ *------------------------------------------------------------------------
+ */
+int32	ioapic_irq2vec (
+		int32	irq,
+		int32	vec
+		)
+{
+	*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * irq) + 1;
+	*((uint32 *)IOAPIC_WIN_ADDR) = 0;
+
+	*((uint32 *)IOAPIC_IDX_ADDR) = 0x10 + (2 * irq);
+	*((uint32 *)IOAPIC_WIN_ADDR) = 0x0000a000 | vec;
+
+	return OK;
+}
+
+/*------------------------------------------------------------------------
+ * int_dispatch  -  Dispatcher function for high level interrupt handlers
+ *------------------------------------------------------------------------
+ */
+void	int_dispatch (
+		int32	inum,		/* Interrupt number	*/
+		long	*savedsp	/* Saved stack pointer	*/
+		)
+{
+	struct	int_entry *ient;	/* Interrupt action entry	*/
+	struct	int_info *iinfo;	/* Interrupt item entry		*/
+	int32	i;			/* Loop index			*/
+
+	lapic->eoi = 0;
+
+	/* Sanity check on interrupt number */
+
+	if( (inum < IRQBASE) || (inum >= (IRQBASE + MAX_EXT_IRQS)) ) {
+		return;
+	}
+
+	ient = &int_actions[inum-IRQBASE];
+
+	if(ient->nitems == 0) {
+		/* This call never returns */
+		trap(inum, savedsp);
+	}
+
+	/* Call all the registered high level interrupt handlers */
+
+	for(i = 0; i < ient->nitems; i++) {
+
+		iinfo = &ient->int_items[i];
+		iinfo->int_handler(iinfo->int_arg);
+	}
+
+	/* Acknowledge interrupt in local APIC */
+
+	//lapic->eoi = 0;
+}
+
+/*------------------------------------------------------------------------
+ * _8259_setirmask  -  Set the interrupt mask in the controller
+ *------------------------------------------------------------------------
+ */
+void	_8259_setirmask(void)
 {
 	if (girmask == 0) {	/* Skip until girmask initialized */
 		return;
@@ -176,9 +288,9 @@ void	trap (
 	}
 
 	/* Adjust stack pointer to get debugging information 	*/
-	/* 8 registers and 1 %ebp pushed in Xint		*/
+	/* 8 registers pushed in _Xint or _extint		*/
 
-	sp = regs + 1 + 8;
+	sp = regs + 8;
 
 	/* Print the debugging information related to interrupt	*/
 
@@ -186,6 +298,7 @@ void	trap (
 		kprintf("error code %08x (%u)\n", *sp, *sp);
 		sp++;
 	}
+
 	kprintf("CS %X eip %X\n", *(sp + 1), *sp);
 	kprintf("eflags %X\n", *(sp + 2));
 

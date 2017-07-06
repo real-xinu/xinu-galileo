@@ -30,7 +30,7 @@ tty:
 		-i ttyinit      -o ionull       -c ionull
 		-r ttyread      -g ttygetc      -p ttyputc
 		-w ttywrite     -s ioerr        -n ttycontrol
-		-intr ttydispatch
+		-intr ttyhandler
 
 /* type of a ethernet device */
 eth:
@@ -38,7 +38,7 @@ eth:
 		-i ethinit	-o ioerr	-c ioerr
 		-r ethread	-g ioerr	-p ioerr
 		-w ethwrite	-s ioerr	-n ethcontrol
-		-intr ethdispatch
+		-intr ethhandler
 
 /* type of a remote disk system device */
 rds:

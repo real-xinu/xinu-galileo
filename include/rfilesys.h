@@ -22,7 +22,7 @@
 #endif
 
 #ifndef	RF_SERVER_PORT
-#define	RF_SERVER_PORT	33123
+#define	RF_SERVER_PORT	0
 #endif
 
 #ifndef	RF_LOC_PORT
@@ -104,8 +104,11 @@ extern	struct	rflcblk	rfltab[];	/* Remote file control blocks	*/
 #define	RF_MSG_XREQ	0x0008		/* Rmdir request and response 	*/
 #define	RF_MSG_XRES	(RF_MSG_XREQ | RF_MSG_RESPONSE)
 
+#define RF_MSG_CREQ	0x0009
+#define RF_MSG_CRES	(RF_MSG_CREQ | RF_MSG_RESPONSE)
+
 #define	RF_MIN_REQ	RF_MSG_RREQ	/* Minimum request type		*/
-#define	RF_MAX_REQ	RF_MSG_XREQ	/* Maximum request type		*/
+#define	RF_MAX_REQ	RF_MSG_CREQ	/* Maximum request type		*/
 
 /* Message header fields present in each message */
 
@@ -202,6 +205,24 @@ struct	rf_msg_ores	{		/* Remote file open response	*/
 
 /************************************************************************/
 /*									*/
+/*				Close					*/
+/*									*/
+/************************************************************************/
+
+#pragma pack(2)
+struct	rf_msg_creq	{		/* Remote file close request	*/
+	RF_MSG_HDR			/* Header fields		*/
+};
+#pragma pack()
+
+#pragma pack(2)
+struct	rf_msg_cres	{		/* Remote file close response	*/
+	RF_MSG_HDR			/* Header fields		*/
+};
+#pragma pack()
+
+/************************************************************************/
+/*									*/
 /*				Size					*/
 /*									*/
 /************************************************************************/
@@ -288,5 +309,21 @@ struct	rf_msg_xreq	{		/* Remote file rmdir request	*/
 #pragma pack(2)
 struct	rf_msg_xres	{		/* Remote file rmdir response	*/
 	RF_MSG_HDR			/* Header fields		*/
+};
+#pragma pack()
+
+/************************************************************************/
+/*									*/
+/*				rfdirent				*/
+/*									*/
+/************************************************************************/
+
+#define RF_DIRENT_FILE	1
+#define RF_DIRENT_DIR	2
+
+#pragma pack(2)
+struct	rfdirent	{
+	byte	d_type;			/* Type of the file	*/
+	char	d_name[256];		/* Name of the file	*/
 };
 #pragma pack()

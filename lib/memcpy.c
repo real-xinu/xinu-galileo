@@ -1,23 +1,28 @@
 /* memcpy.c - memcpy */
 
 /*------------------------------------------------------------------------
- *  memcpy  -  Copy a location in memory from src to dst.
- *			   Return pointer to destination.
+ *  memcpy  -  Copy a block of memory from src to dst, and return a
+ *			  pointer to the destination
  *------------------------------------------------------------------------
  */
-void		*memcpy(
-			  void			*s,		/* destination location				*/
-			  const void	*ct,	/* source location					*/
-			  int			n		/* amount of data (in bytes) to copy*/
-			)
+void	*memcpy(
+	  void		*s,	/* Destination address			*/
+	  const void	*ct,	/* source address			*/
+	  int		n	/* number of bytes to copy		*/
+	)
 {
-    register int i;
-    char *dst = (char *)s;
-    char *src = (char *)ct;
+	if(n <= 0) {
+		return s;
+	}
 
-    for (i = 0; i < n; i++)
-    {
-        *dst++ = *src++;
-    }
-    return s;
+	asm volatile (
+			/* Source address is loaded in esi */
+			/* Dest address is loaded in edi   */
+			/* Count is loaded in ecx	   */
+			"rep	movsb\n\t"
+			:				/* Output	*/
+			: "S" (ct), "D" (s), "c" (n)	/* Input	*/
+			:				/* Clobber	*/
+		     );
+	return s;
 }

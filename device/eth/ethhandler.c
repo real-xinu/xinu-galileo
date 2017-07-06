@@ -6,16 +6,21 @@
  * ethhandler  -  Interrupt handler for Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-interrupt	ethhandler(void)
+void	ethhandler (
+		int32	arg	/* Interrupt handler argument	*/
+		)
 {
+	struct	dentry *devptr;		/* Device table entry pointer	*/
 	struct	ethcblk	*ethptr;	/* Ethertab entry pointer	*/
 	struct	eth_q_csreg *csrptr;	/* Pointer to Ethernet CRSs	*/
 	struct	eth_q_tx_desc *tdescptr;/* Pointer to tx descriptor	*/
 	struct	eth_q_rx_desc *rdescptr;/* Pointer to rx descriptor	*/
 	volatile uint32	sr;		/* Copy of status register	*/
-	uint32	count;			/* Variable used to count pkts	*/
+	int32	count;			/* Variable used to count pkts	*/
+	int32	curr_ringsize;		/* Current ring size		*/
 
-	ethptr = &ethertab[devtab[ETHER0].dvminor];
+	devptr = (struct dentry *)arg;
+	ethptr = &ethertab[devptr->dvminor];
 
 	csrptr = (struct eth_q_csreg *)ethptr->csr;
 
@@ -42,13 +47,24 @@ interrupt	ethhandler(void)
 		tdescptr = (struct eth_q_tx_desc *)ethptr->txRing +
 							ethptr->txHead;
 
-		/* Start packet count at zero */
+		/* Compute the current ring size */
+
+		count = semcount(ethptr->osem);
+
+		if(count < 0) {
+			curr_ringsize = ethptr->txRingSize;
+		}
+		else {
+			curr_ringsize = ethptr->txRingSize - count;
+		}
+
+		/* Start the packet count at zero */
 
 		count = 0;
 
 		/* Repeat until we process all the descriptor slots */
 
-		while(ethptr->txHead != ethptr->txTail) {
+		while(curr_ringsize > 0) {
 
 			/* If the descriptor is owned by DMA, stop here */
 
@@ -59,6 +75,10 @@ interrupt	ethhandler(void)
 			/* Descriptor was processed; increment count	*/
 
 			count++;
+
+			/* Decrement the current ring size */
+
+			curr_ringsize--;
 
 			/* Go to the next descriptor */
 
@@ -91,8 +111,8 @@ interrupt	ethhandler(void)
 
 		/* Repeat until we have received		*/
 		/* maximum no. packets that can fit in queue 	*/
-		resched_cntl(DEFER_START);
-		while((int32)semcount(ethptr->isem) < (int32)ethptr->rxRingSize) {
+
+		while(count <= ethptr->rxRingSize) {
 
 			/* If the descriptor is owned by the DMA, stop */
 
@@ -102,7 +122,6 @@ interrupt	ethhandler(void)
 
 			/* Descriptor was processed; increment count	*/
 			count++;
-			signal(ethptr->isem);
 
 			/* Go to the next descriptor */
 
@@ -117,14 +136,11 @@ interrupt	ethhandler(void)
 							ethptr->rxRing;
 			}
 		}
-		resched_cntl(DEFER_STOP);
+
 		/* 'count' packets were received and are available,	*/
 		/*   so signal the semaphore accordingly		*/
 
-		//signaln(ethptr->isem, count);
-		/*if(semcount(ethptr->isem) > 32) {
-			panic("Ethernet input sem greater than 32");
-		}*/
+		signaln(ethptr->isem, count);
 	}
 
 	return;

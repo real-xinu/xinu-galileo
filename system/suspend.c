@@ -11,7 +11,7 @@ syscall	suspend(
 	)
 {
 	intmask	mask;			/* Saved interrupt mask		*/
-	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	struct	procent *prptr;		/* Ptr to process's table entry	*/
 	pri16	prio;			/* Priority to return		*/
 
 	mask = disable();

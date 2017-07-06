@@ -22,7 +22,7 @@ umsg32	recvtime(
 	/* Schedule wakeup and place process in timed-receive state */
 
 	prptr = &proctab[currpid];
-	if (prptr->prhasmsg == FALSE) {	/* If message waiting, no delay	*/
+	if (prptr->prhasmsg == FALSE) {	/* Delay if no message waiting	*/
 		if (insertd(currpid,sleepq,maxwait) == SYSERR) {
 			restore(mask);
 			return SYSERR;

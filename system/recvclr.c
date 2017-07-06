@@ -9,7 +9,7 @@
 umsg32	recvclr(void)
 {
 	intmask	mask;			/* Saved interrupt mask		*/
-	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	struct	procent *prptr;		/* Ptr to process's table entry	*/
 	umsg32	msg;			/* Message to return		*/
 
 	mask = disable();

@@ -379,7 +379,7 @@ uint16	icmp_cksum (
 	/* If buffer lenght is odd, add last byte */
 
 	if ( (buflen & 0x01) !=0 ) {
-		cksum += (uint32) (*((char *)sptr) << 8);
+		cksum += 0xFFFF & ((uint32) (*((byte *) sptr) << 8));
 	}
 	cksum += (cksum >> 16);
         cksum = 0xffff & ~cksum;

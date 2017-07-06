@@ -2,6 +2,9 @@
 /*			spurious_irq15					*/
 
 #include <icu.s>
+	.data
+	.globl	_saveint
+_saveint:	.long
 
 	.text
 	.globl	disable
@@ -99,8 +102,6 @@ Xtrap:
 
 	.globl	_Xint0			/* Divide error			*/
 _Xint0:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -109,8 +110,6 @@ _Xint0:
 
 	.globl  _Xint1			/* Debug exception		*/
 _Xint1:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -119,8 +118,6 @@ _Xint1:
 
 	.globl  _Xint2			/* Nonmaskable interrupt	*/
 _Xint2:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -129,8 +126,6 @@ _Xint2:
 
 	.globl  _Xint3			/* Breakpoint (one-byte INT 3	*/
 _Xint3:
-	pushl	%ebp			/*    instruction)		*/
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -139,8 +134,6 @@ _Xint3:
 
 	.globl  _Xint4			/* Overflow (INTO instruction)	*/
 _Xint4:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -159,8 +152,6 @@ _Xint5:
 
 	.globl  _Xint6			/* Invalid opcode		*/
 _Xint6:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -169,8 +160,6 @@ _Xint6:
 
 	.globl  _Xint7			/* Coprocessor not available	*/
 _Xint7:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -179,8 +168,6 @@ _Xint7:
 
 	.globl  _Xint8			/* Double fault			*/
 _Xint8:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -189,8 +176,6 @@ _Xint8:
 	
 	.globl  _Xint9			/* (reserved)			*/
 _Xint9:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -199,8 +184,6 @@ _Xint9:
 
 	.globl  _Xint10			/* Invalid TSS			*/
 _Xint10:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -209,8 +192,6 @@ _Xint10:
 
 	.globl  _Xint11			/* Segment not present		*/
 _Xint11:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -219,8 +200,6 @@ _Xint11:
 
 	.globl  _Xint12			/* Stack exception		*/
 _Xint12:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -229,8 +208,6 @@ _Xint12:
 
 	.globl  _Xint13			/* General protection		*/
 _Xint13:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -239,8 +216,6 @@ _Xint13:
 
 	.globl  _Xint14			/* Page fault			*/
 _Xint14:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -249,8 +224,6 @@ _Xint14:
 
 	.globl  _Xint15			/* (reserved)			*/
 _Xint15:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -259,8 +232,6 @@ _Xint15:
 
 	.globl  _Xint16			/* Coprocessor error		*/
 _Xint16:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -269,8 +240,6 @@ _Xint16:
 
 	.globl  _Xint17			/* (reserved)			*/
 _Xint17:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -279,8 +248,6 @@ _Xint17:
 
 	.globl  _Xint18			/* (reserved)			*/
 _Xint18:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -289,8 +256,6 @@ _Xint18:
 
 	.globl  _Xint19			/* (reserved)			*/
 _Xint19:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -299,8 +264,6 @@ _Xint19:
 
 	.globl  _Xint20			/* (reserved)			*/
 _Xint20:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -309,8 +272,6 @@ _Xint20:
 
 	.globl  _Xint21			/* (reserved)			*/
 _Xint21:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -319,8 +280,6 @@ _Xint21:
 
 	.globl  _Xint22			/* (reserved)			*/
 _Xint22:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -329,8 +288,6 @@ _Xint22:
 
 	.globl  _Xint23			/* (reserved)			*/
 _Xint23:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -339,8 +296,6 @@ _Xint23:
 
 	.globl  _Xint24			/* (reserved)			*/
 _Xint24:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -349,8 +304,6 @@ _Xint24:
 
 	.globl  _Xint25			/* (reserved)			*/
 _Xint25:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -359,8 +312,6 @@ _Xint25:
 
 	.globl  _Xint26			/* (reserved)			*/
 _Xint26:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -369,8 +320,6 @@ _Xint26:
 
 	.globl  _Xint27			/* (reserved)			*/
 _Xint27:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -379,8 +328,6 @@ _Xint27:
 
 	.globl  _Xint28			/* (reserved)			*/
 _Xint28:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -389,8 +336,6 @@ _Xint28:
 
 	.globl  _Xint29			/* (reserved)			*/
 _Xint29:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -399,8 +344,6 @@ _Xint29:
 
 	.globl  _Xint30			/* (reserved)			*/
 _Xint30:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
@@ -409,163 +352,113 @@ _Xint30:
 
 	.globl  _Xint31			/* (reserved)			*/
 _Xint31:
-	pushl	%ebp
-	movl	%esp,%ebp
 	pushal
 	movl	%esp, %eax
 	pushl	%eax
 	pushl	$31
 	jmp	Xtrap
 
+/*------------------------------------------------------------------------
+ * _extint  -  Handle external interrupts (32 to 46)
+ *------------------------------------------------------------------------
+ */
+	.globl _extint
+_extint:
+	/* Save all general purpose registers */
+	pushal
+
+	/* Push the current stack pointer as an arg to int_dispatch	*/
+	movl	%esp,%eax
+	pushl	%eax
+
+	/* Push the interrupt number as an argument to int_dispatch */
+	movl	_saveint,%eax
+	pushl	%eax
+
+	/* Call the interrupt dispatcher */
+	call	int_dispatch
+
+	/* Restore stack pointer (remove previously pushed args) */
+	addl	$8,%esp
+
+	/* Pop previously saved registers and return */
+	popal
+	iret
+
 	.globl  _Xint32			/* available for ext. interrupt	*/
 _Xint32:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$32
-	jmp	Xtrap
+	movl	$32,_saveint
+	jmp	_extint
 
 	.globl  _Xint33			/* available for ext. interrupt	*/
 _Xint33:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$33
-	jmp	Xtrap
+	movl	$33,_saveint
+	jmp	_extint
 	
 	.globl  _Xint34			/* available for ext. interrupt	*/
 _Xint34:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$34
-	jmp	Xtrap
+	movl	$34,_saveint
+	jmp	_extint
 
 	.globl  _Xint35			/* available for ext. interrupt	*/
 _Xint35:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$35
-	jmp	Xtrap
+	movl	$35,_saveint
+	jmp	_extint
 
 	.globl  _Xint36			/* available for ext. interrupt	*/
 _Xint36:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$36
-	jmp	Xtrap
+	movl	$36,_saveint
+	jmp	_extint
 
 	.globl  _Xint37			/* available for ext. interrupt	*/
 _Xint37:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$37
-	jmp	Xtrap
+	movl	$37,_saveint
+	jmp	_extint
 
 	.globl  _Xint38			/* available for ext. interrupt	*/
 _Xint38:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$38
-	jmp	Xtrap
+	movl	$38,_saveint
+	jmp	_extint
 
 	.globl  _Xint39			/* available for ext. interrupt	*/
 _Xint39:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$39
-	jmp	Xtrap
+	movl	$39,_saveint
+	jmp	_extint
 
 	.globl  _Xint40			/* available for ext. interrupt	*/
 _Xint40:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$40
-	jmp	Xtrap
+	movl	$40,_saveint
+	jmp	_extint
 
 	.globl  _Xint41			/* available for ext. interrupt	*/
 _Xint41:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$41
-	jmp	Xtrap
+	movl	$41,_saveint
+	jmp	_extint
 
 	.globl  _Xint42			/* available for ext. interrupt	*/
 _Xint42:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$42
-	jmp	Xtrap
+	movl	$42,_saveint
+	jmp	_extint
 
 	.globl  _Xint43			/* available for ext. interrupt	*/
 _Xint43:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$43
-	jmp	Xtrap
+	movl	$43,_saveint
+	jmp	_extint
 
 	.globl  _Xint44			/* available for ext. interrupt	*/
 _Xint44:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$44
-	jmp	Xtrap
+	movl	$44,_saveint
+	jmp	_extint
 
 	.globl  _Xint45			/* available for ext. interrupt	*/
 _Xint45:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$45
-	jmp	Xtrap
+	movl	$45,_saveint
+	jmp	_extint
 
 	.globl  _Xint46			/* available for ext. interrupt	*/
 _Xint46:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$46
-	jmp	Xtrap
+	movl	$46,_saveint
+	jmp	_extint
 
 /*------------------------------------------------------------------------
  * _Xint? - array of exception/interrupt entry points that are

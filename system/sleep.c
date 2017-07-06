@@ -2,17 +2,17 @@
 
 #include <xinu.h>
 
-#define	MAXSECONDS	4294967		/* Max seconds per 32-bit msec	*/
+#define	MAXSECONDS	2147483		/* Max seconds per 32-bit msec	*/
 
 /*------------------------------------------------------------------------
  *  sleep  -  Delay the calling process n seconds
  *------------------------------------------------------------------------
  */
 syscall	sleep(
-	  uint32	delay		/* Time to delay in seconds	*/
+	  int32	delay		/* Time to delay in seconds	*/
 	)
 {
-	if (delay > MAXSECONDS) {
+	if ( (delay < 0) || (delay > MAXSECONDS) ) {
 		return SYSERR;
 	}
 	sleepms(1000*delay);
@@ -24,20 +24,23 @@ syscall	sleep(
  *------------------------------------------------------------------------
  */
 syscall	sleepms(
-	  uint32	delay		/* Time to delay in msec.	*/
+	  int32	delay			/* Time to delay in msec.	*/
 	)
 {
 	intmask	mask;			/* Saved interrupt mask		*/
 
-	mask = disable();
+	if (delay < 0) {
+		return SYSERR;
+	}
+
 	if (delay == 0) {
 		yield();
-		restore(mask);
 		return OK;
 	}
 
 	/* Delay calling process */
 
+	mask = disable();
 	if (insertd(currpid, sleepq, delay) == SYSERR) {
 		restore(mask);
 		return SYSERR;

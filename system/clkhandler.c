@@ -1,19 +1,27 @@
 /* clkhandler.c - clkhandler */
 
 #include <xinu.h>
-extern uint32 ctr1000;
+
+uint32	ctr1000;
 
 /*------------------------------------------------------------------------
  * clkhandler - high level clock interrupt handler
  *------------------------------------------------------------------------
  */
-void	clkhandler()
+void	clkhandler(
+		int32	arg	/* Interrupt handler argument	*/
+		)
 {
-	static	uint32	count1000 = 1000;	/* Count to 1000 ms	*/
+
+	if(!(hpet->gis & HPET_GIS_T0)) {
+		return;
+	}
+
+	hpet->gis |= HPET_GIS_T0;
 
 	/* Decrement the ms counter, and see if a second has passed */
 
-	if((--count1000) <= 0) {
+	if((++count1000) >= 1000) {
 
 		/* One second has passed, so increment seconds count */
 
@@ -21,7 +29,7 @@ void	clkhandler()
 
 		/* Reset the local ms counter for the next second */
 
-		count1000 = 1000;
+		count1000 = 0;
 	}
 
 	/* Handle sleeping processes if any exist */
@@ -36,11 +44,10 @@ void	clkhandler()
 		}
 	}
 
-	if((--(*tmnext)) == 0) {
+	if((--(*tmnext)) <= 0) {
 		tmfire();
 	}
 
-	/* increment tcp timer */
 	ctr1000++;
 
 	/* Decrement the preemption counter, and reschedule when the */

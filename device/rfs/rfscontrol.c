@@ -16,7 +16,6 @@ devcall	rfscontrol (
 	int32	len;			/* Length of name		*/
 	struct	rf_msg_sreq msg;	/* Buffer for size request	*/
 	struct	rf_msg_sres resp;	/* Buffer for size response	*/
-	struct	rflcblk	*rfptr;		/* Pointer to entry in rfltab	*/
 	char	*to, *from;		/* Used during name copy	*/
 	int32	retval;			/* Return value			*/
 
@@ -24,10 +23,10 @@ devcall	rfscontrol (
 
 	wait(Rf_data.rf_mutex);
 
-	/* Check length and copy (needed for size) */
+	/* Check length of name (copy during the check even though the	*/
+	/*	copy is only used for a size request)			*/
 
-	rfptr = &rfltab[devptr->dvminor];
-	from = rfptr->rfname;
+	from = (char *)arg1;
 	to = msg.rf_name;
 	len = 0;
 	memset(to, NULLCH, RF_NAMLEN);	/* Start name as all zeroes	*/
@@ -79,7 +78,8 @@ devcall	rfscontrol (
 		}
 		break;
 
-	/* Obtain current file size (non-standard message size) */
+	/* Obtain current file size (cannot use rfsndmsg because a	*/
+	/*	response contains a value in addition to the header)	*/
 
 	case RFS_CTL_SIZE:
 

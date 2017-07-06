@@ -10,7 +10,7 @@ local	int newpid();
  */
 pid32	create(
 	  void		*funcaddr,	/* Address of the function	*/
-	  uint32	ssize,		/* Stack size in words		*/
+	  uint32	ssize,		/* Stack size in bytes		*/
 	  pri16		priority,	/* Process priority > 0		*/
 	  char		*name,		/* Name (for debugging)		*/
 	  uint32	nargs,		/* Number of args that follow	*/
@@ -64,7 +64,7 @@ pid32	create(
 	a = (uint32 *)(&nargs + 1);	/* Start of args		*/
 	a += nargs -1;			/* Last argument		*/
 	for ( ; nargs > 0 ; nargs--)	/* Machine dependent; copy args	*/
-		*--saddr = *a--;	/*   onto created process' stack*/
+		*--saddr = *a--;	/* onto created process's stack	*/
 	*--saddr = (long)INITRET;	/* Push on return address	*/
 
 	/* The following entries on the stack must match what ctxsw	*/

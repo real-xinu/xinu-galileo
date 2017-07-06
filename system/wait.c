@@ -11,7 +11,7 @@ syscall	wait(
 	)
 {
 	intmask mask;			/* Saved interrupt mask		*/
-	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	struct	procent *prptr;		/* Ptr to process's table entry	*/
 	struct	sentry *semptr;		/* Ptr to sempahore table entry	*/
 
 	mask = disable();

@@ -50,7 +50,7 @@ shellcmd xsh_ping(int nargs, char *args[])
 	}
 
 	if(dname == TRUE) {
-		ipaddr = dns_qa(args[1]);
+		ipaddr = dnslookup(args[1]);
 		if((int32)ipaddr == SYSERR) {
 			fprintf(stderr, "DNS cannot resolve %s\n", args[1]);
 			return 1;

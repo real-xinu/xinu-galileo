@@ -23,12 +23,12 @@ int32	rfscomm (
 	/* For the first time after reboot, register the server port */
 
 	if ( ! Rf_data.rf_registered ) {
-		if ( (retval = udp_register(Rf_data.rf_ser_ip,
+		if ( (slot = udp_register(Rf_data.rf_ser_ip,
 				Rf_data.rf_ser_port,
 				Rf_data.rf_loc_port)) == SYSERR) {
 			return SYSERR;
 		}
-		Rf_data.rf_udp_slot = retval;
+		Rf_data.rf_udp_slot = slot;
 		Rf_data.rf_registered = TRUE;
 	}
 

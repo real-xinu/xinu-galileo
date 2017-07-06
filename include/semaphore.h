@@ -1,7 +1,7 @@
 /* semaphore.h - isbadsem */
 
 #ifndef	NSEM
-#define	NSEM		2000	/* Number of semaphores, if not defined	*/
+#define	NSEM		120	/* Number of semaphores, if not defined	*/
 #endif
 
 /* Semaphore state definitions */

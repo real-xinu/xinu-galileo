@@ -57,11 +57,11 @@ extern	struct	dateinfo Date;		/* Global date information	*/
 #define	utim2ltim(x)	((x)-TIMEZONE*SECPERHR)
 #define	ltim2utim(x)	((x)+TIMEZONE*SECPERHR)
 
-#define	TIMERPORT	37		/* UDP port for time server	*/
-#define	TIMELPORT	42345		/* locl UDP port for time	*/
+#define	TIMERPORT	123		/* UDP port for time server	*/
+#define	TIMELPORT	53678		/* local UDP port for time	*/
 
 #ifndef	TIMESERVER
-#define	TIMESERVER	"128.10.2.6"	/* IP address of time server	*/
+#define	TIMESERVER	"128.10.19.24"	/* IP address of NTP time server*/
 #endif
 
 #define	TIMETIMEOUT	2000		/* timeout for time server (ms)	*/

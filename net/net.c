@@ -5,6 +5,7 @@
 
 struct	network	NetData;
 bpid32	netbufpool;
+uint64	netportseed;
 
 /*------------------------------------------------------------------------
  * net_init  -  Initialize network data structures and processes
@@ -25,6 +26,10 @@ void	net_init (void)
 
 	memset((char *)NetData.ethbcast, 0xFF, ETH_ADDR_LEN);
 
+	/* Initialize the random port seed */
+
+	netportseed = getticks();
+
 	/* Create the network buffer pool */
 
 	nbufs = UDP_SLOTS * UDP_QSIZ + ICMP_SLOTS * ICMP_QSIZ + 1;
@@ -38,6 +43,10 @@ void	net_init (void)
 	/* Initialize UDP */
 
 	udp_init();
+
+	/* Initialize TCP */
+
+	tcp_init();
 
 	/* Initialize ICMP */
 
@@ -55,11 +64,11 @@ void	net_init (void)
 
 	/* Create the IP output process */
 
-	resume(create(ipout, NETSTK, NETOUTPRIO, "ipout", 0, NULL));
+	resume(create(ipout, NETSTK, NETPRIO, "ipout", 0, NULL));
 
 	/* Create a network input process */
 
-	resume(create(netin, NETSTK, NETINPRIO, "netin", 0, NULL));
+	resume(create(netin, NETSTK, NETPRIO, "netin", 0, NULL));
 }
 
 
@@ -103,7 +112,7 @@ process	netin ()
 		    case ETH_IP:			/* Handle IP	*/
 			ip_in(pkt);
 			continue;
-
+	
 		    case ETH_IPv6:			/* Handle IPv6	*/
 			freebuf((char *)pkt);
 			continue;
@@ -136,4 +145,14 @@ void 	eth_ntoh(
 	)
 {
 	pktptr->net_ethtype = ntohs(pktptr->net_ethtype);
+}
+
+/*------------------------------------------------------------------------
+ * getport  -  Retrieve a random port number 
+ *------------------------------------------------------------------------
+ */
+uint16 	getport()
+{
+	netportseed = 6364136223846793005ULL * netportseed + 1;
+	return 50000 + ((uint16)((netportseed >> 48)) % 15535);
 }

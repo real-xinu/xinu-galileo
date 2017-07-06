@@ -12,7 +12,7 @@ syscall	send(
 	)
 {
 	intmask	mask;			/* Saved interrupt mask		*/
-	struct	procent *prptr;		/* Ptr to process' table entry	*/
+	struct	procent *prptr;		/* Ptr to process's table entry	*/
 
 	mask = disable();
 	if (isbadpid(pid)) {
@@ -21,7 +21,7 @@ syscall	send(
 	}
 
 	prptr = &proctab[pid];
-	if ((prptr->prstate == PR_FREE) || prptr->prhasmsg) {
+	if (prptr->prhasmsg) {
 		restore(mask);
 		return SYSERR;
 	}

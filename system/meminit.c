@@ -11,7 +11,7 @@ void	*maxheap;		/* Highest valid heap address		*/
 
 uint32	bootsign = 1;		/* Boot signature of the boot loader	*/
 
-struct	mbootinfo *bootinfo = (struct mbootinfo *)1;	
+struct	mbootinfo *bootinfo = (struct mbootinfo *)1;
 				/* Base address of the multiboot info	*/
 				/*  provided by GRUB, initialized just	*/
 				/*  to guarantee it is in the DATA	*/
@@ -30,7 +30,7 @@ struct __attribute__ ((__packed__)) sd {
 	unsigned char	sd_hibase;
 };
 
-#define	NGD			8	/* Number of global descriptor entries	*/
+#define	NGD			4	/* Number of global descriptor entries	*/
 #define FLAGS_GRANULARITY	0x80
 #define FLAGS_SIZE		0x40
 #define	FLAGS_SETTINGS		(FLAGS_GRANULARITY | FLAGS_SIZE)
@@ -44,12 +44,6 @@ struct sd gdt_copy[NGD] = {
 /* 2nd, Kernel Data Segment */
 {       0xffff,          0,           0,      0x92,         0xcf,        0, },
 /* 3rd, Kernel Stack Segment */
-{       0xffff,          0,           0,      0x92,         0xcf,        0, },
-/* 4st, Bootp Code Segment */
-{       0xffff,          0,           0,      0x9a,         0xcf,        0, },
-/* 5th, Code Segment for BIOS32 request */
-{       0xffff,          0,           0,      0x9a,         0xcf,        0, },
-/* 6th, Data Segment for BIOS32 request */
 {       0xffff,          0,           0,      0x92,         0xcf,        0, },
 };
 
@@ -66,7 +60,7 @@ void	meminit(void) {
 	struct	mbmregion	*mmap_addrend;	/* Ptr to end of mmap region	*/
 	struct	memblk	*next_memptr;	/* Ptr to next memory block	*/
 	uint32	next_block_length;	/* Size of next memory block	*/
-	
+
 	mmap_addr = (struct mbmregion*)NULL;
 	mmap_addrend = (struct mbmregion*)NULL;
 
@@ -74,12 +68,12 @@ void	meminit(void) {
 	memptr = &memlist;
 	memptr->mnext = (struct memblk *)NULL;
 	memptr->mlength = 0;
-	
+
 	/* Initialize the memory counters */
 	/*    Heap starts at the end of Xinu image */
 	minheap = (void*)&end;
 	maxheap = minheap;
-	
+
 	/* Check if Xinu was loaded using the multiboot specification	*/
 	/*   and a memory map was included				*/
 	if(bootsign != MULTIBOOT_SIGNATURE) {
@@ -88,10 +82,10 @@ void	meminit(void) {
 	if(!(bootinfo->flags & MULTIBOOT_BOOTINFO_MMAP)) {
 		panic("no mmap found in boot info");
 	}
-	
+
 	/* Get base address of mmap region (passed by GRUB) */
 	mmap_addr = (struct mbmregion*)bootinfo->mmap_addr;
-		
+
 	/* Calculate address that follows the mmap block */
 	mmap_addrend = (struct mbmregion*)((uint8*)mmap_addr + bootinfo->mmap_length);
 
@@ -103,7 +97,7 @@ void	meminit(void) {
 			mmap_addr = (struct mbmregion*)((uint8*)mmap_addr + mmap_addr->size + 4);
 			continue;
 		}
-			
+
 		if((uint32)maxheap < ((uint32)mmap_addr->base_addr + (uint32)mmap_addr->length)) {
 			maxheap = (void*)((uint32)mmap_addr->base_addr + (uint32)mmap_addr->length);
 		}
@@ -113,7 +107,7 @@ void	meminit(void) {
 			mmap_addr = (struct mbmregion*)((uint8*)mmap_addr + mmap_addr->size + 4);
 			continue;
 		}
-		
+
 		/* The block is usable, so add it to Xinu's memory list */
 
 		/* This block straddles the end of the Xinu image */
@@ -134,7 +128,7 @@ void	meminit(void) {
 			/* Initialize the length of the block */
 			next_block_length = (uint32)truncmb(mmap_addr->length);
 		}
-		
+
 		/* Add then new block to the free list */
 		memptr->mnext = next_memptr;
 		memptr = memptr->mnext;
@@ -176,10 +170,6 @@ void	setsegs()
 
 	psd = &gdt_copy[3];	/* Kernel stack segment */
 	psd->sd_lolimit = ds_end;
-	psd->sd_hilim_fl = FLAGS_SETTINGS | ((ds_end >> 16) & 0xff);
-
-	psd = &gdt_copy[4];	/* Bootp code segment */
-	psd->sd_lolimit = ds_end;   /* Allows execution of 0x100000 CODE */
 	psd->sd_hilim_fl = FLAGS_SETTINGS | ((ds_end >> 16) & 0xff);
 
 	memcpy(gdt, gdt_copy, sizeof(gdt_copy));
