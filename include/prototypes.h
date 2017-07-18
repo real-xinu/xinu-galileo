@@ -118,6 +118,9 @@ extern	pid32	getpid(void);
 /* in file getprio.c */
 extern	syscall	getprio(pid32);
 
+/* in file getrandomport*/
+extern uint16 getrandomport(void);
+
 /* in file getstk.c */
 extern	char	*getstk(uint32);
 

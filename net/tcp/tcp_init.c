@@ -41,7 +41,7 @@ int32	tcp_init(void)
 	/* Initialize values in the Tcp strcuture */
 
 	Tcp.tcpmutex = semcreate (1);
-	Tcp.tcpnextport = 33000;
+	Tcp.tcpnextport = getrandomport();
 
 	Tcp.tcpcmdq = mqcreate (10);
 
