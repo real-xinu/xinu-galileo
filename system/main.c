@@ -1,23 +1,48 @@
 /*  main.c  - main */
 
 #include <xinu.h>
+extern struct tcpcontrol Tcp; /* TCP Control			*/
 
-process	main(void)
-{
+process main(void) {
 
-	/* Run the Xinu shell */
+    /* Run the Xinu shell */
 
-	recvclr();
-	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
+    recvclr();
+    //Ad hoc TCP Test
+    kprintf("Next Port: %d\n\n", Tcp.tcpnextport);
+    int32 slot;
+    int i;
 
-	/* Wait for shell to exit and recreate it */
+    /* Connect to 128.10.136.101:50000 */
+    uint32 serverip;
+    //128.10.136.60
+    //128.10.135.31
 
-	while (TRUE) {
-		receive();
-		sleepms(200);
-		kprintf("\n\nMain process recreating shell\n\n");
-		resume(create(shell, 4096, 20, "shell", 1, CONSOLE));
-	}
-	return OK;
+
+    char string[292000];
     
+    for (i = 0; i < 5; i++) {
+        dot2ip("128.10.136.60", &serverip);
+        slot = tcp_register(serverip, 2004, 1);
+
+        kprintf("Sending Iteration: %d\n", i);
+        tcp_send(slot, string, 233600);
+        tcp_close(slot);
+    }
+    
+
+
+
+    resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
+
+    /* Wait for shell to exit and recreate it */
+
+    while (TRUE) {
+        receive();
+        sleepms(200);
+        kprintf("\n\nMain process recreating shell\n\n");
+        resume(create(shell, 4096, 20, "shell", 1, CONSOLE));
+    }
+    return OK;
+
 }
