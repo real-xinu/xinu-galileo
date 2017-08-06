@@ -19,14 +19,14 @@ process main(void) {
     //128.10.135.31
 
 
-    char string[292000];
+    char string[14600];
     
     for (i = 0; i < 5; i++) {
         dot2ip("128.10.136.60", &serverip);
         slot = tcp_register(serverip, 2004, 1);
 
         kprintf("Sending Iteration: %d\n", i);
-        tcp_send(slot, string, 233600);
+        tcp_send(slot, string, 14600);
         tcp_close(slot);
     }
     

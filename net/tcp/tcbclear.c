@@ -33,7 +33,7 @@ void	tcbclear(
 	ptcb->tcb_ssyn = 0;
 	ptcb->tcb_sfin = 0;
 	ptcb->tcb_spush = 0;
-	ptcb->tcb_cwnd = ptcb->tcb_mss * 3;
+	ptcb->tcb_cwnd = 65000;
 	ptcb->tcb_ssthresh = 0;
 	ptcb->tcb_dupacks = 0;
 	ptcb->tcb_srtt = 0;
