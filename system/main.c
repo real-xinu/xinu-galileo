@@ -9,9 +9,9 @@ process main(void) {
 
     recvclr();
     //Ad hoc TCP Test
-    kprintf("Next Port: %d\n\n", Tcp.tcpnextport);
+    kprintf("PR 500 - Next Port: %d\n\n", Tcp.tcpnextport);
     int32 slot;
-    int i;
+    int i, j;
 
     /* Connect to 128.10.136.101:50000 */
     uint32 serverip;
@@ -19,18 +19,18 @@ process main(void) {
     //128.10.135.31
 
 
-    char string[14600];
-    
-    for (i = 0; i < 5; i++) {
-        dot2ip("128.10.136.60", &serverip);
+    char string[58400];
+
+    for (j = 0; j < 5; j++) {
+        kprintf("Trial: %d\n", j + 1);
+
+        dot2ip("128.10.136.61", &serverip);
         slot = tcp_register(serverip, 2004, 1);
 
-        kprintf("Sending Iteration: %d\n", i);
-        tcp_send(slot, string, 14600);
+        tcp_send(slot, string, 58400);
+
         tcp_close(slot);
     }
-    
-
 
 
     resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
