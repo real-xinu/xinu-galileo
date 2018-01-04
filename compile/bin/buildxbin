@@ -7,6 +7,10 @@
 #########################################################################
 
 use strict;
+use Cwd 'abs_path';
+use File::Basename;
+
+my $bin_path = dirname(abs_path($0));
 
 my $header_version = 0;       # xboot header version
 my $header_size = 512;        # xboot header size
@@ -20,7 +24,8 @@ my $xinu_img_out = shift or die "Usage: buildxbin xinu.bin xinu.xbin\n";
 my $xinu_img_size = -s $xinu_img_in;
 
 # Determine the image checksum
-my $checksum = `/usr/bin/crc32 $xinu_img_in`;
+#my $checksum = `/usr/bin/crc32 $xinu_img_in`;
+my $checksum = `/usr/bin/python $bin_path/crc32.py $xinu_img_in`;
 chomp $checksum;
 my $checksum_int = hex $checksum;
 
