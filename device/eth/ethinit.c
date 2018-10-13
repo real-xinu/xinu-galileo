@@ -48,7 +48,7 @@ uint16	eth_phy_read	(
 void	eth_phy_write	(
 	  volatile	struct eth_q_csreg *csrptr, /* CSR address	*/
 	  uint32	regnum,			    /* Register		*/
-			uint16	value		    /* Value to write	*/
+	  uint16	value			    /* Value to write	*/
 	)
 {
 	uint32	retries; /* No. of retries for write */
