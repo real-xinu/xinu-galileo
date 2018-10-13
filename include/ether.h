@@ -31,7 +31,9 @@ struct	etherPkt {
 
 #define	ETH_MAX_PKT_LEN	( ETH_HDR_LEN + ETH_VLAN_LEN + ETH_MTU )
 
-#define	ETH_BUF_SIZE		1522	/* 1500 MTU + 14 ETH Header + 4 bytes optional VLAN Tagging + 4 Bytes CRC */
+#define	ETH_BUF_SIZE		1522	/* 1500 MTU + 14 ETH header + 4	*/
+					/* bytes optional VLAN Tagging  */
+					/* + 4 Bytes CRC		*/
 
 /* State of the Ethernet interface */
 
@@ -60,7 +62,7 @@ struct	etherPkt {
 struct	ethcblk	{
 	byte	state; 		/* ETH_STATE_... as defined above 	*/
 	struct	dentry	*phy;	/* physical eth device for Tx DMA 	*/
-	byte 	type; 		/* NIC type_... as defined above 	*/
+	byte 	type; 		/* NIC_TYPE_... as defined above 	*/
 
 	/* Pointers to associated structures */
 
