@@ -34,7 +34,7 @@ pid32	enqueue(
  *------------------------------------------------------------------------
  */
 pid32	dequeue(
-	  qid16		q		/* ID queue to use		*/
+	  qid16		q		/* ID of queue to use		*/
 	)
 {
 	pid32	pid;			/* ID of process removed	*/
