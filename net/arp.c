@@ -342,7 +342,7 @@ void 	arp_ntoh(
 }
 
 /*------------------------------------------------------------------------
- * arp_hton  -  Convert ARP packet fields from net to host byte order
+ * arp_hton  -  Convert ARP packet fields from host to net byte order
  *------------------------------------------------------------------------
  */
 void 	arp_hton(
