@@ -382,7 +382,7 @@ process	ipout(void)
 		destip = pktptr->net_ipdst;
 
 
-		/* Sanity check: packets sent to ioout should *not*	*/
+		/* Sanity check: packets sent to ipout should *not*	*/
 		/*	contain	a broadcast address.			*/
 
 		if ((destip == IP_BCAST)||(destip == NetData.ipbcast)) {
