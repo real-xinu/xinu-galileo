@@ -13,16 +13,16 @@
  */
 struct	uart_csreg
 {
-	volatile uint32	buffer;	/* receive buffer (when read)		*/
+	volatile byte	buffer;	/* receive buffer (when read)		*/
 				/*   OR transmit hold (when written)	*/
-	volatile uint32	ier;	/* interrupt enable			*/
-	volatile uint32	iir;	/* interrupt identification (when read)	*/
+	volatile byte	ier;	/* interrupt enable			*/
+	volatile byte	iir;	/* interrupt identification (when read)	*/
 				/*   OR FIFO control (when written)	*/
-	volatile uint32	lcr;	/* line control register		*/
-	volatile uint32	mcr;	/* modem control register		*/
-	volatile uint32	lsr;	/* line status register			*/
-	volatile uint32	msr;	/* modem status register		*/
-	volatile uint32	scr;	/* scratch register			*/
+	volatile byte	lcr;	/* line control register		*/
+	volatile byte	mcr;	/* modem control register		*/
+	volatile byte	lsr;	/* line status register			*/
+	volatile byte	msr;	/* modem status register		*/
+	volatile byte	scr;	/* scratch register			*/
 };
 
 /* Alternative names for control and status registers */

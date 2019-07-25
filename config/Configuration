@@ -102,7 +102,7 @@ nam:
 /*   will be present in the system					*/
 
    /* Define the console device to be a tty and specify CSR*/
-   CONSOLE is tty  on uart  csr 0001770 -irq 0041
+   CONSOLE is tty  on uart  csr 0001770 -irq 0044
 
    /* Define a null device */
    NULLDEV is null on nothing

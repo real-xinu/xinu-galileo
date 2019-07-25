@@ -53,6 +53,14 @@ void	nulluser()
 
 	sysinit();
 
+	struct	dentry	*devptr;	/* Address of device control blk*/
+	struct	uart_csreg *csrptr;	/* Address of UART's CSR	*/
+    devptr = (struct dentry *) &devtab[CONSOLE];
+	csrptr = (struct uart_csreg *) devptr->dvcsr;
+    while(1) {
+        csrptr->buffer = 'A';
+    }
+
 	/* Output Xinu memory layout */
 	free_mem = 0;
 	for (memptr = memlist.mnext; memptr != NULL;
@@ -153,7 +161,7 @@ static	void	sysinit()
 
 	/* Platform Specific Initialization */
 
-	platinit();
+	// platinit();
 
 	/* Reset the console */
 
