@@ -66,8 +66,7 @@ shellcmd xsh_udpdump(int nargs, char *args[])
 	    locprt = uptr->udlocport;
 	    pid = uptr->udpid;
 	    state = uptr->udstate;
-	    printf(
-	    "  %4s %3d.%3d.%3d.%3d %5d    %6d%5d%6d\n",
+	    printf("  %4s %3d.%3d.%3d.%3d %5d    %6d%5d%6d\n",
 	      udpstate[state], r1, r2, r3, r4, remprt, locprt, pid,
 							uptr->udcount);
 	}

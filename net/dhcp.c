@@ -64,7 +64,7 @@ void 	dhcp_bld_bootp_msg(struct dhcpmsg* dmsg)
 	memset(&dmsg->dc_chaddr,'\0',16);/* Client hardware address	*/
 	memcpy(&dmsg->dc_chaddr, NetData.ethucast, ETH_ADDR_LEN);
 	memset(&dmsg->dc_bootp,'\0',192);/* Zero the bootp area		*/
-	dmsg->dc_cookie = htonl(0x63825363); /* Magic cookie for DHCP	*/
+	dmsg->dc_cookie = htonl(0x63825363U); /* Magic cookie for DHCP	*/
 }
 
 /*------------------------------------------------------------------------

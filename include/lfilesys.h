@@ -77,7 +77,7 @@ struct	lfiblk		{		/* Format of index block	*/
 
 /* File System ID */
 
-#define	LFS_ID		0x58696E75	/* ID for Xinu Local File System*/
+#define	LFS_ID		0x58696E75U	/* ID for Xinu Local File System*/
 
 /* Conversion functions below assume 7 index blocks per disk block */
 

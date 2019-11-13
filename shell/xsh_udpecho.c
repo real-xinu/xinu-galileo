@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern	int	atoi(char *);
+
 /*------------------------------------------------------------------------
  * xsh_udpecho - shell command that can send a message to a remote UDP
  *			echo server and receive a reply
@@ -18,11 +20,10 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 	int32	slot;			/* UDP slot to use		*/
 	int32	msglen;			/* length of outgoing message	*/
 	uint32	remoteip;		/* remote IP address to use	*/
-	//uint32	localip;		/* local IP address to use	*/
-	uint16	echoport= 7;		/* port number for UDP echo	*/
+	uint16	remport= 7;		/* remote port number to use	*/
 	uint16	locport	= 52743;	/* local port to use		*/
 	int32	retries	= 3;		/* number of retries		*/
-	int32	delay	= 2000;		/* reception delay in ms	*/
+	int32	delay	= 500;		/* reception delay in ms	*/
 
 	/* For argument '--help', emit help about the 'udpecho' command	*/
 
@@ -39,7 +40,7 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 	/* Check for valid IP address argument */
 
 	if (nargs != 2) {
-		fprintf(stderr, "%s: invalid argument(s)\n", args[0]);
+		fprintf(stderr, "%s: invalid number of argument(s)\n", args[0]);
 		fprintf(stderr, "Try '%s --help' for more information\n",
 				args[0]);
 		return 1;
@@ -50,19 +51,21 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 			args[0]);
 		return 1;
 	}
-	/*
-	localip = getlocalip();
-	if (localip == SYSERR) {
-		fprintf(stderr,
-			"%s: could not obtain a local IP address\n",
-			args[0]);
-		return 1;
+	if (nargs == 3) {
+		retval = atoi(args[2]);
+		if ( (retval <= 0) || (retval > 64535) ) {
+			fprintf(stderr, "%s: invalid port argument\r\n",
+				args[0]);
+			return 1;
+		}
+		remport = (uint16) retval;
 	}
-	*/
+
+	fprintf(stderr, "using remote port %d\n", remport);
 
 	/* register local UDP port */
 
-	slot = udp_register(remoteip, echoport, locport);
+	slot = udp_register(remoteip, remport, locport);
 	if (slot == SYSERR) {
 		fprintf(stderr, "%s: could not reserve UDP port %d\n",
 				args[0], locport);

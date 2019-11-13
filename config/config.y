@@ -17,20 +17,11 @@
 #include <string.h>
 #include <ctype.h>
 
+/* Avoid warnings for undeclared items */
+
 extern	char	*yytext;
-/*
-   Work-around for the type conflict that results from unmatched versions
-   of flex and bison (lex and yacc).  The idea is to force the new flex
-   style so the output file (lex.yy.c) treats yyleng as an int (as was
-   done by oldest lex versions) instead of a size_t.  We override the
-   new flex typedef of yy_size_t.
-*/
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef int yy_size_t;
-#endif
-/* End work-around */
 extern	int	yyleng;
+extern	int	yylex(void);
 
 
 /********************************************************************************/

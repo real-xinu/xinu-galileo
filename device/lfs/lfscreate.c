@@ -40,7 +40,14 @@ status	lfscreate (
 	/* Create an initial directory */
 
 	memset((char *)&dir, NULLCH, sizeof(struct lfdir));
+	dir.lfd_fsysid = LFS_ID;
 	dir.lfd_nfiles = 0;
+	dir.lfd_allzeros = 0;
+	dir.lfd_allones = 0xffffffff;
+	dir.lfd_revid = ((LFS_ID>>24) & 0x000000ff) | 
+                  ((LFS_ID>> 8) & 0x0000ff00) |
+                  ((LFS_ID<< 8) & 0x00ff0000) |
+                  ((LFS_ID<<24) & 0xff000000) ;
 	dbindex= (dbid32)(ibsectors + 1);
 	dir.lfd_dfree = dbindex;
 	dblks = sectors - ibsectors - 1;
