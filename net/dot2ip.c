@@ -34,11 +34,12 @@ uint32	dot2ip (
 			}
 		}
 
-		/* Too many digits or non-digit is an error */
+		/*  Non-digit is an error */
 
-		if ( (nch>=3) || (ch<'0') || (ch>'9') ) {
+		if ( (ch<'0') || (ch>'9') ) {
 			return SYSERR;
 		}
+
 		val = 10*val + (ch-'0');
 	    }
 
@@ -51,7 +52,7 @@ uint32	dot2ip (
 		break;
 	    }
 	}
-	if ( (seg >= 4) || (ch != NULLCH) ) {
+	if ( (seg != 3) || (ch != NULLCH) ) {
 		return SYSERR;
 	}
 	*result = ipaddr;
