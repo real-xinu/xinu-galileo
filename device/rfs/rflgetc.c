@@ -15,9 +15,13 @@ devcall	rflgetc(
 
 	retval = rflread(devptr, &ch, 1);
 
-	if (retval != 1) {
+	if (retval == TIMEOUT) {
+		return TIMEOUT;
+	} else if ( (retval == EOF) || (retval == 0) ) {
+		return EOF;
+	} else if (retval != 1) {
 		return SYSERR;
 	}
 
-	return (devcall)ch;
+	return (devcall)(ch&0xff);
 }

@@ -96,5 +96,8 @@ devcall	rflread (
 	rfptr->rfpos += ntohl(resp.rf_len);
 
 	signal(Rf_data.rf_mutex);
+	if (ntohl(resp.rf_len) == 0) {
+		return EOF;
+	}
 	return ntohl(resp.rf_len);
 }

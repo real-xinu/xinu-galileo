@@ -17,7 +17,6 @@ shellcmd xsh_ping(int nargs, char *args[])
 	char	buf[56];		/* buffer of chars		*/
 	int32	i;			/* index into buffer		*/
 	int32	nextval;		/* next value to use		*/
-	bool8	dname;
 
 	/* For argument '--help', emit help about the 'ping' command	*/
 
@@ -40,35 +39,14 @@ shellcmd xsh_ping(int nargs, char *args[])
 		return 1;
 	}
 
-	dname = FALSE;
-	for(i = 0; i < strlen(args[1]); i++) {
-		if( ( (args[1][i] >= 65) && (args[1][i] <= 90) ) ||
-		    ( (args[1][i] >= 97) && (args[1][i] <= 122)) ) {
-		    	dname = TRUE;
-			break;
-		}
+	if(dnslookup(args[1], &ipaddr) == SYSERR) {
+		fprintf(stderr, "DNS cannot resolve %s\n", args[1]);
+		return 1;
 	}
-
-	if(dname == TRUE) {
-		ipaddr = dnslookup(args[1]);
-		if((int32)ipaddr == SYSERR) {
-			fprintf(stderr, "DNS cannot resolve %s\n", args[1]);
-			return 1;
-		}
-		printf("Pinging %d.%d.%d.%d\n", (ipaddr>>24)&0xff,
+	printf("Pinging %d.%d.%d.%d\n", (ipaddr>>24)&0xff,
 						(ipaddr>>16)&0xff,
 						(ipaddr>>8)&0xff,
 						(ipaddr)&0xff);
-	}
-	else {
-		/* convert argument to binary */
-
-		retval = dot2ip(args[1], &ipaddr);
-		if ((int32)retval == SYSERR) {
-			fprintf(stderr, "%s: invalid IP address\n", args[0]);
-			return 1;
-		}
-	}
 
 	/* Register to receive an ICMP Echo Reply */
 
@@ -90,18 +68,19 @@ shellcmd xsh_ping(int nargs, char *args[])
 	retval = icmp_send(ipaddr, ICMP_ECHOREQST, slot,
 					seq++, buf, sizeof(buf));
 	if (retval == SYSERR) {
-		fprintf(stderr, "%s: no response from host %s\n", args[0], args[1]);
+		fprintf(stderr, "%s: cannot send ping\n", args[0]);
 		icmp_release(slot);
 		return 1;
 	}
 
-	/* Read a reply */
+	/* Read a reply, waiting up to 3 seconds */
 
 	retval = icmp_recv(slot, buf, sizeof(buf), 3000);
 	icmp_release(slot);
 	if (retval == TIMEOUT) {
 		fprintf(stderr, "%s: no response from host %s\n", args[0],
 					args[1]);
+		icmp_release(slot);
 		return 1;
 	}
 
@@ -110,5 +89,6 @@ shellcmd xsh_ping(int nargs, char *args[])
 			sizeof(buf), retval);
 		}
 	fprintf(stderr, "host %s is alive\n", args[1]);
+	icmp_release(slot);
 	return 0;
 }

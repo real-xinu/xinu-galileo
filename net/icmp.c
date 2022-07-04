@@ -74,9 +74,19 @@ void	icmp_in(
 	/*    in incomming packet matches IP address in table	*/
 
 	icmptr = &icmptab[slot];
-	if ( (icmptr->icstate == ICMP_FREE) ||
-	     (pkt->net_ipsrc != icmptr->icremip) ) {
-		freebuf((char *)pkt);	/* discard packet */
+	if (icmptr->icstate == ICMP_FREE) {
+		freebuf((char *)pkt);
+		restore(mask);
+		return;
+	}
+
+	/* Check address in incoming packet */
+	
+	if ( (pkt->net_ipsrc != icmptr->icremip) &&
+	     (pkt->net_ipsrc != NetData.ipucast) &&
+	     ( (pkt->net_ipsrc&0x7f000000) !=
+			0x7f000000 ) ) {
+		freebuf((char *)pkt);
 		restore(mask);
 		return;
 	}

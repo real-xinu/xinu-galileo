@@ -40,7 +40,7 @@ devcall	lflcontrol (
 		return retval;	
 
 	default:
-		kprintf("lfcontrol: function %d not valid\n\r", func);
+		kprintf("lfcontrol: function %d not valid\n", func);
 		signal(lfptr->lfmutex);
 		return SYSERR;
 	}

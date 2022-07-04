@@ -14,23 +14,22 @@ devcall	rdscontrol (
 	)
 {
 	struct	rdscblk	*rdptr;		/* Pointer to control block	*/
-	struct	rdbuff	*bptr;		/* Ptr to buffer that will be	*/
-					/*   placed on the req. queue	*/
-	struct	rdbuff	*pptr;		/* Ptr to "previous" node on	*/
-					/*   a list			*/
+	struct	rdqnode	*rptr;		/* Pointer to a request node	*/
 	struct	rd_msg_dreq msg;	/* Buffer for delete request	*/
 	struct	rd_msg_dres resp;	/* Buffer for delete response	*/
 	char	*to, *from;		/* Used during name copy	*/
 	int32	retval;			/* Return value			*/
+	uint32	mypid;			/* PID of the calling process	*/
+	pri16	myprio;			/* Process priority		*/
 
-	/* Verify that device is currently open */
+	/* If the device not currently open, report an error */
 
 	rdptr = &rdstab[devptr->dvminor];
 	if (rdptr->rd_state != RD_OPEN) {
 		return SYSERR;
 	}
 
-	/* Ensure rdsprocess is runnning */
+	/* Ensure the communication process is runnning */
 
 	if ( ! rdptr->rd_comruns ) {
 		rdptr->rd_comruns = TRUE;
@@ -43,46 +42,46 @@ devcall	rdscontrol (
 
 	case RDS_CTL_SYNC:
 
-		/* Allocate a buffer to use for the request list */
+		/* If request queue is empty, return immediately */
 
-		bptr = rdsbufalloc(rdptr);
-		if (bptr == (struct rdbuff *)SYSERR) {
-			return SYSERR;
+		if (rdptr->rd_qhead == (struct rdqnode *)NULL) {
+			return OK;
 		}
 
-		/* Form a sync request */
+		/* Allocate a request node and fill in a sync request */
 
-		bptr->rd_op = RD_OP_SYNC;
-		bptr->rd_refcnt = 1;
-		bptr->rd_blknum = 0;		/* Unused */
-		bptr->rd_status = RD_INVALID;
-		bptr->rd_pid = getpid();
+		rptr = rdptr->rd_qfree;
+		rdptr->rd_qfree = rptr->rd_next;
+		rptr->rd_op = RD_OP_SYNC;
+		rptr->rd_blknum = 0;		/* unused */
+		rptr->rd_callbuf = NULL;	/* unused */
+		mypid = getpid();
+		rptr->rd_pid = mypid;
 
-		/* Insert new request into list just before tail */
+		/* Insert the new request at the tail of the queue */
 
-		pptr = rdptr->rd_rtprev;
-		rdptr->rd_rtprev = bptr;
-		bptr->rd_next = pptr->rd_next;
-		bptr->rd_prev = pptr;
-		pptr->rd_next = bptr;
-
-		/* Prepare to wait until item is processed */
-
-		recvclr();
-
-		/* Signal then semaphore to start communication */
-
-		signal(rdptr->rd_reqsem);
-
-		/* Block to wait for a message */
-
-		bptr = (struct rdbuff *)receive();
-		if (bptr == (struct rdbuff *)SYSERR) {	
-			return SYSERR;
+		rptr->rd_next = (struct rdqnode *)NULL;
+		rptr->rd_prev = rdptr->rd_qtail;
+		if (rdptr->rd_qtail == (struct rdqnode *)NULL) {
+			/* Request queue was empty */
+			rdptr->rd_qhead = rptr;
 		}
-		break;
+		rdptr->rd_qtail = rptr;
 
-	/* Delete the remote disk (entirely remove it) */
+		/* Atomically signal the comm. process semaphore and	*/
+		/*   suspend the current process by temporarily setting	*/
+		/*   the process  prirority to the highest possible	*/
+		/*   value, performing the two actions, and then	*/
+		/*   resetting the priority to its original value when	*/
+		/*   the process is awakened				*/
+
+		myprio = rdssetprio(MAXPRIO);
+		signal(rdptr->rd_comsem);
+		suspend(getpid());
+		myprio = rdssetprio(myprio);
+		return OK;
+
+		/* Delete the remote disk (entirely remove it) */
 
 	case RDS_CTL_DEL:
 
@@ -107,25 +106,17 @@ devcall	rdscontrol (
 					sizeof(struct rd_msg_dres),
 					rdptr);
 
-		/* Check response */
+		/* Check the response */
 
-		if (retval == SYSERR) {
-			return SYSERR;
-		} else if (retval == TIMEOUT) {
-			kprintf("Timeout during remote file delete\n\r");
-			return SYSERR;
-		} else if (ntohs(resp.rd_status) != 0) {
+		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
+		     (ntohs(resp.rd_status) != 0) ) {
 			return SYSERR;
 		}
-
-		/* Close local device */
-
-		return rdsclose(devptr);
+		return OK;
 
 	default:
-		kprintf("rfsControl: function %d not valid\n\r", func);
+		kprintf("rsscontrol: invalid function %d\n");
 		return SYSERR;
 	}
-
 	return OK;
 }

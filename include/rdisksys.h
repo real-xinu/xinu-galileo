@@ -10,31 +10,36 @@
 
 /* Global data for the remote disk server */
 
-#ifndef	RD_SERVER_IP
-#define	RD_SERVER_IP	"255.255.255.255"
+#ifndef	RD_SERVER
+#define	RD_SERVER	"example.com"
 #endif
 
 #ifndef	RD_SERVER_PORT
-#define	RD_SERVER_PORT	33124
+#define	RD_SERVER_PORT	53124
 #endif
 
 #ifndef	RD_LOC_PORT
-#define	RD_LOC_PORT	33124		/* Base port number - minor dev	*/
+#define	RD_LOC_PORT	53124		/* Base port number - minor dev	*/
 					/*   number is added to insure	*/
 					/*   that each device is unique	*/
 #endif
 
-/* Control block for remote disk device */
+#define	RD_QNODES	NPROC		/* Number of request nodes	*/
+#define	RD_CNODES	32		/* Number of cache buffers	*/
+
+
+/* Constants for remote disk device control block */
 
 #define	RD_IDLEN	64		/* Size of a remote disk ID	*/
-#define	RD_BUFFS	64		/* Number of disk buffers	*/
 #define	RD_STACK	16384		/* Stack size for comm. process	*/
 #define	RD_PRIO		200		/* Priorty of comm. process	*/
+					/*  (Must be higher than any	*/
+					/*   process that reads/writes	*/
 
 /* Constants for state of the device */
 
-#define	RD_FREE		 0		/* Device is available		*/
-#define	RD_OPEN		 1		/* Device is open (in use)	*/
+#define	RD_CLOSED	 0		/* Device is not in use		*/
+#define	RD_OPEN		 1		/* Device is open		*/
 #define	RD_PEND		 2		/* Open is pending		*/
 
 /* Operations for request queue */
@@ -43,53 +48,41 @@
 #define	RD_OP_WRITE	2		/* Write operation on req. list	*/
 #define	RD_OP_SYNC	3		/* Sync operation on req. list	*/
 
-/* Status values for a buffer */
+/* Definition of a request queue node */
 
-#define	RD_VALID	0		/* Buffer contains valid data	*/
-#define	RD_INVALID	1		/* Buffer does not contain data	*/
-
-/* Definition of a buffer with a header that allows the same node to be	*/
-/*  used as a request on the request queue, an item in the cache, or a	*/
-/*  node on the free list of buffers					*/
-
-struct	rdbuff	{			/* Request list node		*/
-	struct	rdbuff	*rd_next;	/* Ptr to next node on a list	*/
-	struct	rdbuff	*rd_prev;	/* Ptr to prev node on a list	*/
+struct	rdqnode {			/* Node in the request queue	*/
+	struct	rdqnode	*rd_next;	/* Pointer to next node		*/
+	struct	rdqnode	*rd_prev;	/* Pointer to previous node	*/
 	int32	rd_op;			/* Operation - read/write/sync	*/
-	int32	rd_refcnt;		/* Reference count of processes	*/
-					/*   reading the block		*/
-	uint32	rd_blknum;		/* Block number of this block	*/
-	int32	rd_status;		/* Is buffer currently valid?	*/
-	pid32	rd_pid;			/* Process that initiated a	*/
-					/*   read request for the block	*/
-	char	rd_block[RD_BLKSIZ];	/* Space to hold one disk block	*/
+	uint32	rd_blknum;		/* Disk block number requested	*/
+	char	*rd_callbuf;		/* Address of caller's buffer	*/
+	pid32	rd_pid;			/* Process that initiated the	*/
+};					/*   request			*/
+
+/* Definition of a node in the cache */
+
+struct	rdcnode {			/* Node in the cache		*/
+	struct	rdcnode	*rd_next;	/* Pointer to next node		*/
+	struct	rdcnode	*rd_prev;	/* Pointer to previous node	*/
+	uint32	rd_blknum;		/* Number of this disk block	*/
+	byte	rd_data[RD_BLKSIZ];	/* Data for the disk block	*/
 };
 
-struct	rdscblk	{
+/* Device control block for a remote disk */
+
+struct	rdscblk	{			/* Remote disk control block	*/
 	int32	rd_state;		/* State of device		*/
 	char	rd_id[RD_IDLEN];	/* Disk ID currently being used	*/
 	int32	rd_seq;			/* Next sequence number to use	*/
-	/* Request queue head and tail */
-	struct	rdbuff	*rd_rhnext;	/* Head of request queue: next	*/
-	struct	rdbuff	*rd_rhprev;	/*   and previous		*/
-	struct	rdbuff	*rd_rtnext;	/* Tail of request queue: next	*/
-	struct	rdbuff	*rd_rtprev;	/*   (null) and previous	*/
-
-	/* Cache head and tail */
-
-	struct	rdbuff	*rd_chnext;	/* Head of cache: next and	*/
-	struct	rdbuff	*rd_chprev;	/*   previous			*/
-	struct	rdbuff	*rd_ctnext;	/* Tail of cache: next (null)	*/
-	struct	rdbuff	*rd_ctprev;	/*   and previous		*/
-
-	/* Free list head (singly-linked) */
-
-	struct	rdbuff	*rd_free;	/* Pointer to free list		*/
-
+	struct	rdcnode	*rd_chead;	/* Head of cache		*/
+	struct	rdcnode	*rd_ctail;	/* Tail of cache		*/
+	struct	rdcnode	*rd_cfree;	/* Free list of cache nodes	*/
+	struct	rdqnode	*rd_qhead;	/* Head of request queue	*/
+	struct	rdqnode	*rd_qtail;	/* Tail of request queue	*/
+	struct	rdqnode	*rd_qfree;	/* Free list of request nodes	*/
 	pid32	rd_comproc;		/* Process ID of comm. process	*/
 	bool8	rd_comruns;		/* Has comm. process started?	*/
-	sid32	rd_availsem;		/* Semaphore ID for avail buffs	*/
-	sid32	rd_reqsem;		/* Semaphore ID for requests	*/
+	sid32	rd_comsem;		/* Semaphore ID for com process	*/
 	uint32	rd_ser_ip;		/* Server IP address		*/
 	uint16	rd_ser_port;		/* Server UDP port		*/
 	uint16	rd_loc_port;		/* Local (client) UPD port	*/
@@ -97,18 +90,17 @@ struct	rdscblk	{
 	int32	rd_udpslot;		/* Registered UDP slot		*/
 };
 
-
 extern	struct	rdscblk	rdstab[];	/* Remote disk control block	*/
 
 /* Definitions of parameters used during server access */
 
 #define	RD_RETRIES	3		/* Times to retry sending a msg	*/
-#define	RD_TIMEOUT	2000		/* Timeout for reply (2 seconds)*/
+#define	RD_TIMEOUT	1000		/* Timeout for reply (1 second)	*/
 
-/* Control functions for a remote file pseudo device */
+/* Control functions for a remote disk device */
 
-#define	RDS_CTL_DEL	1		/* Delete (erase) an entire disk*/
-#define RDS_CTL_SYNC	2		/* Write all pending blocks	*/
+#define RDS_CTL_SYNC	1		/* Write all pending blocks	*/
+#define	RDS_CTL_DEL	2		/* Delete the entire disk	*/
 
 /************************************************************************/
 /*	Definition of messages exchanged with the remote disk server	*/

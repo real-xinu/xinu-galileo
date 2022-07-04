@@ -1,14 +1,3 @@
-*.o
-*.map
-*.a
-*~
 .,*
-xinu
-xinu.bin
-xinu.xbin
-xinu.elf
-.defs
-.deps
 .jed_100
-.vers_num
 version

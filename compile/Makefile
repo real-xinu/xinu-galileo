@@ -13,7 +13,7 @@ PNAME		=	galileo
 PLAT		=	Platform_$(PNAME)
 TOPDIR		=	..
 
-CC		=	${COMPILER_ROOT}gcc
+CC		=	${COMPILER_ROOT}gcc-4.8
 LD		=	${COMPILER_ROOT}ld
 OBJCOPY		=	${COMPILER_ROOT}objcopy
 XINU		=	$(TOPDIR)/compile/xinu.elf

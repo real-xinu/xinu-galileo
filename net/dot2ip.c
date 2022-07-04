@@ -6,7 +6,7 @@
  * dot2ip  -  Convert a string of dotted decimal to an unsigned integer
  *------------------------------------------------------------------------
  */
-uint32	dot2ip (
+status	dot2ip (
 	  char	 *dotted,		/* IP address in dotted decimal	*/
 	  uint32 *result		/* Location to which binary IP	*/
 					/*    address will be stored	*/

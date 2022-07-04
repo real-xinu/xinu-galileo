@@ -28,18 +28,19 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 	/* For argument '--help', emit help about the 'udpecho' command	*/
 
 	if (nargs == 2 && strncmp(args[1], "--help", 7) == 0) {
-		printf("Use: %s  REMOTEIP\n\n", args[0]);
+		printf("Use: %s  remote_ip [remote_port]\n\n", args[0]);
 		printf("Description:\n");
 		printf("\tBounce a message off a remote UDP echo server\n");
 		printf("Options:\n");
-		printf("\tREMOTEIP:\tIP address in dotted decimal\n");
-		printf("\t--help\t display this help and exit\n");
+		printf("\tremote_ip:\tIP address in dotted decimal\n");
+		printf("\tremote_port:\tport number\n");
+		printf("\t--help\t\tdisplay this help and exit\n");
 		return 0;
 	}
 
 	/* Check for valid IP address argument */
 
-	if (nargs != 2) {
+	if ( (nargs < 2) || (nargs > 3) ) {
 		fprintf(stderr, "%s: invalid number of argument(s)\n", args[0]);
 		fprintf(stderr, "Try '%s --help' for more information\n",
 				args[0]);
@@ -47,14 +48,14 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 	}
 
 	if (dot2ip(args[1], &remoteip) == SYSERR) {
-		fprintf(stderr, "%s: invalid IP address argument\r\n",
+		fprintf(stderr, "%s: invalid IP address argument\n",
 			args[0]);
 		return 1;
 	}
 	if (nargs == 3) {
 		retval = atoi(args[2]);
 		if ( (retval <= 0) || (retval > 64535) ) {
-			fprintf(stderr, "%s: invalid port argument\r\n",
+			fprintf(stderr, "%s: invalid port argument\n",
 				args[0]);
 			return 1;
 		}

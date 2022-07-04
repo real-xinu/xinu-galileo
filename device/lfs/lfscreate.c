@@ -24,6 +24,14 @@ status	lfscreate (
 	int32	retval;			/* Return value from func call	*/
 	int32	i;			/* Loop index			*/
 
+	/* See if the disk device is valid or if a disk has already	*/
+	/*	been formatted						*/
+
+	if ( isbaddev(disk) || (Lf_data.lf_dskdev >= 0) ) {
+		return SYSERR;
+	}
+	Lf_data.lf_dskdev = disk;
+
 	/* Compute total sectors on disk */
 
 	sectors = dsiz	/ LF_BLKSIZ;	/* Truncate to full sector */

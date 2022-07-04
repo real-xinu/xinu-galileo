@@ -5,7 +5,7 @@
 
 struct	network	NetData;
 bpid32	netbufpool;
-uint64	netportseed;
+uint32	netportseed;
 
 /*------------------------------------------------------------------------
  * net_init  -  Initialize network data structures and processes
@@ -149,6 +149,6 @@ void 	eth_ntoh(
  */
 uint16 	getport()
 {
-	netportseed = 6364136223846793005ULL * netportseed + 1;
-	return 50000 + ((uint16)((netportseed >> 48)) % 15535);
+	netportseed = 1103515245 * netportseed + 12345;
+	return 50000 + ((uint16)((netportseed >> 16)) % 15535);
 }

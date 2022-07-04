@@ -17,16 +17,16 @@
 
 /* Global data for the remote server */
 
-#ifndef	RF_SERVER_IP
-#define	RF_SERVER_IP	"128.10.3.51"
+#ifndef	RF_SERVER
+#define	RF_SERVER	"example.com"
 #endif
 
 #ifndef	RF_SERVER_PORT
-#define	RF_SERVER_PORT	0
+#define	RF_SERVER_PORT	53224
 #endif
 
 #ifndef	RF_LOC_PORT
-#define	RF_LOC_PORT	33123
+#define	RF_LOC_PORT	53224
 #endif
 
 struct	rfdata	{
@@ -104,7 +104,7 @@ extern	struct	rflcblk	rfltab[];	/* Remote file control blocks	*/
 #define	RF_MSG_XREQ	0x0008		/* Rmdir request and response 	*/
 #define	RF_MSG_XRES	(RF_MSG_XREQ | RF_MSG_RESPONSE)
 
-#define RF_MSG_CREQ	0x0009
+#define RF_MSG_CREQ	0x0009		/* Close an open file		*/
 #define RF_MSG_CRES	(RF_MSG_CREQ | RF_MSG_RESPONSE)
 
 #define	RF_MIN_REQ	RF_MSG_RREQ	/* Minimum request type		*/
@@ -309,21 +309,5 @@ struct	rf_msg_xreq	{		/* Remote file rmdir request	*/
 #pragma pack(2)
 struct	rf_msg_xres	{		/* Remote file rmdir response	*/
 	RF_MSG_HDR			/* Header fields		*/
-};
-#pragma pack()
-
-/************************************************************************/
-/*									*/
-/*				rfdirent				*/
-/*									*/
-/************************************************************************/
-
-#define RF_DIRENT_FILE	1
-#define RF_DIRENT_DIR	2
-
-#pragma pack(2)
-struct	rfdirent	{
-	byte	d_type;			/* Type of the file	*/
-	char	d_name[256];		/* Name of the file	*/
 };
 #pragma pack()

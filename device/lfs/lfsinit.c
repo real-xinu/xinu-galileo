@@ -12,9 +12,9 @@ devcall	lfsinit (
 	  struct dentry *devptr		/* Entry in device switch table */
 	)
 {
-	/* Assign ID of disk device that will be used */
+	/* Indicate that no disk device has been selected */
 
-	Lf_data.lf_dskdev = LF_DISK_DEV;
+	Lf_data.lf_dskdev = -1;
 
 	/* Create a mutual exclusion semaphore */
 

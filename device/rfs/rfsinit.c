@@ -13,15 +13,17 @@ devcall	rfsinit(
 	)
 {
 
-	/* Choose an initial message sequence number */
+
+	/* Set an initial message sequence number */
 
 	Rf_data.rf_seq = 1;
 
-	/* Set the server IP address, server port, and local port */
+	/* Set the server IP address to zero until rfscomm is called */
 
-	if ( dot2ip(RF_SERVER_IP, &Rf_data.rf_ser_ip) == SYSERR ) {
-		panic("invalid IP address for remote file server");
-	}
+	Rf_data.rf_ser_ip = 0;
+
+	/* Record the local and remote port numbers to use */
+
 	Rf_data.rf_ser_port = RF_SERVER_PORT;
 	Rf_data.rf_loc_port = RF_LOC_PORT;
 
@@ -31,7 +33,7 @@ devcall	rfsinit(
 		panic("Cannot create remote file system semaphore");
 	}
 
-	/* Specify that the server port is not yet registered */
+	/* Specify that the UDP slot is not yet registered */
 
 	Rf_data.rf_registered = FALSE;
 

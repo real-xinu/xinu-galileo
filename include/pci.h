@@ -66,16 +66,16 @@ struct __attribute__ ((__packed__)) pci_config_header {
 	unsigned char	maxLatency;				/*   3f */
 };
 
-extern int pci_init(void);
-extern int find_pci_device(int32, int32, int32);
-extern struct eth_pd*	eth_txring;
-extern struct eth_pd*	eth_rxring;
+extern	int pci_init(void);
+extern	int find_pci_device(int32, int32, int32);
+extern	struct eth_pd*	eth_txring;
+extern	struct eth_pd*	eth_rxring;
 
-extern int pci_read_config_byte(uint32, int, unsigned char *);
-extern int pci_read_config_word(uint32, int, uint16 *);
-extern int pci_read_config_dword(uint32, int, uint32 *);
-extern int pci_write_config_byte(uint32, int, unsigned char);
-extern int pci_write_config_word(uint32, int, uint16);
-extern int pci_write_config_dword(uint32, int, uint32);
-extern int pci_get_dev_mmio_base_addr(uint32, int, void **);
-extern int32 pci_set_ivec(uint32, int32, void *, int32);
+extern	int pci_read_config_byte(uint32, int, unsigned char *);
+extern	int pci_read_config_word(uint32, int, uint16 *);
+extern	int pci_read_config_dword(uint32, int, uint32 *);
+extern	int pci_write_config_byte(uint32, int, unsigned char);
+extern	int pci_write_config_word(uint32, int, uint16);
+extern	int pci_write_config_dword(uint32, int, uint32);
+extern	int pci_get_dev_mmio_base_addr(uint32, int, void **);
+extern	int32 pci_set_ivec(uint32, int32, void *, int32);

@@ -6,8 +6,8 @@
  * ethhandler  -  Interrupt handler for Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-void	ethhandler (
-		int32	arg	/* Interrupt handler argument	*/
+interrupt ethhandler (
+		uint32	arg		/* Interrupt handler argument	*/
 		)
 {
 	struct	dentry *devptr;		/* Device table entry pointer	*/

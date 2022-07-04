@@ -19,7 +19,7 @@ void	ip_in(
 	/* Verify checksum */
 
 	if (ipcksum(pktptr) != 0) {
-		kprintf("IP header checksum failed\n\r");
+		// kprintf("IP header checksum failed\n");
 		freebuf((char *)pktptr);
 		return;
 	}
@@ -31,7 +31,7 @@ void	ip_in(
 	/* Ensure version and length are valid */
 
 	if (pktptr->net_ipvh != 0x45) {
-		kprintf("IP version failed\n\r");
+		kprintf("IP version failed\n");
 		freebuf((char *)pktptr);
 		return;
 	}

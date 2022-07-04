@@ -4,6 +4,11 @@
 
 process	main(void)
 {
+	printf("\n\n");
+
+	/* Create a local file system on the RAM disk */
+
+	lfscreate(RAM0, 40, 20480);
 
 	/* Run the Xinu shell */
 

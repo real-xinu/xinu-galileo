@@ -49,6 +49,9 @@ extern	shellcmd  xsh_memstat	(int32, char *[]);
 /* in file xsh_netinfo.c */
 extern	shellcmd  xsh_netinfo	(int32, char *[]);
 
+/* in file xsh_ns.c */
+extern	shellcmd  xsh_ns	(int32, char *[]);
+
 /* in file xsh_nvram.c */
 extern	shellcmd  xsh_nvram	(int32, char *[]);
 

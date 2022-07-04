@@ -4,51 +4,85 @@
 #include <string.h>
 #include <dns.h>
 
-local	uint32	dns_bldq(char *, char *);
-local	uint32	dns_geta(char *, struct dnspkt *);
+local	int32	dns_bldq(char *, char *);
+local	status	dns_geta(char *, struct dnspkt *, uint32 *);
 local	uint32	dns_getrname(char *, char *, char *);
 
 /*------------------------------------------------------------------------
- * dnslookup - Send a DNS Address Query and wait for the Response
+ * dnslookup - Look up a domain name and obtain an IP address
  *------------------------------------------------------------------------
  */
-uint32	dnslookup (
-	char	*dname	/* Domain name to be resolved	*/
+status	dnslookup (
+	char	*dname,			/* Domain name to be resolved	*/
+	uint32	*addr			/* Returned IP address		*/
 	)
 {
 	struct	dnspkt	qpkt;		/* Query Packet	buffer		*/
 	struct	dnspkt	rpkt;		/* Response Packet buffer	*/
 	uint32	nsaddr;			/* Name server IP address	*/
-	uint32	qlen;			/* Query length			*/
+	int32	qlen;			/* Query length			*/
 	uid32	slot;			/* UDP Slot			*/
 	int32	rlen;			/* Response length		*/
 	uint32	ipaddr;			/* IP address from response	*/
 	int32	retval;			/* Return value			*/
 	int32	i;			/* Loop index			*/
+	char	*p;			/* Pointer to walk the name	*/
+	char	ch;			/* One character in the name	*/
+	bool8	dotted;			/* Is sname dotted decimal?	*/
 
-	/* Check if we have a valid name pointer */
+	/* Check for a non-null argument */
 
 	if(dname == NULL) {
 		return (uint32)SYSERR;
 	}
 
-	/* Obtain the IP address of a DNS server */
+	/* Check for a dotted decimal value and return the IP address */
+
+	p = dname;
+	ch = *p++;
+	dotted = TRUE;
+	while (ch != NULLCH) {
+		if ( (ch != '.') && ( (ch < '0') || (ch > '9') ) ) {
+			dotted = FALSE;
+			break;
+		}
+		ch = *p++;
+	}
+	if (dotted) {
+		/* String contains only digits and dots */
+		if (dot2ip(dname, &ipaddr) == OK) {
+			*addr = ipaddr;
+			return OK;
+		} else {
+			return SYSERR;
+		}
+	}
+
+	/* Check for 'localhost' */
+
+	if ( strncmp(dname, "localhost", 9) == 0 ) {
+		/* make localhost into 127.0.0.1 */
+		*addr = 0x7f000001;
+		return OK;
+	}
+
+	/* Not dotted decimal, Find the address of a DNS server */
 
 	retval = getlocalip();
 	nsaddr = NetData.dnsserver;
 	if ( (retval == SYSERR) || (NetData.dnsserver == 0) ) {
 			kprintf("Cannot find a DNS server\n");
-			return (uint32)SYSERR;
+			return SYSERR;
 	}
 
 	/* Register a UDP Slot */
 
 	slot = udp_register(nsaddr, DNSPORT, DNSLPORT);
 	if(slot == SYSERR) {
-		return (uint32)SYSERR;
+		return SYSERR;
 	}
 
-	/* Build the Query message */
+	/* Build a DNS Query message for the name */
 
 	memset((char *)&qpkt, 0, sizeof(struct dnspkt));
 
@@ -57,9 +91,13 @@ uint32	dnslookup (
 	qpkt.qucount = htons(1);
 
 	qlen = dns_bldq(dname, qpkt.data);
+	if (qlen == SYSERR) {
+		return SYSERR;
+	}
 
-	ipaddr = (uint32)SYSERR;
-	for(i = 0; (ipaddr==(uint32)SYSERR) && (i < DNSRETRY); i++) {
+	/* Repeatedly send the query and await a response */
+
+	for(i = 0 ; i < DNSRETRY ; i++) {
 
 		/* Send the Query message */
 
@@ -72,17 +110,29 @@ uint32	dnslookup (
 		if ( (rlen == SYSERR) || (rlen == TIMEOUT) ) {
 			continue;
 		}
-		ipaddr = dns_geta(dname, &rpkt);
+
+		/* Extract the address from the response */
+
+		retval = dns_geta(dname, &rpkt, &ipaddr);
+		if (retval == SYSERR) {
+			continue;
+		}
+		break;
 	}
 	udp_release(slot);
-	return ntohl(ipaddr);
+	if (i >= DNSRETRY) {
+		return SYSERR;
+	}
+	*addr = ntohl(ipaddr);
+	return OK;
 }
+
 
 /*------------------------------------------------------------------------
  * dns_bldq - Build a DNS Question and return the length of the packet
  *------------------------------------------------------------------------
  */
-uint32	dns_bldq (
+int32	dns_bldq (
 	 char	*dname,			/* Domain Name			*/
 	 char	*data			/* Pointer to buffer for data	*/
 	)
@@ -111,7 +161,7 @@ uint32	dns_bldq (
 	for(i = 0; i < dlen; i++) {
 
 		if(qlen >= DNSDATASIZ) {
-			return (uint32)SYSERR;
+			return SYSERR;
 		}
 		if(dname[i] != '.') {
 			/* Add normal character to the existing label	*/
@@ -152,9 +202,10 @@ uint32	dns_bldq (
  * dns_geta - return the best IP address in the Answer Section
  *------------------------------------------------------------------------
  */
-uint32	dns_geta (
+status	dns_geta (
 	char	*dname,			/* Domain Name			*/
-	struct	dnspkt *rpkt		/* Pointer to a response packet	*/
+	struct	dnspkt *rpkt,		/* Pointer to a response packet	*/
+	uint32	*addr			/* Returned IP address		*/
 	)
 {
 	uint16	qcount;			/* Number of Questions		*/
@@ -173,7 +224,7 @@ uint32	dns_geta (
 
 	/* Skip qcount questions */
 
-	for(i = 0; i < qcount; i++) {
+	for (i = 0; i < qcount; i++) {
 
 		/* Get the label length */
 
@@ -181,7 +232,7 @@ uint32	dns_geta (
 
 		/* While we haven't reached the end of this domain name	*/
 
-		while(llen != 0) {
+		while (llen != 0) {
 
 			/* Pointer means end of name */
 
@@ -218,7 +269,7 @@ uint32	dns_geta (
 
 	/* Check each answer to see if it matches the local net */
 
-	for(i = 0; i < acount; i++) {
+	for (i = 0; i < acount; i++) {
 
 		char	rname[1024];
 		uint16	tmptype;
@@ -261,9 +312,10 @@ uint32	dns_geta (
 	}
 
 	if (ipaddr != 0) {
-		return ipaddr;
+		*addr = ipaddr;
+		return OK;
 	} else {
-		return (uint32)SYSERR;
+		return SYSERR;
 	}
 }
 

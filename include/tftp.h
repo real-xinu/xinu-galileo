@@ -23,6 +23,10 @@
 #define	TFTP_MAXRETRIES	3       /* Number of retranmissions     */
 #define	TFTP_WAIT       5000    /* Time to wait for reply (ms)  */
 
+/* Xinu Specific Flags */
+#define TFTP_NON_VERBOSE 0	/* Do not use verbose output	*/
+#define TFTP_VERBOSE     1	/* Use verbose output        	*/
+
 #define TFTP_FUNC_MAGIC	0xFFFFFF00	/* Magic value used to indicate	*/
 					/*	input to tftpget is a	*/
 					/*	function pointer	*/
@@ -63,4 +67,4 @@ struct	tftp_msg {
 };
 #pragma pack()
 
-status tftpget(uint32, const char*, void*, uint32);
+status tftpget(uint32, const char*, void*,uint32);

@@ -91,7 +91,7 @@ devcall	rfsopen (
 		signal(Rf_data.rf_mutex);
 		return SYSERR;
 	} else if (retval == TIMEOUT) {
-		kprintf("Timeout during remote file open\n\r");
+		kprintf("Timeout during remote file open\n");
 		signal(Rf_data.rf_mutex);
 		return SYSERR;
 	} else if (ntohs(resp.rf_status) != 0) {

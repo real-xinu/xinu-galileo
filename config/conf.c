@@ -49,7 +49,7 @@ struct	dentry	devtab[NDEVS] =
 
 /* RDISK is rds */
 	{ 4, 0, "RDISK",
-	  (void *)rdsinit, (void *)rdsopen, (void *)rdsclose,
+	  (void *)rdsinit, (void *)rdsopen, (void *)ioerr,
 	  (void *)rdsread, (void *)rdswrite, (void *)ioerr,
 	  (void *)ioerr, (void *)ioerr, (void *)rdscontrol,
 	  (void *)0x0, (void *)ionull, 0 },

@@ -24,7 +24,7 @@ dbid32	lfdballoc (
 	}
 	retval = read(Lf_data.lf_dskdev, (char *)dbuff, dnum);
 	if (retval == SYSERR) {
-		panic("lfdballoc cannot read disk block\n\r");
+		panic("lfdballoc cannot read disk block\n");
 	}
 
 	/* Unlink d-block from in-memory directory */

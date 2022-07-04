@@ -22,10 +22,17 @@ syscall	mount(
 	psiz = namlen(prefix, NM_PRELEN);
 	rsiz = namlen(replace, NM_REPLLEN);
 
+	/* Check for table lverflow */
+
+	if (nnames >= NNAMES) {
+		kprintf("Namespace overflow\n");
+		restore(mask);
+		return SYSERR;
+	}
+
 	/* If arguments are invalid or table is full, return error */
 
-	if ( (psiz == SYSERR)   || (rsiz == SYSERR) ||
-	     (isbaddev(device)) || (nnames >= NNAMES) ) {
+	if ( (psiz == SYSERR) || (rsiz == SYSERR) || isbaddev(device) ) {
 		restore(mask);
 		return SYSERR;
 	}

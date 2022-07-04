@@ -3,9 +3,8 @@
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
- * rdscomm  -  handle communication with a remote disk server (send a
- *		 request and receive a reply, including sequencing and
- *		 retries)
+ * rdscomm  -  send a request message to the remote disk server and
+ *		 a reply, handling sequence numbers and retries
  *------------------------------------------------------------------------
  */
 status	rdscomm (
@@ -32,8 +31,8 @@ status	rdscomm (
 	/* Register the server port, if not registered */
 
 	if ( ! rdptr->rd_registered ) {
-		slot = udp_register(0, rdptr->rd_ser_port,
-						rdptr->rd_loc_port);
+		slot = udp_register(rdptr->rd_ser_ip, rdptr->rd_ser_port,
+					rdptr->rd_loc_port);
 		if(slot == SYSERR) {
 			restore(mask);
 			return SYSERR;
@@ -70,8 +69,7 @@ status	rdscomm (
 
 		/* Send a copy of the message */
 
-		retval = udp_sendto(slot, rdptr->rd_ser_ip, rdptr->rd_ser_port,
-					(char *)msg, mlen);
+		retval = udp_send(slot, (char *)msg, mlen);
 		if (retval == SYSERR) {
 			kprintf("Cannot send to remote disk server\n\r");
 			return SYSERR;
@@ -108,7 +106,7 @@ status	rdscomm (
 		continue;
 	    }
 
-	    /* Check the status */
+	    /* Verify that the reply status is valid */
 
 	    if (ntohs(reply->rd_status) != 0) {
 		return SYSERR;

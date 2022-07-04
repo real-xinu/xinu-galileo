@@ -43,7 +43,7 @@ status	getutime(
 	/*	use the default server					*/
 
 	if (NetData.ntpserver == 0) {
-		if (dot2ip(TIMESERVER, &NetData.ntpserver) == SYSERR) {
+		if (dnslookup(TIMESERVER, &NetData.ntpserver) == SYSERR) {
 			return SYSERR;
 		}
 	}

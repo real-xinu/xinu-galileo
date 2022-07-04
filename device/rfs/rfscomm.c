@@ -19,17 +19,27 @@ int32	rfscomm (
 	int32	seq;			/* Sequence for this exchange	*/
 	int16	rtype;			/* Reply type in host byte order*/
 	int32	slot;			/* UDP slot			*/
+	char	err[128];		/* Error message buffer		*/
+
 
 	/* For the first time after reboot, register the server port */
 
 	if ( ! Rf_data.rf_registered ) {
-		if ( (slot = udp_register(Rf_data.rf_ser_ip,
-				Rf_data.rf_ser_port,
-				Rf_data.rf_loc_port)) == SYSERR) {
+
+	    /* Convert the server name to an IP address */
+
+	    if (dnslookup(RF_SERVER, &Rf_data.rf_ser_ip) == SYSERR) {
+		sprintf(err, "rfs server %s is invalid", RF_SERVER);
+		panic("err");
+	    }
+
+	    if ( (slot = udp_register(Rf_data.rf_ser_ip,
+			    Rf_data.rf_ser_port,
+			    Rf_data.rf_loc_port)) == SYSERR) {
 			return SYSERR;
-		}
-		Rf_data.rf_udp_slot = slot;
-		Rf_data.rf_registered = TRUE;
+	    }
+	    Rf_data.rf_udp_slot = slot;
+	    Rf_data.rf_registered = TRUE;
 	}
 
 	/* Assign message next sequence number */
@@ -74,7 +84,6 @@ int32	rfscomm (
 		if (rtype != ( ntohs(msg->rf_type) | RF_MSG_RESPONSE) ) {
 			continue;
 		}
-
 		return retval;		/* Return length to caller */
 	}
 

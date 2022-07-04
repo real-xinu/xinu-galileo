@@ -64,14 +64,14 @@ status	naminit(void)
 		}
 
 		if (len > NM_MAXLEN) {
-			kprintf("namespace: device name %s too long\r\n",
+			kprintf("namespace: device name %s too long\n",
 					devptr->dvname);
 			continue;
 		}
 
 		retval = mount(tmpstr, NULLSTR, devptr->dvnum);
                 if (retval == SYSERR) {
-			kprintf("namespace: cannot mount device %d\r\n",
+			kprintf("namespace: cannot mount device %d\n",
 					devptr->dvname);
 			continue;
 		}
@@ -79,13 +79,14 @@ status	naminit(void)
 
 	/* Add other prefixes (longest prefix first) */
 
-        mount("/dev/null",	"",        NULLDEV);
-	mount("/remote/",	"remote:", RFILESYS);
-	mount("/local/",	NULLSTR,   LFILESYS);
-	mount("/dev/",		NULLSTR,   SYSERR);
-        mount("~/",		NULLSTR,   LFILESYS);
-	mount("/",		"root:",   RFILESYS);
-	mount("",		"",        LFILESYS);
+	mount("/dev/null",	"",	    NULLDEV);
+	mount("/remote/",	NULLSTR,    RFILESYS);
+	mount("/local/",	NULLSTR,    LFILESYS);
+	mount("/tmp/",		"tmp-",	    LFILESYS);
+	mount("/dev/",		NULLSTR,    SYSERR);
+       	mount("~/",		NULLSTR,    RFILESYS);
+	mount("/",		"root:",    RFILESYS);
+	mount("",		NULLSTR,    LFILESYS);
 
 	return OK;
 }

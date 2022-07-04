@@ -27,7 +27,7 @@ status	lfsckfmt (
 	if (retval == SYSERR) {
 		panic("cannot read directory");
 	}
-	kprintf("Have read directory from disk device %d\n\r",
+	kprintf("Have read directory from disk device %d\n",
 		disk);
 
 	/* Check to see if directory contains a Xinu file system */
@@ -41,25 +41,25 @@ status	lfsckfmt (
 
 	lfiblks = 0;
 	nextib = dir.lfd_ifree;
-	kprintf("initial index block is %d\n\r", nextib);
+	kprintf("initial index block is %d\n", nextib);
 	while (nextib != LF_INULL) {
 		lfiblks++;
 		lfibget(disk, nextib, &iblock);
 		nextib = iblock.ib_next;
 	}
 	ibsectors = (lfiblks + 6) /7;
-	kprintf("Found %d index blocks (%d sectors)\n\r", lfiblks, ibsectors);
+	kprintf("Found %d index blocks (%d sectors)\n", lfiblks, ibsectors);
 
 	/* Follow data block list */
 
 	dblks = 0;
 	nextdb = dir.lfd_dfree;
-	kprintf("initial data block is %d\n\r", nextdb);
+	kprintf("initial data block is %d\n", nextdb);
 	while (nextdb != LF_DNULL) {
 		dblks++;
 		read(disk, (char *)&dblock, nextdb);
 		nextdb = dblock.lf_nextdb;
 	}
-	kprintf("Found %d data blocks\n\r", dblks);
+	kprintf("Found %d data blocks\n", dblks);
 	return OK;
 }

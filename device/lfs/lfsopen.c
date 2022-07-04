@@ -24,6 +24,12 @@ devcall	lfsopen (
 	int32	retval;			/* Value returned from function	*/
 	int32	mbits;			/* Mode bits			*/
 
+	if (Lf_data.lf_dskdev < 0) {
+		kprintf("error: no disk selected for local files ");
+		kprintf("use lfscreate)\n");
+		return SYSERR;
+	}
+
 	/* Check length of name file (leaving space for NULLCH */
 
 	from = name;

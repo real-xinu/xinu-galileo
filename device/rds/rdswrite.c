@@ -12,86 +12,62 @@ devcall	rdswrite (
 	  int32	blk			/* Block number to write	*/
 	)
 {
-	struct	rdscblk	*rdptr;		/* Pointer to control block	*/
-	struct	rdbuff	*bptr;		/* Pointer to buffer on a list	*/
-	struct	rdbuff	*pptr;		/* Ptr to previous buff on list	*/
-	struct	rdbuff	*nptr;		/* Ptr to next buffer on list	*/
-	bool8	found;			/* Was buff found during search?*/
+	struct	rdscblk	*rdptr;		/* Pointer to the control block	*/
+					/*   for the disk device	*/
+	struct	rdqnode	*rptr;		/* Pointer that walks the	*/
+					/*   request list		*/
+	struct	rdcnode	*cptr;		/* Pointer that walks the cache	*/
+	pri16	myprio;			/* Temp storage for my priority	*/
 
-	/* If device not currently in use, report an error */
+	/* If the device not currently open, report an error */
 
 	rdptr = &rdstab[devptr->dvminor];
 	if (rdptr->rd_state != RD_OPEN) {
 		return SYSERR;
 	}
 
-	/* Ensure rdsprocess is runnning */
+	/* Ensure the communication process is runnning */
 
 	if ( ! rdptr->rd_comruns ) {
 		rdptr->rd_comruns = TRUE;
 		resume(rdptr->rd_comproc);
 	}
 
-	/* If request queue already contains a write request */
-	/*    for the block, replace the contents	     */
 
-	bptr = rdptr->rd_rhnext;
-	while (bptr != (struct rdbuff *)&rdptr->rd_rtnext) {
-		if ( (bptr->rd_blknum == blk) &&
-			(bptr->rd_op == RD_OP_WRITE) ) {
-			memcpy(bptr->rd_block, buff, RD_BLKSIZ);
-			return OK;
-		}
-		bptr = bptr->rd_next;
+	/* If block is present in the cache, remove it and return the	*/
+	/*   node to the free list					*/
+
+	cptr = rdptr->rd_chead;
+	while (cptr != (struct rdcnode *)NULL) {
+	    if (cptr->rd_blknum == blk) {
+		rdcunlink(rdptr, cptr);
+		break;
+	    }
+	    cptr = cptr->rd_next;
 	}
 
-	/* Search cache for cached copy of block */
+	/* Allocate a request node and fill in a write request */
 
-	bptr = rdptr->rd_chnext;
-	found = FALSE;
-	while (bptr != (struct rdbuff *)&rdptr->rd_ctnext) {
-		if (bptr->rd_blknum == blk) {
-			if (bptr->rd_refcnt <= 0) {
-				pptr = bptr->rd_prev;
-				nptr = bptr->rd_next;
+	rptr = rdptr->rd_qfree;
+	rdptr->rd_qfree = rptr->rd_next;
+	rptr->rd_op = RD_OP_WRITE;
+	rptr->rd_blknum = blk;
+	rptr->rd_callbuf = buff;
+	rptr->rd_pid = getpid();
 
-				/* Unlink node from cache list and reset*/
-				/*   the available semaphore accordingly*/
+	/* Insert the new request at the tail of the queue */
 
-				pptr->rd_next = bptr->rd_next;
-				nptr->rd_prev = bptr->rd_prev;
-				semreset(rdptr->rd_availsem,
-					semcount(rdptr->rd_availsem) - 1);
-				found = TRUE;
-			}
-			break;
-		}
-		bptr = bptr->rd_next;
-	}
+	rdqinsert(rdptr, rptr);
 
-	if ( !found ) {
-		bptr = rdsbufalloc(rdptr);
-	}
+	/* Atomically signal the comm. process semaphore and suspend	*/
+	/*   the current process by temporarily setting the process	*/
+	/*   prirority to the highest possible value, performing the	*/
+	/*   two actions, and then resetting the priority to its	*/
+	/*   original value when the process is awakened		*/
 
-	/* Create a write request */
-
-	memcpy(bptr->rd_block, buff, RD_BLKSIZ);
-	bptr->rd_op = RD_OP_WRITE;
-	bptr->rd_refcnt = 0;
-	bptr->rd_blknum = blk;
-	bptr->rd_status = RD_VALID;
-	bptr->rd_pid = getpid();
-
-	/* Insert new request into list just before tail */
-
-	pptr = rdptr->rd_rtprev;
-	rdptr->rd_rtprev = bptr;
-	bptr->rd_next = pptr->rd_next;
-	bptr->rd_prev = pptr;
-	pptr->rd_next = bptr;
-
-	/* Signal semaphore to start communication process */
-
-	signal(rdptr->rd_reqsem);
+	myprio = rdssetprio(MAXPRIO);
+	signal(rdptr->rd_comsem);
+	suspend(getpid());
+	rdssetprio(myprio);
 	return OK;
 }

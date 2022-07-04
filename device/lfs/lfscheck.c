@@ -32,7 +32,8 @@ status	lfscheck (
 		return SYSERR;
 	}
 
-	/* Extra sanity check - verify file count is positive */
+	/* Extra sanity check - verify file count is non-negative */
+
 	if (dirptr->lfd_nfiles < 0){
 		return SYSERR;
 	}

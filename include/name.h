@@ -5,7 +5,7 @@
 #define	NM_PRELEN	64		/* Max size of a prefix string	*/
 #define	NM_REPLLEN	96		/* Maximum size of a replacement*/
 #define	NM_MAXLEN	256		/* Maximum size of a file name	*/
-#define	NNAMES		40		/* Number of prefix definitions	*/
+#define	NNAMES		128		/* Number of prefix definitions	*/
 
 /* Definition of the name prefix table that defines all name mappings */
 

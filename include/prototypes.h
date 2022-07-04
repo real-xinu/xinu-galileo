@@ -1,3 +1,4 @@
+
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
 
@@ -46,19 +47,25 @@ extern	void	ctxsw(void *, void *);
 extern	uint32	getlocalip(void);
 
 /* in file dns.c */
-extern	uint32	dnslookup(char *);
+extern	status	dnslookup(char *, uint32 *);
 
 /* in file dot2ip.c */
-extern	uint32	dot2ip(char *, uint32 *);
+extern	status	dot2ip(char *, uint32 *);
 
 /* in file ethinit.c */
 extern 	int32	ethinit(struct dentry *);
 
-/* in file ethhandler.c */
-extern 	interrupt	ethhandler(int32);
+/* in file ethread.c */
+extern	devcall	ethread(struct dentry *, char *, int32);
+
+/* in file ethwrite.c */
+extern	int32	ethwrite(struct dentry *, char *, int32);
 
 /* in file ethcontrol.c */
 extern 	devcall ethcontrol(struct dentry *, int32, int32, int32);
+
+/* in file ethhandler.c */
+extern	interrupt ethhandler(uint32);
 
 /* in file ethdispatch.S */
 extern	void	ethdispatch(void);
@@ -66,12 +73,6 @@ extern	void	ethdispatch(void);
 /* in file ethmcast.c */
 extern	int32	ethmcast_add(struct ethcblk *, byte[]);
 extern	int32	ethmcast_remove(struct ethcblk *, byte[]);
-
-/* in file ethread.c */
-extern  devcall ethread(struct dentry *, char *, int32);
-
-/* in file ethwrite.c */
-extern 	devcall ethwrite(struct dentry *, char *buf, int32);
 
 /* in file exit.c */
 extern	void	exit(void);
@@ -139,8 +140,7 @@ extern	void	icmp_in(struct netpacket *);
 extern	int32	icmp_register(uint32);
 extern	int32	icmp_recv(int32, char *, int32, uint32);
 extern	status	icmp_send(uint32, uint16, uint16, uint16, char *, int32);
-extern	struct	netpacket *icmp_mkpkt(uint32, uint16, uint16, uint16,
-				      char *, int32);
+extern	struct	netpacket *icmp_mkpkt(uint32, uint16, uint16, uint16, char *, int32);
 extern	status	icmp_release(int32);
 extern	uint16	icmp_cksum(char *, int32);
 extern	void	icmp_hton(struct netpacket *);
@@ -382,33 +382,46 @@ extern	devcall	ramread(struct dentry *, char *, int32);
 /* in file ramwrite.c */
 extern	devcall	ramwrite(struct dentry *, char *, int32);
 
-/* in file rdsclose.c */
-extern	devcall	rdsclose(struct dentry *);
+/* in file rdscomm.c */
+
+extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *, int32, struct rdscblk *);
 
 /* in file rdscontrol.c */
+
 extern	devcall	rdscontrol(struct dentry *, int32, int32, int32);
 
 /* in file rdsinit.c */
+
 extern	devcall	rdsinit(struct dentry *);
 
 /* in file rdsopen.c */
+
 extern	devcall	rdsopen(struct dentry *, char *, char *);
 
+/* in file rdsprocess.c */
+
+extern	void	rdsprocess(struct rdscblk *);
+
+/* in file rdsqfcns.c */
+
+extern	struct	rdqnode	* rdqunlink(struct rdscblk *rdptr, struct rdqnode *rptr);
+extern	void	rdqinsert(struct rdscblk *, struct rdqnode *);
+extern	void	rdcunlink(struct rdscblk *, struct rdcnode *);
+extern	void	rdcinsert(struct rdscblk *, uint32, char *);
+extern	void	edqdump(did32);
+extern	void	edcdump(did32);
+
 /* in file rdsread.c */
+
 extern	devcall	rdsread(struct dentry *, char *, int32);
 
+/* in file rdssetprio.c */
+
+extern	pri16	rdssetprio(pri16);
+
 /* in file rdswrite.c */
+
 extern	devcall	rdswrite(struct dentry *, char *, int32);
-
-/* in file rdsbufalloc.c */
-extern	struct	rdbuff * rdsbufalloc(struct rdscblk *);
-
-/* in file rdscomm.c */
-extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
-		int32, struct rdscblk *);
-
-/* in file rdsprocess.c */
-extern	void	rdsprocess(struct rdscblk *);
 
 /* in file sdmcclose.c */
 extern	devcall	sdmcclose(struct dentry *);
@@ -492,13 +505,6 @@ extern	devcall	rfsopen(struct dentry  *devptr, char *, char *);
 /* in file rfscomm.c */
 extern	int32	rfscomm(struct rf_msg_hdr *, int32,
 			struct rf_msg_hdr *, int32);
-
-/* in file rdscomm.c */
-extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *,
-			int32, struct rdscblk *);
-
-/* in file rdsprocess.c */
-extern	void	rdsprocess(struct rdscblk *);
 
 /* in file seek.c */
 extern	syscall	seek(did32, uint32);
@@ -616,9 +622,9 @@ extern	void	xdone(void);
 extern	syscall	yield(void);
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
-#define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
-#define	htonl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
-		   (((x)<<8) & 0x00ff0000) | (((x)<<24) & 0xff000000))
-#define	ntohs(x)  ((0xff & ((x)>>8)) | ( (0xff & (x)) << 8))
-#define	ntohl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
-		   (((x)<<8) & 0x00ff0000) | (((x)<<24) & 0xff000000))
+#define	htons(x)   ( ( 0xff & ((x)>>8) ) | ( (0xff & (x)) << 8 ) )
+#define	htonl(x)   ( (((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
+		     (((x)<< 8) & 0x00ff0000) | (((x)<<24) & 0xff000000) )
+#define	ntohs(x)   ( ( 0xff & ((x)>>8) ) | ( (0xff & (x)) << 8 ) )
+#define	ntohl(x)   (  (((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \
+		      (((x)<< 8) & 0x00ff0000) | (((x)<<24) & 0xff000000) )

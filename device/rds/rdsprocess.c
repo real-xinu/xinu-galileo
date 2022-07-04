@@ -1,5 +1,7 @@
 /* rdsprocess.c - rdsprocess */
 
+/*DEBUG*/ int	go = 1;
+
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
@@ -9,6 +11,7 @@
  *		  response, including caching responses blocks
  *------------------------------------------------------------------------
  */
+
 void	rdsprocess (
 	  struct rdscblk    *rdptr	/* Ptr to device control block	*/
 	)
@@ -18,26 +21,34 @@ void	rdsprocess (
 	struct	rd_msg_rres resp;	/* Buffer to hold response	*/
 					/*   (includes data area)	*/
 	int32	retval;			/* Return value from rdscomm	*/
-	char	*idto;			/* Ptr to ID string copy	*/
-	char	*idfrom;		/* Ptr into ID string		*/
-	struct	rdbuff	*bptr;		/* Ptr to buffer at the head of	*/
-					/*   the request queue		*/
-	struct	rdbuff	*nptr;		/* Ptr to next buffer on the	*/
-					/*   request queue		*/
-	struct	rdbuff	*pptr;		/* Ptr to previous buffer	*/
-	struct	rdbuff	*qptr;		/* Ptr that runs along the	*/
-					/*   request queue		*/
-	int32	i;			/* Loop index			*/
+	char	*idto;			/* Ptr to ID string for copy	*/
+	char	*idfrom;		/* Ptr into ID string for copu	*/
+	struct	rdqnode	*rptr;		/* Ptr to a node in the request	*/
+					/*    queue			*/
+	struct	rdqnode	*tptr;		/* Temp pointer to a node in	*/
+					/*    the request queue		*/
+	uint32	blk;			/* Block number in current req.	*/
 
 	while (TRUE) {			/* Do forever */
 
-	    /* Wait until the request queue contains a node */
-	    wait(rdptr->rd_reqsem);
-	    bptr = rdptr->rd_rhnext;
+	    /* Wait until a request arrives and node */
+
+	    wait(rdptr->rd_comsem);
+	    rptr = rdptr->rd_qhead;
+	    if (rptr == (struct rdqnode *)NULL) {
+		/* A request was satisfied early */
+		continue;
+	    }
+	    blk = rptr->rd_blknum;
 
 	    /* Use operation in request to determine action */
 
-	   switch (bptr->rd_op) {
+	   switch (rptr->rd_op) {
+
+	   case RD_OP_SYNC:
+		resume(rptr->rd_pid);
+		rptr = rdqunlink(rdptr, rptr);
+		break;
 
 	   case RD_OP_READ:
 
@@ -45,12 +56,13 @@ void	rdsprocess (
 
 		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
 		msg.rd_status = htons(0);
-		msg.rd_seq = 0;		/* Rdscomm fills in an entry	*/
+		msg.rd_seq = 0;		/* rdscomm fills in the value	*/
 		idto = msg.rd_id;
 		memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero	*/
 		idfrom = rdptr->rd_id;
 		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
 			;
+		msg.rd_blk = htonl(blk);
 		}
 
 		/* Send the message and receive a response */
@@ -65,67 +77,42 @@ void	rdsprocess (
 
 		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
 				(ntohs(resp.rd_status) != 0) ) {
-			panic("Failed to contact remote disk server");
+			panic("remite disk error contacting server");
 		}
 
 		/* Copy data from the reply into the buffer */
 
-		for (i=0; i<RD_BLKSIZ; i++) {
-			bptr->rd_block[i] = resp.rd_data[i];
-		}
+		memcpy(rptr->rd_callbuf, resp.rd_data, RD_BLKSIZ);
 
-		/* Unlink buffer from the request queue */
+		/* Resume the waiting process (will not run until the	*/
+		/*     communication process blocks			*/
 
-		nptr = bptr->rd_next;
-		pptr = bptr->rd_prev;
-		nptr->rd_prev = bptr->rd_prev;
-		pptr->rd_next = bptr->rd_next;
+		resume(rptr->rd_pid);
 
-		/* Insert buffer in the cache */
+		tptr = rdqunlink(rdptr, rptr);
 
-		pptr = (struct rdbuff *) &rdptr->rd_chnext;
-		nptr = pptr->rd_next;
-		bptr->rd_next = nptr;
-		bptr->rd_prev = pptr;
-		pptr->rd_next = bptr;
-		nptr->rd_prev = bptr;
+		/* Walk the request queue and satisfy subsequent read	*/
+		/*    requests for the same block			*/
 
-		/* Initialize reference count */
-
-		bptr->rd_refcnt = 1;
-
-		/* Signal the available semaphore */
-
-		signal(rdptr->rd_availsem);
-
-		/* Send a message to waiting process */
-
-		send(bptr->rd_pid, (uint32)bptr);
-
-		/* If other processes are waiting to read the  */
-		/*   block, notify them and remove the request */
-
-		qptr = rdptr->rd_rhnext;
-		while (qptr != (struct rdbuff *)&rdptr->rd_rtnext) {
-			if (qptr->rd_blknum == bptr->rd_blknum) {
-				bptr->rd_refcnt++;
-				send(qptr->rd_pid,(uint32)bptr);
-
-				/* Unlink request from queue	*/
-
-				pptr = qptr->rd_prev;
-				nptr = qptr->rd_next;
-				pptr->rd_next = bptr->rd_next;
-				nptr->rd_prev = bptr->rd_prev;
-
-				/* Move buffer to the free list	*/
-
-				qptr->rd_next = rdptr->rd_free;
-				rdptr->rd_free = qptr;
-				signal(rdptr->rd_availsem);
-				break;
-			}
-			qptr = qptr->rd_next;
+		rptr = rdptr->rd_qhead;
+		while (rptr != (struct rdqnode *)NULL) {
+		    if (rptr->rd_blknum != blk) {
+			rptr = rptr->rd_next;
+			continue;
+		    }
+		    /* block number matches */
+		    if (rptr->rd_op == RD_OP_WRITE) {
+			/* Stop on a write for the block */
+			break;
+		    }
+		    if ( rptr->rd_op == RD_OP_READ ) {
+			/* Satisfy a subsequent read for the block */
+			memcpy(rptr->rd_callbuf,resp.rd_data,RD_BLKSIZ);
+			resume(rptr->rd_pid);
+			rptr = rdqunlink(rdptr, rptr);
+		    } else {
+			rptr = rptr->rd_next;
+		    }
 		}
 		break;
 
@@ -134,7 +121,6 @@ void	rdsprocess (
 		/* Build a write request message for the server */
 
 		msg.rd_type = htons(RD_MSG_WREQ);	/* Write request*/
-		msg.rd_blk = bptr->rd_blknum;
 		msg.rd_status = htons(0);
 		msg.rd_seq = 0;		/* Rdscomb fills in an entry	*/
 		idto = msg.rd_id;
@@ -143,30 +129,31 @@ void	rdsprocess (
 		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
 			;
 		}
-		for (i=0; i<RD_BLKSIZ; i++) {
-			msg.rd_data[i] = bptr->rd_block[i];
+		msg.rd_blk = htonl(blk);
+		memcpy(msg.rd_data, rptr->rd_callbuf, RD_BLKSIZ);
+
+		/* Check request queue for subsequent writes of blk */
+
+		tptr = rptr->rd_next;
+		while (tptr != (struct rdqnode *)NULL) {
+			if ( (tptr->rd_blknum == blk) &&
+			     (tptr->rd_op == RD_OP_WRITE) ) {
+				break;
+			}
+				
+		}
+		if (tptr == (struct rdqnode *)NULL) {
+			/* No subsequent writes, so add to cache */
+			rdcinsert(rdptr, blk, msg.rd_data);
 		}
 
-		/* Unlink buffer from request queue */
+		/* Resume the process (comm. pocess continues to run) */
 
-		nptr = bptr->rd_next;
-		pptr = bptr->rd_prev;
-		pptr->rd_next = nptr;
-		nptr->rd_prev = pptr;
+		resume(rptr->rd_pid);
 
-		/* Insert buffer in the cache */
+		/* Unlink the node from the request queue */
 
-		pptr = (struct rdbuff *) &rdptr->rd_chnext;
-		nptr = pptr->rd_next;
-		bptr->rd_next = nptr;
-		bptr->rd_prev = pptr;
-		pptr->rd_next = bptr;
-		nptr->rd_prev = bptr;
-
-		/* Declare that buffer is eligible for reuse */
-
-		bptr->rd_refcnt = 0;
-		signal(rdptr->rd_availsem);
+		rptr = rdqunlink(rdptr, rptr);
 
 		/* Send the message and receive a response */
 
@@ -176,37 +163,16 @@ void	rdsprocess (
 					sizeof(struct rd_msg_wres),
 				  rdptr );
 
-		/* Check response */
+		/* Check the response */
 
 		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
 				(ntohs(resp.rd_status) != 0) ) {
-			panic("failed to contact remote disk server");
+			panic("remote disk access failed");
 		}
 		break;
 
-	    case RD_OP_SYNC:
-
-		/* Send a message to the waiting process */
-
-		send(bptr->rd_pid, OK);
-
-		/* Unlink buffer from the request queue */
-
-		nptr = bptr->rd_next;
-		pptr = bptr->rd_prev;
-		nptr->rd_prev = bptr->rd_prev;
-		pptr->rd_next = bptr->rd_next;
-
-		/* Insert buffer into the free list */
-
-		bptr->rd_next = rdptr->rd_free;
-		rdptr->rd_free = bptr;
-		signal(rdptr->rd_availsem);
-		break;
+	   default:
+		break;/* SHould never happen */
 	   }
 	}
 }
-
-
-
-
