@@ -12,3 +12,4 @@ xinu.elf
 .jed_100
 .vers_num
 version
+.touchall

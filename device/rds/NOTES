@@ -1,0 +1,123 @@
+Idea:
+	* Keep the request queue nodes separate from buffers (as in the Doyle solution)
+	* Have NPROC request queue nodes so there is one per process (no blocking)
+	* Use buffers *only* for caching, meaning the number of buffers doesn't matter
+	* Initially, place all buffers are on the free list; eventually they all end up in the cache
+	  (It would be possible to have one list, searching from the "cache end" (items contain
+	   valid blocks) and allocating from the "free end" (items contain empty buffers or the
+	   oldest caches item.)
+	* Ensure the com process has higher priority than all processes that call read/write/sync
+	* Have the com process, not the read/write functions copy data from/to the caller's buffer
+	* All functions run with interrupts disabled so they can search lists and modify pointers
+		without interference from other processes
+
+A fundamental restriction?  I think this is likely.
+
+	* With finite buffers and finite request queue nodes, we can only have semi-asynchronous
+		writes or we get the problem of exhausting all the nodes/buffers and end up with
+		a priority inversion when they try to grab nodes/buffers.  A semi-asynchronous
+		write means the writing process blocks until the request is *sent* to the remote
+		server, and does not need to wait for the server to send a response.
+
+Invariants:
+
+	Block B only remains in the cache if it is the latest copy of B.
+	There is never a read for block B on the request queue *subsequent* to a write for B.
+	   (i.e., if a write for B is in the queue, a read request will be satisfied
+	    immediately, without placing a new request on the request queue.)
+
+Each node in the request queue contains
+	- Pointers to next and prev nodes
+	- Block number		(not used in sync)
+	- Operation (read/write/sync)
+	- Address of the caller's buffer
+	- Process ID of the process making the request
+
+Each node in the cache contains
+	- Pointers to next and prev nodes
+	- Block number
+	- One block of data
+
+init:
+    * Allocate NPROC request nodes and link them on a free list
+    * Allocate N buffers for the cache, choosing N for performance (N can be < or > NPROC)
+    * Create a com process semaphore with a count of 0
+    * Create the com process and leave it suspended
+
+open:
+    * Send an open request to the remote server to ensure the remote disk is present
+
+read block B:
+    * If block B is in the cache, satisfy the request and return to the caller
+    * Search backward in the request queue, and if there is a write for B, satisfy the
+		request and return to the caller
+    * Allocate a node and place a request to read B in the request queue
+    * Atomically (need to make it atomic because the com has higher priority)
+	- Signal the com process semaphore
+	- Suspend the calling process
+    * When awakened, return to the caller
+
+write block B:
+    * If block B is in the cache, free the buffer
+    * Allocate a node and place a write request in the request queue
+    * Atomically (need to make it atomic because the com has higher priority)
+	- If the request queue contains a previous write for B, remove it and resume the process
+	- Signal com process semaphore
+	- Suspend the calling process
+    * When awakened, return to the caller
+
+sync:
+    * Place a request in the queue
+    * Atomically (need to make it atomic because the com has higher priority)
+	- Signal com process semaphore
+	- Suspend the calling process
+    * When awakened, return to the caller
+
+com process:
+
+    repeat forever {
+
+	- Block until the next request arrives (i.e.,  wait for the com process semaphore)
+
+	- If the request queue is empty, continue (go to the next iteration of the loop),
+		Note: This situation is unlikely, and only happens when a a node has been
+		removed from the request queue (e.g., when multiple processes are waiting to
+		read a block, a reply from the server satisfies all their requests and they
+		are removed from the request queue).
+
+	- Use the request type in the item at the head of the queue to determine the action taken
+
+	  Sync:
+		free the request block
+		Resume the waiting process
+
+	  Read block B:
+		Send a read request message to the server and receive a reply (the com process
+			will block to receive the reply, and other processes will run)
+		Copy data to caller's buffer
+		Resume the waiting process (The com process keeps running because it has highest priority)
+		Free the request block
+		Search the request queue for all subsequent reads of the block B (stopping on a write of B)
+		 and for each read of B
+		 - Copy data to caller's buffer
+		 - Resume the waiting process (the com process keeps running)
+		 - Free the request block
+
+	  Write block B:
+
+		Copy the data from the caller's buffer into the outgoing message
+		If there are no subsequent writes for B on the request queue, this is the latest
+			copy, so steal a buffer from the free list or the cache, copy the data
+			into it, and place the node at the head of the cache
+		Resume the waiting process (the com process continues to run)
+		Free the request node
+		Send the write request message to the server and receive a reply (the com process
+			will block to receive the reply, and other processes will run)
+		/* No need to check for subsequent reads of B on the request queue because */
+		/* they will have already been satisfied */
+    }
+
+Implementation of atomic actions
+
+   Raise the process priority to the maximum possible priority, perform atomic actions, and then
+reset the priority to the original value.
