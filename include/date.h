@@ -61,7 +61,7 @@ extern	struct	dateinfo Date;		/* Global date information	*/
 #define	TIMELPORT	53678		/* local UDP port for time	*/
 
 #ifndef	TIMESERVER
-#define	TIMESERVER	"128.10.19.24"	/* IP address of NTP time server*/
+#define	TIMESERVER	"pool.ntp.org"	/* IP address of NTP time server*/
 #endif
 
 #define	TIMETIMEOUT	2000		/* timeout for time server (ms)	*/
