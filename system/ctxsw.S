@@ -24,7 +24,7 @@ ctxsw:
 		/* The next instruction switches from the old process's	*/
 		/*   stack to the new process's stack.			*/
 
-		movl	(%eax),%esp	/* Pop up new process's SP	*/
+		movl	(%eax),%esp	/* Pick up new process's SP	*/
 
 		/* Restore new seg. registers here, if multiple allowed */
 
