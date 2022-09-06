@@ -183,7 +183,7 @@ void rdcinsert (struct rdscblk *rdptr, uint32 blk, char *data) {
  *------------------------------------------------------------------------
  */
 
-void edqdump (
+void rdqdump (
 	  did32 disk		/* ID of disk to use */
 	)
 {
@@ -246,7 +246,7 @@ void edqdump (
 
  */
 
-void edcdump (
+void rdcdump (
 	  did32 disk		/* ID of disk to use */
 	)
 {

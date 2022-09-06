@@ -408,8 +408,8 @@ extern	struct	rdqnode	* rdqunlink(struct rdscblk *rdptr, struct rdqnode *rptr);
 extern	void	rdqinsert(struct rdscblk *, struct rdqnode *);
 extern	void	rdcunlink(struct rdscblk *, struct rdcnode *);
 extern	void	rdcinsert(struct rdscblk *, uint32, char *);
-extern	void	edqdump(did32);
-extern	void	edcdump(did32);
+extern	void	rdqdump(did32);
+extern	void	rdcdump(did32);
 
 /* in file rdsread.c */
 
