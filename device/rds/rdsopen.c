@@ -172,7 +172,7 @@ devcall	rdsopen (
 
 	rdptr->rd_state = RD_OPEN;
 
-	/* Return */
+	/* Return the device ID of the remote disk device */
 
-	return OK;
+	return devptr->dvnum;
 }

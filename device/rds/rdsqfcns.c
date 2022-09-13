@@ -289,8 +289,8 @@ void rdcdump (
 			if ( (i%64) == 0) {
 				kprintf("\n");
 			}
-			kprintf("\n**** END OF DATA ****\n");
 		}
+		kprintf("\n**** END OF DATA ****\n");
 		cptr = cptr->rd_next;
 	}
 	return;
