@@ -1,0 +1,74 @@
+This directory holds Xinu sources for the Beaglebone Black.
+
+==========================================================================================
+
+The code contains a PIPE mechanism and a shell that allows a pipeline of commands.
+
+
+			****   *****  ****   *****   ****
+			*   *    *    *   *  *      *   
+			****     *    ****   ****    ***
+			*        *    *      *          *
+			*      *****  *      *****  ****
+
+
+==========================================================================================
+
+Assumptions
+
+	A given pipe only has 1 writer and 1 reader.  When it finishes depositing data in
+		the pipe, the writer closes the pipe.  After the reader consumes all the
+		data, subsequent reads return EOF.
+
+	A pipe will be closed twice: once when writer finishes sending data and once when
+		the reader exits.  After the first close, a reader can still read to EOF.
+
+	Pipes will be used in the shell, so processes will have pipes as stdin or stdout.
+		If a process is killed, stdin and stdout will be colosed, so if the process
+		is uing pipe(s) the pipes will be closed.
+
+	Normally, a writer closes the pipe first, but a reader may close a pipe early if
+		the process is killed or encounters a condition that cause it to exit
+		before reading all the data in the pipe.  Subsequent attempts to write to
+		the pipe will fail (the call will return SYSERR).  If the writer ignores
+		the return code, the writer can continue making calls to write data until
+		it exhausts all the output and calls close, at which time the pipe will
+		be deallocated.
+
+Pipe devices
+
+	The system contains a main pipe device (PIPE) and a set of pipe pseudo-devices
+		(PIPE1, PIPE2, PIPE3...).  The PIPE device only supports open; the opening
+		the PIPE device allocates a free pseudo device and returns the descriptor.
+		A pseudo device supports read, write, and close.
+
+==========================================================================================
+
+Shell algorithm
+
+ 1. Get an input line and use lexan to divide it into tokens.
+
+ 2. Divide tokens into segments separated by the pipe symbol, and set each segment input
+    and output devices to the device the shell is using (presumably, CONSOLE).
+
+ 3. Check for background (& as the last token) and remove the token.
+
+ 4. Check for input redirection on the first segment and output redirection on the last
+    segment, and remember the names of the input and output files, if any.
+
+ 5. Look up the command name in each segment.
+
+6. Open the redirected input and output files, if any, and record the device ID as the
+    first segment input device or the last segment output device.
+
+ 7. Create N-1 pipes for N segments, and record the device ID as the output device for
+    segment i and the input device for segment i+1.
+
+ 8. Create a process to run each segment and add arguments.
+
+ 9. If running in foreground, wait for the last process to exit (a message arrives with
+    the process ID of the last process in the pipeline).
+
+10. Continue with the main loop that reads the next input line.
+
+==========================================================================================
