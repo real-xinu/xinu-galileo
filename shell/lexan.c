@@ -15,8 +15,6 @@ int32	lexan (
 	  char		*tokbuf,	/* Buffer into which tokens are	*/
 					/*   stored with a null		*/
 					/*   following each token	*/
-	  int32		*tlen,		/* Place to store number of	*/
-					/*   chars in tokbuf		*/
 	  int32		tok[],		/* Array of pointers to the	*/
 					/*   start of each token	*/
 	  int32		toktyp[]	/* Array that gives the type	*/
@@ -46,7 +44,7 @@ int32	lexan (
 			return SYSERR;
 		}
 
-		/* Skip whitespace before token */
+		/* Skip white space before token */
 
 		while ( (*p == SH_BLANK) || (*p == SH_TAB) ) {
 			p++;
@@ -56,7 +54,6 @@ int32	lexan (
 
 		ch = *p;
 		if ( (ch==SH_NEWLINE) || (ch==NULLCH) ) {
-			*tlen = tbindex;
 			return ntok;
 		}
 
@@ -70,6 +67,13 @@ int32	lexan (
 		switch (ch) {
 
 		    case SH_AMPER:	toktyp[ntok] = SH_TOK_AMPER;
+					tokbuf[tbindex++] = ch;
+					tokbuf[tbindex++] = NULLCH;
+					ntok++;
+					p++;
+					continue;
+
+		    case SH_PIPE:	toktyp[ntok] = SH_TOK_PIPE;
 					tokbuf[tbindex++] = ch;
 					tokbuf[tbindex++] = NULLCH;
 					ntok++;
@@ -126,7 +130,7 @@ int32	lexan (
 			&& (ch != SH_LESS)  && (ch != SH_GREATER)
 			&& (ch != SH_BLANK) && (ch != SH_TAB)
 			&& (ch != SH_AMPER) && (ch != SH_SQUOTE)
-			&& (ch != SH_DQUOTE) )	{
+			&& (ch != SH_DQUOTE)&& (ch != SH_PIPE))	{
 				tokbuf[tbindex++] = ch;
 				p++;
 		}
@@ -143,6 +147,5 @@ int32	lexan (
                 ntok++;				/* count valid token	*/
 
 	}
-	*tlen = tbindex;
 	return ntok;
 }

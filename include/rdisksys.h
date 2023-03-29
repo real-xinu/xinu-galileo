@@ -141,7 +141,7 @@ extern	struct	rdscblk	rdstab[];	/* Remote disk control block	*/
 /* The standard header present in all messages with no extra fields */
 #pragma pack(2)
 struct	rd_msg_hdr {			/* Header fields present in each*/
-	RD_MSG_HDR			/*   remote file system message	*/
+	RD_MSG_HDR			/*   remote disk system message	*/
 };
 #pragma pack()
 
@@ -149,14 +149,14 @@ struct	rd_msg_hdr {			/* Header fields present in each*/
 /*				Read					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_rreq	{		/* Remote file read request	*/
+struct	rd_msg_rreq	{		/* Remote disk read request	*/
 	RD_MSG_HDR			/* Header fields		*/
 	uint32	rd_blk;			/* Block number to read		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_rres	{		/* Remote file read reply	*/
+struct	rd_msg_rres	{		/* Remote disk read reply	*/
 	RD_MSG_HDR			/* Header fields		*/
 	uint32	rd_blk;			/* Block number that was read	*/
 	char	rd_data[RD_BLKSIZ];	/* Array containing one block	*/
@@ -167,7 +167,7 @@ struct	rd_msg_rres	{		/* Remote file read reply	*/
 /*				Write					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_wreq	{		/* Remote file write request	*/
+struct	rd_msg_wreq	{		/* Remote disk write request	*/
 	RD_MSG_HDR			/* Header fields		*/
 	uint32	rd_blk;			/* Block number to write	*/
 	char	rd_data[RD_BLKSIZ];	/* Array containing one block	*/
@@ -175,7 +175,7 @@ struct	rd_msg_wreq	{		/* Remote file write request	*/
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_wres	{		/* Remote file write response	*/
+struct	rd_msg_wres	{		/* Remote disk write response	*/
 	RD_MSG_HDR			/* Header fields		*/
 	uint32	rd_blk;			/* Block number that was written*/
 };
@@ -185,13 +185,13 @@ struct	rd_msg_wres	{		/* Remote file write response	*/
 /*				Open					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_oreq	{		/* Remote file open request	*/
+struct	rd_msg_oreq	{		/* Remote disk open request	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_ores	{		/* Remote file open response	*/
+struct	rd_msg_ores	{		/* Remote disk open response	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
@@ -200,13 +200,13 @@ struct	rd_msg_ores	{		/* Remote file open response	*/
 /*				Close					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_creq	{		/* Remote file close request	*/
+struct	rd_msg_creq	{		/* Remote disk close request	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_cres	{		/* Remote file close response	*/
+struct	rd_msg_cres	{		/* Remote disk close response	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
@@ -215,13 +215,13 @@ struct	rd_msg_cres	{		/* Remote file close response	*/
 /*				Delete					*/
 /************************************************************************/
 #pragma pack(2)
-struct	rd_msg_dreq	{		/* Remote file delete request	*/
+struct	rd_msg_dreq	{		/* Remote disk delete request	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()
 
 #pragma pack(2)
-struct	rd_msg_dres	{		/* Remote file delete response	*/
+struct	rd_msg_dres	{		/* Remote disk delete response	*/
 	RD_MSG_HDR			/* Header fields		*/
 };
 #pragma pack()

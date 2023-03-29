@@ -185,5 +185,82 @@ struct	dentry	devtab[NDEVS] =
 	  (void *)lflinit, (void *)ioerr, (void *)lflclose,
 	  (void *)lflread, (void *)lflwrite, (void *)lflseek,
 	  (void *)lflgetc, (void *)lflputc, (void *)lflcontrol,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE is pipem */
+	{ 24, 0, "PIPE",
+	  (void *)ionull, (void *)pipe_open, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE0 is pip */
+	{ 25, 0, "PIPE0",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE1 is pip */
+	{ 26, 1, "PIPE1",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE2 is pip */
+	{ 27, 2, "PIPE2",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE3 is pip */
+	{ 28, 3, "PIPE3",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE4 is pip */
+	{ 29, 4, "PIPE4",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE5 is pip */
+	{ 30, 5, "PIPE5",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE6 is pip */
+	{ 31, 6, "PIPE6",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE7 is pip */
+	{ 32, 7, "PIPE7",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE8 is pip */
+	{ 33, 8, "PIPE8",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
+	  (void *)0x0, (void *)ionull, 0 },
+
+/* PIPE9 is pip */
+	{ 34, 9, "PIPE9",
+	  (void *)pipe_init, (void *)ioerr, (void *)pipe_close,
+	  (void *)pipe_read, (void *)pipe_write, (void *)ioerr,
+	  (void *)pipe_getc, (void *)pipe_putc, (void *)ioerr,
 	  (void *)0x0, (void *)ionull, 0 }
 };

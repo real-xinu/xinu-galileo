@@ -60,7 +60,7 @@ extern	struct	rflcblk	rfltab[];	/* Remote file control blocks	*/
 /* Definitions of parameters used when accessing a remote server	*/
 
 #define	RF_RETRIES	3		/* Time to retry sending a msg	*/
-#define	RF_TIMEOUT	3000		/* Wait one second for a reply	*/
+#define	RF_TIMEOUT	1000		/* Wait one second for a reply	*/
 
 /* Control functions for a remote file pseudo device */
 

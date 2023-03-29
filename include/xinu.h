@@ -41,3 +41,4 @@
 #include <string.h>
 #include <hpet.h>
 #include <apic.h>
+#include <pipe.h>

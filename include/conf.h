@@ -49,6 +49,17 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define LFILE3              21	/* type lfl      */
 #define LFILE4              22	/* type lfl      */
 #define LFILE5              23	/* type lfl      */
+#define PIPE                24	/* type pipem    */
+#define PIPE0               25	/* type pip      */
+#define PIPE1               26	/* type pip      */
+#define PIPE2               27	/* type pip      */
+#define PIPE3               28	/* type pip      */
+#define PIPE4               29	/* type pip      */
+#define PIPE5               30	/* type pip      */
+#define PIPE6               31	/* type pip      */
+#define PIPE7               32	/* type pip      */
+#define PIPE8               33	/* type pip      */
+#define PIPE9               34	/* type pip      */
 
 /* Control block sizes */
 
@@ -62,8 +73,10 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 #define	Nlfs	1
 #define	Nlfl	6
 #define	Nnam	1
+#define	Npipem	1
+#define	Npip	10
 
-#define NDEVS 24
+#define NDEVS 35
 
 
 /* Configuration and Size Constants */

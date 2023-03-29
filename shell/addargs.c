@@ -11,8 +11,7 @@
 status	addargs(
 	  pid32		pid,		/* ID of process to use		*/
 	  int32		ntok,		/* Count of arguments		*/
-	  int32		tok[],		/* Index of tokens in tokbuf	*/
-	  int32		tlen,		/* Length of data in tokbuf	*/
+	  int32		tok[],		/* Array of token indices	*/
 	  char		*tokbuf,	/* Array of null-term. tokens	*/
 	  void 		*dummy		/* Dummy argument that was	*/
 					/*   used at creation and must	*/
@@ -28,16 +27,19 @@ status	addargs(
 					/*   to place args vector	*/
 	char	*argstr;		/* Location in process's stack	*/
 					/*   to place arg strings	*/
-	uint32	*search;		/* pointer that searches for	*/
+	uint32	*search;		/* Pointer that searches for	*/
 					/*   dummy argument on stack	*/
 	uint32	*aptr;			/* Walks through args array	*/
 	int32	i;			/* Index into tok array		*/
+	int32	len;			/* Length of argument strings	*/
+	char	*first, *last;		/* Address of first and last	*/
+					/*   tokens in tokbuf		*/ 
 
 	mask = disable();
 
 	/* Check argument count and data length */
 
-	if ( (ntok <= 0) || (tlen < 0) ) {
+	if (ntok <= 0) {
 		restore(mask);
 		return SYSERR;
 	}
@@ -60,7 +62,7 @@ status	addargs(
 	/*	string area plus the offset of this argument		*/
 
 	for (aptr=argloc, i=0; i < ntok; i++) {
-		*aptr++ = (uint32) (argstr + tok[i]);
+		*aptr++ = (uint32) (argstr + tok[i]-tok[0]);
 	}
 
 	/* Add a null pointer to the args array */
@@ -70,7 +72,11 @@ status	addargs(
 	/* Copy the argument strings from tokbuf into process's	stack	*/
 	/*	just beyond the args vector				*/
 
-	memcpy(aptr, tokbuf, tlen);
+	first = &tokbuf[tok[0]];
+	last  = &tokbuf[tok[ntok-1]];
+	len = last - first + strlen(last) + 1;
+
+	memcpy(aptr, first, len);
 
 	/* Find the second argument in process's stack */
 

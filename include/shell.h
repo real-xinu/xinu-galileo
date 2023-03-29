@@ -30,11 +30,12 @@
 #define SHELL_STRTMSG	"Welcome to Xinu!\n"/* Welcome message		*/
 #define SHELL_EXITMSG	"Shell closed\n"/* Shell exit message		*/
 #define SHELL_SYNERRMSG	"Syntax error\n"/* Syntax error message		*/
-#define SHELL_CREATMSG	"Cannot create process\n"/* command error	*/
+#define SHELL_CREATEMSG	"Cannot create process\n"/* command error	*/
 #define SHELL_INERRMSG	"Cannot open file %s for input\n" /* Input err	*/
 #define SHELL_OUTERRMSG	"Cannot open file %s for output\n"/* Output err	*/
 					/* Builtin cmd error message	*/
-#define SHELL_BGERRMSG	"Cannot redirect I/O or background a builtin\n"
+#define SHELL_BGERRMSG	"Cannot redirect I/O or background a builtin\n"	*/
+#define SHELL_PIPEMSG	"Cannot create a pipe\n"/* error opening a pipe */
 
 /* Constants used for lexical analysis */
 
@@ -45,15 +46,17 @@
 #define	SH_TAB		'\t'		/* Tab character		*/
 #define	SH_SQUOTE	'\''		/* Single quote character	*/
 #define	SH_DQUOTE	'"'		/* Double quote character	*/
-#define	SH_LESS		'<'		/* Less-than character	*/
+#define	SH_LESS		'<'		/* Less-than character		*/
 #define	SH_GREATER	'>'		/* Greater-than character	*/
+#define	SH_PIPE		'|'		/* Pipeline symbol              */
 
 /* Token types */
 
 #define	SH_TOK_AMPER	0		/* Ampersand token		*/
 #define	SH_TOK_LESS	1		/* Less-than token		*/
 #define	SH_TOK_GREATER	2		/* Greater-than token		*/
-#define	SH_TOK_OTHER	3		/* Token other than those	*/
+#define	SH_TOK_PIPE	3		/* Pipeline token		*/
+#define	SH_TOK_OTHER	4		/* Token other than those	*/
 					/*   listed above (e.g., an	*/
 					/*   alphanumeric string)	*/
 
@@ -67,7 +70,6 @@
 
 struct	cmdent	{			/* Entry in command table	*/
 	char	*cname;			/* Name of command		*/
-	bool8	cbuiltin;		/* Is this a builtin command?	*/
 	int32	(*cfunc)(int32,char*[]);/* Function for command		*/
 };
 

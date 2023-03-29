@@ -96,6 +96,21 @@ nam:
 		-w ioerr 	-s ioerr 	-n ioerr
 		-intr ioerr
 
+/* type of the main pipe device */
+pipem:
+	on none
+		-i ionull	-o pipe_open	-c ioerr
+		-r ioerr	-g ioerr	-p ioerr
+		-w ioerr	-s ioerr	-n ioerr
+		-intr ionull
+
+/* type of a pipe pseudo-device */
+pip:
+	on none
+		-i pipe_init	-o ioerr	-c pipe_close
+		-r pipe_read	-g pipe_getc	-p pipe_putc
+		-w pipe_write	-s ioerr	-n ioerr
+		-intr ionull
 %%
 
 /* Actual device declarations that each give the name of a device that	*/
@@ -149,6 +164,22 @@ nam:
    LFILE4 is lfl on lfs
    LFILE5 is lfl on lfs
 
+   /* Main pipe device */
+
+   PIPE is pipem on none
+
+   /* Definitions of actual pipe pseudo devices */
+
+   PIPE0 is pip on none
+   PIPE1 is pip on none
+   PIPE2 is pip on none
+   PIPE3 is pip on none
+   PIPE4 is pip on none
+   PIPE5 is pip on none
+   PIPE6 is pip on none
+   PIPE7 is pip on none
+   PIPE8 is pip on none
+   PIPE9 is pip on none
 %%
 
 /* Configuration and Size Constants */

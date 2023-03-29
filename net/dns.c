@@ -28,7 +28,7 @@ status	dnslookup (
 	int32	i;			/* Loop index			*/
 	char	*p;			/* Pointer to walk the name	*/
 	char	ch;			/* One character in the name	*/
-	bool8	dotted;			/* Is sname dotted decimal?	*/
+	bool8	dotted;			/* Is dname dotted decimal?	*/
 
 	/* Check for a non-null argument */
 
