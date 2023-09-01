@@ -13,7 +13,7 @@ devcall	pipe_write(
 	)
 {
 	int32	nbytes;			/* Count of bytes written	*/
-	int32	retval;			/* Return valu from pipeputc	*/
+	int32	retval;			/* Return value from pipe_putc	*/
 
 	/* Ensure count is valid */
 

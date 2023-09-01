@@ -34,7 +34,7 @@ devcall	pipe_close (
 		resched_cntl(DEFER_START);
 		if (semcount(piptr->pcsem) < 0) {
 			/* Pipe is empty and consumer is blocked, so	*/
-			/* so allow the consumer to run   		*/
+			/* allow the consumer to run   			*/
 			semreset(piptr->pcsem, 0);
 		}
 
@@ -52,5 +52,6 @@ devcall	pipe_close (
 	piptr->pstate = PIPE_FREE;
 	semdelete(piptr->ppsem);
 	semdelete(piptr->pcsem);
+	piptr->pavail = 0;
 	return OK;
 }

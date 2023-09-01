@@ -10,7 +10,7 @@ devcall	pipe_getc(
 	  struct dentry	*devptr		/* Entry in device switch table	*/
 	)
 {
-	char	ch;			/* byte of data from the buffer	*/
+	char	ch;			/* Byte of data from the buffer	*/
 	struct	pipecblk *piptr;	/* Pointer to pipe control block*/
 
 	/* Get a pointer to the control block for this pipe */
@@ -61,7 +61,7 @@ devcall	pipe_getc(
 	}
 	piptr->pavail--;
 
-	/* signal the producer and return the byte */
+	/* Signal the producer and return the byte */
 
 	signal(piptr->ppsem);
 	return 0xff & ch;

@@ -17,7 +17,7 @@ devcall	pipe_putc(
 
 	piptr = &pipetab[devptr->dvminor];
 
-	/* check that the pipe is available for writing */
+	/* Check that the pipe is available for writing */
 
 	if (piptr->pstate != PIPE_OPEN) {
 		return SYSERR;

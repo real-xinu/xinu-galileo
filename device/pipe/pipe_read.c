@@ -25,7 +25,7 @@ devcall	pipe_read(
 		if ( (retval == SYSERR) || (retval == EOF) ) {
 			if (nbytes > 0) {
 				/* Some data already read -- return the	*/
-				/* data on thie call; the next call will*/
+				/* data on this call; the next call will*/
 				/* return EOF or SYSERR			*/
 				return nbytes;
 			} else {

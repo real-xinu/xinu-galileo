@@ -32,5 +32,6 @@ devcall	pipe_open(
 	piptr->pcsem = semcreate(0);
 	piptr->ppsem = semcreate(PIPE_BUF_SIZE);
 	piptr->phead = piptr->ptail = 0;
+	piptr->pavail= 0;
 	return piptr->pdevid;
 }

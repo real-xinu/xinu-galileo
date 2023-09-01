@@ -17,11 +17,11 @@
 
 struct	pipecblk {
 	int32	pstate;		/* State of this pipe device		*/
-	byte	pbuf[PIPE_BUF_SIZE]; /* buffer for the pipe		*/
+	byte	pbuf[PIPE_BUF_SIZE]; /* Buffer for the pipe		*/
 	int32	phead;		/* Index of next byte in pbuf to read	*/
 	int32	ptail;		/* Index of next byte in pbuf to write	*/
 	sid32	ppsem;		/* Producer semaphore for the pipe	*/
-	sid32	pcsem;		/* consumer semaphore for the pipe	*/
+	sid32	pcsem;		/* Consumer semaphore for the pipe	*/
 	did32	pdevid;		/* Device ID of this pseudo device	*/
 	int32	pavail;		/* Available characters during drain	*/
 };
