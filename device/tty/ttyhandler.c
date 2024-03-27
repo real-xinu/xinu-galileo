@@ -34,9 +34,9 @@ void ttyhandler(
         }
 
 	/* Decode the interrupt cause based upon the value extracted	*/
-	/* from the UART interrupt identification register.  Clear	*/
-	/* the interrupt source and perform the appropriate handling	*/
-	/* to coordinate with the upper half of the driver		*/
+	/*  from the UART interrupt identification register.  Clear	*/
+	/*  the interrupt source and perform the appropriate handling	*/
+	/*  to coordinate with the upper half of the driver		*/
 
         /* Decode the interrupt cause */
 

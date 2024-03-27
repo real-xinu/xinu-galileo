@@ -8,7 +8,7 @@
  *------------------------------------------------------------------------
  */
 syscall	kputc(
-	  byte	c			/* character to write		*/
+	  byte	c			/* Character to write		*/
 	)
 {
 	struct	dentry	*devptr;
@@ -80,7 +80,7 @@ syscall kgetc(void)
 	irmask = csrptr->ier;		/* Save UART interrupt state.   */
 	csrptr->ier = 0;		/* Disable UART interrupts.     */
 
-	/* wait for UART transmit queue to empty */
+	/* Wait for UART transmit queue to empty */
 
 	while (0 == (csrptr->lsr & UART_LSR_DR)) {
 		; /* Do Nothing */

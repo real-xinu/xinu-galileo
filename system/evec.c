@@ -31,7 +31,7 @@ uint16	girmask;
 #define	OCR	ICU1		/* Operation Command Register		*/
 #define	IMR	(ICU1+1)	/* Interrupt Mask Register		*/
 
-#define	EOI	0x20		/* non-specific end of interrupt	*/
+#define	EOI	0x20		/* Non-specific end of interrupt	*/
 
 #define NID		48	/* Number of interrupt descriptors	*/
 #define	IGDT_TRAPG	15	/* Trap Gate				*/

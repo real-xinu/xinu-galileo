@@ -389,7 +389,7 @@ status	udp_send (
 	pkt->net_ipfrag = 0x0000;	/* IP flags & fragment offset	*/
 	pkt->net_ipttl = 0xff;		/* IP time-to-live		*/
 	pkt->net_ipproto = IP_UDP;	/* Datagram carries UDP		*/
-	pkt->net_ipcksum = 0x0000;	/* initial checksum		*/
+	pkt->net_ipcksum = 0x0000;	/* Initial checksum		*/
 	pkt->net_ipsrc = locip;		/* IP source address		*/
 	pkt->net_ipdst = remip;		/* IP destination address	*/
 
@@ -501,7 +501,7 @@ status	udp_release (
 {
 	intmask	mask;			/* Saved interrupt mask		*/
 	struct	udpentry *udptr;	/* Pointer to udptab entry	*/
-	struct	netpacket *pkt;		/* pointer to packet being read	*/
+	struct	netpacket *pkt;		/* Pointer to packet being read	*/
 
 	/* Ensure only one process can access the UDP table at a time	*/
 

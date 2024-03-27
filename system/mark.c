@@ -18,30 +18,55 @@ void	markinit(void)
 
 
 /*------------------------------------------------------------------------
+ *  notmarked  -  Return nonzero if a location has not been marked
+ *------------------------------------------------------------------------
+ */
+syscall	notmarked(memmark loc)
+{	
+	intmask	mask;			/* Saved interrupt mask		*/
+
+	mask = disable();
+
+	/* See if the location has been marked */
+
+	if (loc[0]<0 || loc[0]>=nmarks || marks[loc[0]] != loc) {
+		restore(mask);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+/*------------------------------------------------------------------------
  *  mark  -  Mark a specified memory location
  *------------------------------------------------------------------------
  */
-status	mark(
+syscall	mark(
 	  int32	*loc			/* Location to mark		*/
 	)
+
 {
+	intmask	mask;			/* Saved interrupt mask		*/
+
+	mask = disable();
 
 	/* If location is already marked, do nothing */
 
 	if ( (*loc>=0) && (*loc<nmarks) && (marks[*loc]==loc) ) {
+		restore(mask);
 		return OK;
 	}
 
 	/* If no more memory marks are available, indicate an error */
 
 	if (nmarks >= MAXMARK) {
+		restore(mask);
 		return SYSERR;
 	}
 
 	/* Obtain exclusive access and mark the specified location */
 
-	wait(mkmutex);
 	marks[ (*loc) = nmarks++ ] = loc;
-	signal(mkmutex);
+	restore(mask);
 	return OK;
 }

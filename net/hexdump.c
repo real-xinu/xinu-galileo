@@ -7,12 +7,12 @@
  *------------------------------------------------------------------------
  */
 void	hexdump	(
-	  char *p, int32 len		/* ptr to packet and length of	*/
+	  char *p, int32 len		/* Ptr to packet and length of	*/
 					/*  payload (IP datagram)	*/
 	)
 {
-	int32	i;			/* counts bytes			*/
-	int32	word;			/* counts 32 bits words		*/
+	int32	i;			/* Counts bytes			*/
+	int32	word;			/* Counts 32 bits words		*/
 
 	for (i=0; i<6; i++) {
 		kprintf("%02x", 0xff & *p++);
@@ -53,11 +53,11 @@ void	hexdump	(
  *------------------------------------------------------------------------
  */
 void	hexadump	(
-	  char *p, int32 len		/* ptr to packet and length of	*/
+	  char *p, int32 len		/* Ptr to packet and length of	*/
 					/*  payload (IP datagram)	*/
 	)
 {
-	int32	i;			/* counts bytes			*/
+	int32	i;			/* Counts bytes			*/
 
 	for (i=0; i<6; i++) {
 		kprintf("%02x", 0xff & *p++);

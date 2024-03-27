@@ -130,7 +130,7 @@ status	arp_resolve (
 		} else if (msg == SYSERR) {
 			restore(mask);
 			return SYSERR;
-		} else {	/* entry is resolved */
+		} else {	/* Entry is resolved */
 			break;
  		}
 	}

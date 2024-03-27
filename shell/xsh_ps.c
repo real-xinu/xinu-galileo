@@ -10,9 +10,9 @@
  */
 shellcmd xsh_ps(int nargs, char *args[])
 {
-	struct	procent	*prptr;		/* pointer to process		*/
-	int32	i;			/* index into proctabl		*/
-	char *pstate[]	= {		/* names for process states	*/
+	struct	procent	*prptr;		/* Pointer to process		*/
+	int32	i;			/* Index into proctabl		*/
+	char *pstate[]	= {		/* Names for process states	*/
 		"free ", "curr ", "ready", "recv ", "sleep", "susp ",
 		"wait ", "rtime"};
 
@@ -50,7 +50,7 @@ shellcmd xsh_ps(int nargs, char *args[])
 
 	for (i = 0; i < NPROC; i++) {
 		prptr = &proctab[i];
-		if (prptr->prstate == PR_FREE) {  /* skip unused slots	*/
+		if (prptr->prstate == PR_FREE) {  /* Skip unused slots	*/
 			continue;
 		}
 		printf("%3d %-16s %s %4d %4d 0x%08X 0x%08X %8d\n",

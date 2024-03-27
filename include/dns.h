@@ -13,18 +13,18 @@
 
 struct	dnspkt {
 	uint16	id;			/* DNS Query ID			*/
-	struct	{
-		byte	rd:1;		/* Recursion Desired		*/
-		byte	tc:1;		/* Truncation			*/
-		byte	aa:1;		/* Authoritative Answer		*/
-		byte	opcode:4;	/* Operation Code		*/
-		byte	qr:1;		/* Query=0, Response=1		*/
+
+	struct	{			/* Header in little-endian order*/
+		uint16	rcode:4;	/* Response Code		*/
+		uint16	z:3;		/* Reserved, must be 0		*/
+		uint16	ra:1;		/* Recursion Available		*/
+		uint16	rd:1;		/* Recursion Desired		*/
+		uint16	tc:1;		/* Truncation			*/
+		uint16	aa:1;		/* Authoritative Answer		*/
+		uint16	opcode:4;	/* Operation Code		*/
+		uint16	qr:1;		/* Query=0, Response=1		*/
 	};
-	struct	{
-		byte	rcode:4;	/* Response Code		*/
-		byte	z:3;		/* Reserved, must be 0		*/
-		byte	ra:1;		/* Recursion Available		*/
-	};
+
 	uint16	qucount;		/* No. of Questions		*/
 	uint16	ancount;		/* No. of RRs in Answer		*/
 	uint16	nscount;		/* No of Name Server RRs	*/

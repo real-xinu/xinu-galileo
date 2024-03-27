@@ -17,7 +17,7 @@ extern	status	ascdate(uint32, char *);
 extern	status	bufinit(void);
 
 /* in file chprio.c */
-extern	pri16	chprio(pid32, pri16);
+extern	syscall	chprio(pid32, pri16);
 
 /* in file clkupdate.S */
 extern	uint32	clkcount(void);
@@ -403,6 +403,10 @@ extern	devcall	ramread(struct dentry *, char *, int32);
 /* in file ramwrite.c */
 extern	devcall	ramwrite(struct dentry *, char *, int32);
 
+/* in file rdsars.c */
+
+extern	syscall	rdsars(pid32);
+
 /* in file rdscomm.c */
 
 extern	status	rdscomm(struct rd_msg_hdr *, int32, struct rd_msg_hdr *, int32, struct rdscblk *);
@@ -425,20 +429,16 @@ extern	void	rdsprocess(struct rdscblk *);
 
 /* in file rdsqfcns.c */
 
-extern	struct	rdqnode	* rdqunlink(struct rdscblk *rdptr, struct rdqnode *rptr);
-extern	void	rdqinsert(struct rdscblk *, struct rdqnode *);
-extern	void	rdcunlink(struct rdscblk *, struct rdcnode *);
-extern	void	rdcinsert(struct rdscblk *, uint32, char *);
+extern	void	rdqadd(struct rdscblk *, struct rdqnode *);
+extern	struct	rdqnode	*	rdqfree(struct rdscblk *, struct rdqnode *);
+extern	int32	rdcget(struct rdscblk *, uint32, char *);
+extern	void	rdcadd(struct rdscblk *, uint32, char *);
 extern	void	rdqdump(did32);
 extern	void	rdcdump(did32);
 
 /* in file rdsread.c */
 
 extern	devcall	rdsread(struct dentry *, char *, int32);
-
-/* in file rdssetprio.c */
-
-extern	pri16	rdssetprio(pri16);
 
 /* in file rdswrite.c */
 
@@ -485,7 +485,7 @@ extern	status	resched_cntl(int32);
 extern	void	restore(intmask);
 
 /* in file resume.c */
-extern	pri16	resume(pid32);
+extern	syscall	resume(pid32);
 
 /* in file rfsgetmode.c */
 extern	int32	rfsgetmode(char * );

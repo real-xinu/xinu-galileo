@@ -11,18 +11,18 @@
 shellcmd xsh_help(int nargs, char *args[])
 {
 	int32	i;
-	char	*argv[2];		/* argument vector for call	*/
-	char	*src, *cmp;		/* used for string compare	*/
-	int32	len;			/* length of a command name	*/
-	int32	maxlen;			/* maximum length of all	*/
+	char	*argv[2];		/* Argument vector for call	*/
+	char	*src, *cmp;		/* Used for string compare	*/
+	int32	len;			/* Length of a command name	*/
+	int32	maxlen;			/* Maximum length of all	*/
 					/*   command names		*/
-	int32	cols;			/* number of columns in the	*/
+	int32	cols;			/* Number of columns in the	*/
 					/*   formatted command list	*/
-	int32	spac;			/* space per column in the	*/
+	int32	spac;			/* Space per column in the	*/
 					/*   formatted command list	*/
-	int32	lines;			/* total lines of output in the	*/
+	int32	lines;			/* Total lines of output in the	*/
 					/*   formatted command list	*/
-	int32	j;			/* index of commands across one	*/
+	int32	j;			/* Index of commands across one	*/
 					/*   line of formatted output	*/
 	
 	/* For argument '--help', emit help about the 'help' command	*/
@@ -67,7 +67,7 @@ shellcmd xsh_help(int nargs, char *args[])
 				continue;
 			}
 
-			/* prepare args for shell command */
+			/* Prepare args for shell command */
 
 			argv[0] = args[1];
 			argv[1] = "--help";
@@ -107,7 +107,7 @@ shellcmd xsh_help(int nargs, char *args[])
 
 	lines = (ncmd+(cols-1))/cols;
 
-	/* print the lines of command names */
+	/* Print the lines of command names */
 
 	for (i=0; i<lines; i++) {
 		for (j=i; j<ncmd; j+=lines) {

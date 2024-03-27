@@ -7,7 +7,7 @@
 
 #define	HPET_TXCC_IT	0x00000002	/* Intr. type level (edge)	*/
 #define	HPET_TXCC_IE	0x00000004	/* Interrupt enable		*/
-#define	HPET_TXCC_TYP	0x00000008	/* timer type periodic		*/
+#define	HPET_TXCC_TYP	0x00000008	/* Timer type periodic		*/
 #define	HPET_TXCC_TVS	0x00000040	/* Timer Value Set		*/
 
 /* Structure of HPET control and status registers */

@@ -26,7 +26,7 @@ devcall	ttycontrol(
 		wait(typtr->tyisem);
 		ch = *typtr->tyitail;
 		signal(typtr->tyisem);
-		return (devcall)ch;
+		return (devcall)(0xff & ch);
 
 	case TC_MODER:
 		typtr->tyimode = TY_IMRAW;

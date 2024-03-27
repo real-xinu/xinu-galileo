@@ -52,7 +52,7 @@ status	addargs(
 	
 	aloc = (uint32) (prptr->prstkbase
 		- prptr->prstklen + sizeof(uint32));
-	argloc = (uint32*) ((aloc + 3) & ~0x3);	/* round multiple of 4	*/
+	argloc = (uint32*) ((aloc + 3) & ~0x3);	/* Round to mult. of 4	*/
 
 	/* Compute the first location beyond args array for the strings	*/
 

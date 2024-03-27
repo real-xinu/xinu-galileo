@@ -9,7 +9,7 @@
  */
 shellcmd xsh_echo(int nargs, char *args[])
 {
-	int32	i;			/* walks through args array	*/
+	int32	i;			/* Walks through args array	*/
 
 	if (nargs > 1) {
 		printf("%s", args[1]);

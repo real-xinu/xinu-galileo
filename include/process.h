@@ -36,7 +36,7 @@
 
 /* Number of device descriptors a process can have open */
 
-#define NDESC		5	/* must be odd to make procent 4N bytes	*/
+#define NDESC		5	/* Must be odd to make procent 4N bytes	*/
 
 /* Definition of the process table (multiple of 32 bits) */
 

@@ -14,16 +14,16 @@ extern	uint32	start;
  */
 shellcmd xsh_memdump(int nargs, char *args[])
 {
-	bool8	force = FALSE;		/* ignore address sanity checks	*/
-	uint32	begin;			/* begining address		*/
-	uint32	stop;			/* last address to dump		*/
-	uint32	length;			/* length of region to dump	*/
-	int32	arg;			/* index into args array	*/
-	uint32	l;			/* counts length during dump	*/
-	int32	i;			/* counts words during dump	*/
-	uint32	*addr;			/* address to dump		*/
-	char	*chptr;			/* character address to dump	*/
-	char	ch;			/* next character to print	*/
+	bool8	force = FALSE;		/* Ignore address sanity checks	*/
+	uint32	begin;			/* Begining address		*/
+	uint32	stop;			/* Last address to dump		*/
+	uint32	length;			/* Length of region to dump	*/
+	int32	arg;			/* Index into args array	*/
+	uint32	l;			/* Counts length during dump	*/
+	int32	i;			/* Counts words during dump	*/
+	uint32	*addr;			/* Address to dump		*/
+	char	*chptr;			/* Character address to dump	*/
+	char	ch;			/* Next character to print	*/
 
 	/* For argument '--help', emit help about the 'memdump' command	*/
 
@@ -86,12 +86,12 @@ shellcmd xsh_memdump(int nargs, char *args[])
 
 	stop = begin + length;
 
-	/* verify that the address and length are reasonable */
+	/* Verify that the address and length are reasonable */
 
 	if ( force || ( (begin >= (uint32)&start) && (stop > begin) &&
 					(((void *)stop) < maxheap)) ) {
 
-		/* values are valid; perform dump */
+		/* Values are valid; perform dump */
 
 		chptr = (char *)begin;
 		for (l=0; l<length; l+=16) {
@@ -124,20 +124,20 @@ shellcmd xsh_memdump(int nargs, char *args[])
  *------------------------------------------------------------------------
  */
 static	uint32	parseval(
-	  char	*string			/* argument string to parse	*/
+	  char	*string			/* Argument string to parse	*/
 	)
 {
-	uint32	value;			/* value to return		*/
-	char	ch;			/* next character		*/
+	uint32	value;			/* Value to return		*/
+	char	ch;			/* Next character		*/
 	
 
 	value = 0;
 
-	/* argument string must consists of decimal digits or	*/
+	/* Argument string must consists of decimal digits or	*/
 	/*	0x followed by hex digits			*/
 
 	ch = *string++;
-	if (ch == '0') {		/* hexadecimal */
+	if (ch == '0') {		/* Hexadecimal */
 		if (*string++ != 'x') {
 			return 0;
 		}
@@ -152,7 +152,7 @@ static	uint32	parseval(
 				return 0;
 			}
 		}
-	} else {			/* decimal */
+	} else {			/* Decimal */
 		while (ch != NULLCH) {
 			if ( (ch < '0') || (ch > '9') ) {
 				return 0;

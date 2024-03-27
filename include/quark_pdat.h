@@ -33,7 +33,7 @@ struct quark_pdat_entry {
 	char	pdat_entry_desc[10];  /* Description string of the platform entry */
 	uint16	pdat_entry_ver;       /* Version of the platform entry */
 	
-	/* variable length data for the entry */
+	/* Variable length data for the entry */
 };
 #pragma pack()
 

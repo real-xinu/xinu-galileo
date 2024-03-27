@@ -26,7 +26,7 @@ devcall	pipe_getc(
 	if (piptr->pstate == PIPE_EOF) {
 
 		/* The writer closed the pipe, so return bytes while	*/
-		/* any remain in the buffer.				*/
+		/*  any remain in the buffer.				*/
 
 		if (piptr->pavail > 0) {
 			ch = piptr->pbuf[piptr->phead++];
@@ -44,7 +44,7 @@ devcall	pipe_getc(
 	wait(piptr->pcsem);
 
 	/* If the state changed while we were blocked, the producer must*/
-	/* have called close, possibly after writing bytes to the pipe.	*/
+	/*  have called close, possibly after writing bytes to the pipe.*/
 
 	if (piptr->pstate == PIPE_EOF) {
 		if (piptr->pavail <= 0) {

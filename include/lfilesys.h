@@ -114,7 +114,7 @@ struct	lfdir	{			/* Entire directory on disk	*/
 	ibid32	lfd_ifree;		/* List of free i-blocks on disk*/
 	int32	lfd_nfiles;		/* Current number of files	*/
 	struct	ldentry lfd_files[LF_NUM_DIR_ENT]; /* Set of files	*/
-	uint32	lfd_revid;		/* fsysid in reverse byte order	*/
+	uint32	lfd_revid;		/* Fsysid in reverse byte order	*/
 };
 #pragma pack()
 

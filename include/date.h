@@ -12,37 +12,37 @@
 
 /* Conversion between network and local representations */
 
-#define	ntim2xtim(x)  ((x)-2208988800U)	/* net-to-xinu time		*/
-#define	xtim2ntim(x)  ((x)+2208988800U)	/* xinu-to-net time		*/
+#define	ntim2xtim(x)  ((x)-2208988800U)	/* Net-to-xinu time		*/
+#define	xtim2ntim(x)  ((x)+2208988800U)	/* Xinu-to-net time		*/
 
 /* Constants for Daylight Savings Time					*/									
 
-#define	DATE_DST_OFF	0		/* force DST to be off		*/
-#define	DATE_DST_ON	1		/* force DST to be on		*/
-#define	DATE_DST_AUTO	2		/* compute DST automatically	*/
+#define	DATE_DST_OFF	0		/* Force DST to be off		*/
+#define	DATE_DST_ON	1		/* Force DST to be on		*/
+#define	DATE_DST_AUTO	2		/* Compute DST automatically	*/
 
 /* Days in months and month names used to format a date */
 
 struct	dateinfo {
-	uint32	dt_boot;		/* time when system booted	*/
+	uint32	dt_boot;		/* Time when system booted	*/
 					/*  add clktime to get the	*/
 					/*  current time-of-day		*/
-	bool8	dt_bootvalid;		/* is dt_boot field valid?	*/
-	int32	dt_daylight;		/* whether to compute daylight	*/
+	bool8	dt_bootvalid;		/* Is dt_boot field valid?	*/
+	int32	dt_daylight;		/* Whether to compute daylight	*/
 					/*   savings time		*/
-	int32	dt_msize[12];		/* days per month		*/
-	char	*dt_mnam[12];		/* month names			*/
-	char	*dt_dnam[7];		/* day names			*/
+	int32	dt_msize[12];		/* Days per month		*/
+	char	*dt_mnam[12];		/* Month names			*/
+	char	*dt_dnam[7];		/* Day names			*/
 };
 
 extern	struct	dateinfo Date;		/* Global date information	*/
 
 /* Constants for converting time to month/day/year/hour/minute/second	*/
 
-#define	isleap(x)	((x)%4==0)	/* leap year? (1970-2099)	*/
-#define	SECPERDY	(60*60*24)	/* one day in seconds		*/
-#define	SECPERHR	(60*60)		/* one hour in seconds		*/
-#define	SECPERMN	(60)		/* one minute in seconds	*/
+#define	isleap(x)	((x)%4==0)	/* Leap year? (1970-2099)	*/
+#define	SECPERDY	(60*60*24)	/* One day in seconds		*/
+#define	SECPERHR	(60*60)		/* One hour in seconds		*/
+#define	SECPERMN	(60)		/* One minute in seconds	*/
 
 /* The local time zone can be set to EST, CST, MST,or PST.		*/
 
@@ -50,7 +50,7 @@ extern	struct	dateinfo Date;		/* Global date information	*/
 #define	ZONE_CST	6		/*  hours west of England	*/
 #define	ZONE_MST	7
 #define	ZONE_PST	8
-#define	TIMEZONE	ZONE_EST	/* timezone for this system	*/
+#define	TIMEZONE	ZONE_EST	/* Timezone for this system	*/
 
 /* In-line procedures to convert universal-to-local time and vice versa	*/
 
@@ -58,10 +58,10 @@ extern	struct	dateinfo Date;		/* Global date information	*/
 #define	ltim2utim(x)	((x)+TIMEZONE*SECPERHR)
 
 #define	TIMERPORT	123		/* UDP port for time server	*/
-#define	TIMELPORT	53678		/* local UDP port for time	*/
+#define	TIMELPORT	53678		/* Local UDP port for time	*/
 
 #ifndef	TIMESERVER
 #define	TIMESERVER	"pool.ntp.org"	/* IP address of NTP time server*/
 #endif
 
-#define	TIMETIMEOUT	2000		/* timeout for time server (ms)	*/
+#define	TIMETIMEOUT	2000		/* Timeout for time server (ms)	*/

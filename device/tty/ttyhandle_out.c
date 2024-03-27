@@ -55,6 +55,9 @@ void	ttyhandle_out(
 
 	ochars = 0;
 	avail = TY_OBUFLEN - semcount(typtr->tyosem);
+	if (avail > TY_OBUFLEN) {	/* In case semcount < 0	*/
+		avail = TY_OBUFLEN;
+	}
 	while ( (uspace>0) &&  (avail > 0) ) {
 		csrptr->buffer = *typtr->tyohead++;
 		if (typtr->tyohead >= &typtr->tyobuff[TY_OBUFLEN]) {

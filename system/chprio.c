@@ -6,7 +6,7 @@
  *  chprio  -  Change the scheduling priority of a process
  *------------------------------------------------------------------------
  */
-pri16	chprio(
+syscall	chprio(
 	  pid32		pid,		/* ID of process to change	*/
 	  pri16		newprio		/* New priority			*/
 	)
@@ -18,11 +18,11 @@ pri16	chprio(
 	mask = disable();
 	if (isbadpid(pid)) {
 		restore(mask);
-		return (pri16) SYSERR;
+		return SYSERR;
 	}
 	prptr = &proctab[pid];
 	oldprio = prptr->prprio;
 	prptr->prprio = newprio;
 	restore(mask);
-	return oldprio;
+	return 0xffff & oldprio;
 }

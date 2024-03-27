@@ -68,7 +68,7 @@ devcall	rdsopen (
 	msg.rd_status = htons(0);
 	msg.rd_seq = 0;			/* Rdscomm fills in an entry	*/
 	idto = msg.rd_id;
-	memset(idto, NULLCH, RD_IDLEN);/* initialize ID to zero bytes	*/
+	memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero bytes	*/
 
 	idfrom = diskid;
 	while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID to req.	*/
@@ -77,6 +77,10 @@ devcall	rdsopen (
 
 	/* Set the server port, local port, and	the server IP address.	*/
 
+	if ( (int32)getlocalip() == SYSERR) {
+		kprintf("RDS cannot obtain an IP address\n");
+		return SYSERR;
+	}
 	rdptr->rd_ser_port = RD_SERVER_PORT;
 	rdptr->rd_loc_port = RD_LOC_PORT + devptr->dvminor;
 	if (dnslookup(RD_SERVER, &rdptr->rd_ser_ip) == SYSERR) {
@@ -100,22 +104,10 @@ devcall	rdsopen (
 		return SYSERR;
 	}
 
+	/* Initialize the serial queue to empty */
 
-	/* Create a communication process semaphore */
+	rdptr->rdshead = rdptr->rdstail = rdptr->rdscount = 0;
 
-	rdptr->rd_comsem = semcreate(0);
-
-
-	/* Create the communication process for this remote deisk */
-
-	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
-						"remdisk", 1, rdptr);
-	if (rdptr->rd_comproc == SYSERR) {
-		kprintf("rdsopen: cannot create remote disk process");
-		rdptr->rd_state = RD_CLOSED;
-		return SYSERR;
-	}
-	
 	/* Initialize the request queue to empty */
 
 	rdptr->rd_qhead = rdptr->rd_qtail = (struct rdqnode *) NULL;
@@ -132,8 +124,8 @@ devcall	rdsopen (
 	}
 	rdptr->rd_qfree = (struct rdqnode *)p;
 	pend = p + size;
-	pprev = p; /* To prevent a compiler initialization" warning */									
-	while (p < pend) {	/* walk through allocated memory */
+	pprev = p; /* To prevent a Compiler initialization" warning */									
+	while (p < pend) {	/* Walk through allocated memory */
 		pprev = p;
 		p = p + sizeof(struct rdqnode);
 		((struct rdqnode *)pprev)->rd_next = (struct rdqnode *)p;
@@ -156,17 +148,22 @@ devcall	rdsopen (
 	}
 	rdptr->rd_cfree = (struct rdcnode *)p;
 	pend = p + size;
-	while (p < pend) {	/* walk through allocated memory */
+	while (p < pend) {	/* Walk through allocated memory */
 		pprev = p;
 		p = p + sizeof(struct rdcnode);
 		((struct rdcnode *)pprev)->rd_next = (struct rdcnode *)p;
 	}
 	((struct rdcnode *)pprev)->rd_next = NULL;  /* End of the list	*/
 
-	/* Resume the communication process, which will immediately	*/
-	/*    block waiting on the semaphore				*/
+	/* Create the communication process for this remote disk */
 
-	resume(rdptr->rd_comproc);
+	rdptr->rd_comproc = create(rdsprocess, RD_STACK, RD_PRIO,
+						"remdisk", 1, rdptr);
+	if (rdptr->rd_comproc == SYSERR) {
+		kprintf("rdsopen: cannot create remote disk process");
+		rdptr->rd_state = RD_CLOSED;
+		return SYSERR;
+	}
 
 	/* Change state of device to open */
 

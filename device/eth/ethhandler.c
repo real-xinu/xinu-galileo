@@ -95,7 +95,7 @@ interrupt ethhandler (
 		}
 
 		/* 'count' packets were processed by DMA, and slots are	*/
-		/* now free; signal the semaphore accordingly		*/
+		/*  now free; signal the semaphore accordingly		*/
 
 		signaln(ethptr->osem, count);
 
@@ -110,7 +110,7 @@ interrupt ethhandler (
 		count = 0;	/* Start packet count at zero */
 
 		/* Repeat until we have received		*/
-		/* maximum no. packets that can fit in queue 	*/
+		/* Maximum no. packets that can fit in queue 	*/
 
 		while(count <= ethptr->rxRingSize) {
 

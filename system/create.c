@@ -26,9 +26,9 @@ pid32	create(
 	uint32		*saddr;		/* Stack address		*/
 
 	mask = disable();
-	if (ssize < MINSTK)
+	if (ssize < MINSTK) {
 		ssize = MINSTK;
-	ssize = (uint32) roundmb(ssize);
+	}
 	if ( (priority < 1) || ((pid=newpid()) == SYSERR) ||
 	     ((saddr = (uint32 *)getstk(ssize)) == (uint32 *)SYSERR) ) {
 		restore(mask);
@@ -64,7 +64,7 @@ pid32	create(
 	a = (uint32 *)(&nargs + 1);	/* Start of args		*/
 	a += nargs -1;			/* Last argument		*/
 	for ( ; nargs > 0 ; nargs--)	/* Machine dependent; copy args	*/
-		*--saddr = *a--;	/* onto created process's stack	*/
+		*--saddr = *a--;	/*  onto created process's stack*/
 	*--saddr = (long)INITRET;	/* Push on return address	*/
 
 	/* The following entries on the stack must match what ctxsw	*/

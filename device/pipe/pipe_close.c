@@ -14,10 +14,10 @@ devcall	pipe_close (
 	struct	pipecblk *piptr;	/* Pointer to pipe control block*/
 
 	/* Note: because both a writing process and reading process use	*/
-	/* a given pipe, both will close the pipe.  Conceptually, the	*/
-	/* first call moves the pipe to a read-only state and marks the	*/
-	/* end-of-ile.	The second call deallocates the pipe device,	*/
-	/* making it available for reuse.				*/
+	/*  a given pipe, both will close the pipe.  Conceptually, the	*/
+	/*  first call moves the pipe to a read-only state and marks the*/
+	/*  end-of-ile.	The second call deallocates the pipe device,	*/
+	/*  making it available for reuse.				*/
 
 	piptr = &pipetab[devptr->dvminor];
 
@@ -34,7 +34,7 @@ devcall	pipe_close (
 		resched_cntl(DEFER_START);
 		if (semcount(piptr->pcsem) < 0) {
 			/* Pipe is empty and consumer is blocked, so	*/
-			/* allow the consumer to run   			*/
+			/* Allow the consumer to run   			*/
 			semreset(piptr->pcsem, 0);
 		}
 

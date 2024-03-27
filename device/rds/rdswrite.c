@@ -14,10 +14,7 @@ devcall	rdswrite (
 {
 	struct	rdscblk	*rdptr;		/* Pointer to the control block	*/
 					/*   for the disk device	*/
-	struct	rdqnode	*rptr;		/* Pointer that walks the	*/
-					/*   request list		*/
-	struct	rdcnode	*cptr;		/* Pointer that walks the cache	*/
-	pri16	myprio;			/* Temp storage for my priority	*/
+	struct	rdsent  *sptr;		/* Pointer tp serial queue entry*/
 
 	/* If the device not currently open, report an error */
 
@@ -26,48 +23,21 @@ devcall	rdswrite (
 		return SYSERR;
 	}
 
-	/* Ensure the communication process is runnning */
+	/* Fill in the next serial queue entry */
 
-	if ( ! rdptr->rd_comruns ) {
-		rdptr->rd_comruns = TRUE;
-		resume(rdptr->rd_comproc);
+	sptr = &rdptr->rd_sq[rdptr->rdstail++];
+	if (rdptr->rdstail >= RD_SSIZE) {
+		rdptr->rdstail = 0;
 	}
+	rdptr->rdscount++;
+	sptr->rd_op = RD_OP_WRITE;
+	sptr->rd_blknum = blk;
+	sptr->rd_callbuf = buff;
+	sptr->rd_pid = getpid();
 
+	/* Atomically resume the communication process and suspend the	*/
+	/*  the current process to wait until the request is ebqueued	*/
 
-	/* If block is present in the cache, remove it and return the	*/
-	/*   node to the free list					*/
-
-	cptr = rdptr->rd_chead;
-	while (cptr != (struct rdcnode *)NULL) {
-	    if (cptr->rd_blknum == blk) {
-		rdcunlink(rdptr, cptr);
-		break;
-	    }
-	    cptr = cptr->rd_next;
-	}
-
-	/* Allocate a request node and fill in a write request */
-
-	rptr = rdptr->rd_qfree;
-	rdptr->rd_qfree = rptr->rd_next;
-	rptr->rd_op = RD_OP_WRITE;
-	rptr->rd_blknum = blk;
-	rptr->rd_callbuf = buff;
-	rptr->rd_pid = getpid();
-
-	/* Insert the new request at the tail of the queue */
-
-	rdqinsert(rdptr, rptr);
-
-	/* Atomically signal the comm. process semaphore and suspend	*/
-	/*   the current process by temporarily setting the process	*/
-	/*   priority to the highest possible value, performing the	*/
-	/*   two actions, and then resetting the priority to its	*/
-	/*   original value when the process is awakened		*/
-
-	myprio = rdssetprio(MAXPRIO);
-	signal(rdptr->rd_comsem);
-	suspend(getpid());
-	rdssetprio(myprio);
-	return OK;
+	rdsars(rdptr->rd_comproc);
+	return RD_BLKSIZ;
 }

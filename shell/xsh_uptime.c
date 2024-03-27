@@ -10,11 +10,11 @@
  */
 shellcmd xsh_uptime(int nargs, char *args[])
 {
-	uint32	days, hrs, mins, secs;	/* days, hours, minutes,  and	*/
+	uint32	days, hrs, mins, secs;	/* Days, hours, minutes,  and	*/
 					/*  seconds since system boot	*/
-	uint32	secperday = 86400;	/* seconds in a day		*/
-	uint32	secperhr  =  3600;	/* seconds in an hour		*/
-	uint32	secpermin =    60;	/* seconds in a minute		*/	
+	uint32	secperday = 86400;	/* Seconds in a day		*/
+	uint32	secperhr  =  3600;	/* Seconds in an hour		*/
+	uint32	secpermin =    60;	/* Seconds in a minute		*/	
 
 	/* For argument '--help', emit help about the 'uptime' command	*/
 
@@ -36,19 +36,19 @@ shellcmd xsh_uptime(int nargs, char *args[])
 		return 1;
 	}
 
-	secs = clktime;		/* total seconds since boot */
+	secs = clktime;		/* Total seconds since boot */
 
-	/* subtract number of whole days */
+	/* Subtract number of whole days */
 
 	days  = secs/secperday;
 	secs -= days*secperday;
 
-	/* subtract number of hours */
+	/* Subtract number of hours */
 
 	hrs   = secs/secperhr;
 	secs -= hrs*secperhr;
 
-	/* subtract number of minutes */
+	/* Subtract number of minutes */
 
 	mins  = secs/secpermin;
 	secs -= mins*secpermin;

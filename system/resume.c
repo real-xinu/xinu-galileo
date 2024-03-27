@@ -6,7 +6,7 @@
  *  resume  -  Unsuspend a process, making it ready
  *------------------------------------------------------------------------
  */
-pri16	resume(
+syscall	resume(
 	  pid32		pid		/* ID of process to unsuspend	*/
 	)
 {
@@ -17,15 +17,15 @@ pri16	resume(
 	mask = disable();
 	if (isbadpid(pid)) {
 		restore(mask);
-		return (pri16)SYSERR;
+		return SYSERR;
 	}
 	prptr = &proctab[pid];
 	if (prptr->prstate != PR_SUSP) {
 		restore(mask);
-		return (pri16)SYSERR;
+		return SYSERR;
 	}
 	prio = prptr->prprio;		/* Record priority to return	*/
 	ready(pid);
 	restore(mask);
-	return prio;
+	return 0xffff & prio;
 }

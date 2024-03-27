@@ -133,7 +133,7 @@ void	dhcp_dump(
 
 		}
 
-		opt_tmp++;	/* move to length octet */
+		opt_tmp++;	/* Move to length octet */
 		opt_tmp += *(uint8*)opt_tmp + 1;
 	}
 	kprintf("\n");

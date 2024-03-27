@@ -62,7 +62,7 @@ devcall	rflclose (
 		signal(Rf_data.rf_mutex);
 		return SYSERR;
 	} else if (retval == TIMEOUT) {
-		kprintf("Timeout during remote file read\n");
+		kprintf("Timeout during remote file close\n");
 		signal(Rf_data.rf_mutex);
 		return SYSERR;
 	} else if (ntohs(resp.rf_status) != 0) {

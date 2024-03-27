@@ -11,7 +11,7 @@ struct	icmpentry icmptab[ICMP_SLOTS];	/* Table of processes using ping*/
  */
 void	icmp_init(void) {
 
-	int32	i;			/* table index */
+	int32	i;			/* Table index */
 
 	for(i=0; i<ICMP_SLOTS; i++) {
 		icmptab[i].icstate = ICMP_FREE;
@@ -237,7 +237,7 @@ status	icmp_send (
 	 uint16	type,			/* ICMP type (req. or reply)	*/
 	 uint16	ident,			/* ICMP identifier value	*/
 	 uint16	seq,			/* ICMP sequence number		*/
-	 char	*buf,			/* pointer to data buffer	*/
+	 char	*buf,			/* Pointer to data buffer	*/
 	 int32	len			/* Length of data in buffer	*/
 	)
 {
@@ -275,7 +275,7 @@ struct	netpacket *icmp_mkpkt (
 	 int32	len			/* Length of data in buffer	*/
 	)
 {
-	struct	netpacket *pkt;		/* pointer to packet buffer	*/
+	struct	netpacket *pkt;		/* Pointer to packet buffer	*/
 	static	uint32	ipident=32767;	/* IP ident field		*/
 
 	/* Allocate packet */

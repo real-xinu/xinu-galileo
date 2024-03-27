@@ -36,8 +36,8 @@ shellcmd xsh_arp(int nargs, char *args[])
  */
 static	void arp_dmp ()
 {
-	int32	i, j;			/* index into the ARP table	*/
-	struct	arpentry *arptr;	/* pointer to entry in cache	*/
+	int32	i, j;			/* Index into the ARP table	*/
+	struct	arpentry *arptr;	/* Pointer to entry in cache	*/
 
 	/* Print entries from the ARP table */
 

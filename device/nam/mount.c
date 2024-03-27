@@ -41,7 +41,7 @@ syscall	mount(
 
 	namptr = &nametab[nnames];	/* Next unused entry in table	*/
 
-	/* copy prefix and replacement strings and record device ID */
+	/* Copy prefix and replacement strings and record device ID */
 	
 	for (i=0; i<psiz; i++) {	/* Copy prefix into table entry	*/
 		namptr->nprefix[i] = *prefix++;

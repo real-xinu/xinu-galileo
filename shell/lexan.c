@@ -60,7 +60,7 @@ int32	lexan (
 		/* Set next entry in tok array to be an index to the	*/
 		/*   current location in the token buffer		*/
 
-		tok[ntok] = tbindex;	/* the start of the token	*/
+		tok[ntok] = tbindex;	/* The start of the token	*/
 
 		/* Set the token type */
 
@@ -100,7 +100,7 @@ int32	lexan (
 		/* Handle quoted string (single or double quote) */
 
 		if ( (ch==SH_SQUOTE) || (ch==SH_DQUOTE) ) {
-			quote = ch;	/* remember opening quote */
+			quote = ch;	/* Remember opening quote */
 
 			/* Copy quoted string to arg area */
 
@@ -110,20 +110,20 @@ int32	lexan (
 					&& (ch != NULLCH) ) {
 				tokbuf[tbindex++] = ch;
 			}
-			if (ch != quote) {  /* string missing end quote	*/
+			if (ch != quote) {  /* String missing end quote	*/
 				return SYSERR;
 			}
 
 			/* Finished string - count token and go on	*/
 
-			tokbuf[tbindex++] = NULLCH; /* terminate token	*/
-			ntok++;		/* count string as one token	*/
-			continue;	/* go to next token		*/
+			tokbuf[tbindex++] = NULLCH; /* Terminate token	*/
+			ntok++;		/* Count string as one token	*/
+			continue;	/* Go to next token		*/
 		}
 
 		/* Handle a token other than a quoted string		*/
 
-		tokbuf[tbindex++] = ch;	/* put first character in buffer*/
+		tokbuf[tbindex++] = ch;	/* Put first character in buffer*/
 		p++;
 
 		while ( ((ch = *p) != SH_NEWLINE) && (ch != NULLCH)
@@ -142,9 +142,9 @@ int32	lexan (
 			return SYSERR;
 		}
 
-		tokbuf[tbindex++] = NULLCH;	/* terminate the token	*/
+		tokbuf[tbindex++] = NULLCH;	/* Terminate the token	*/
 
-                ntok++;				/* count valid token	*/
+                ntok++;				/* Count valid token	*/
 
 	}
 	return ntok;

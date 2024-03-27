@@ -33,5 +33,5 @@ devcall	ttygetc(
 		return (devcall)EOF;
 	}
 
-	return (devcall)ch;
+	return (devcall)(0xff & ch);
 }

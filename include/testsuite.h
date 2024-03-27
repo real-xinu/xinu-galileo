@@ -32,7 +32,7 @@ struct	testcase {
     process	(*test) (bool8);/* Test case function			*/
 };
 
-extern	int	ntests;		/* total number of tests		*/
-extern	struct	testcase testtab[]; /* table of test cases		*/
+extern	int	ntests;		/* Total number of tests		*/
+extern	struct	testcase testtab[]; /* Table of test cases		*/
 
-#define	TESTSTK	8192		/* size of process stack used for test	*/
+#define	TESTSTK	8192		/* Size of process stack used for test	*/

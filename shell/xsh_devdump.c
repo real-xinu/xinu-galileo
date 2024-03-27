@@ -8,12 +8,12 @@
  *------------------------------------------------------------------------
  */
 shellcmd xsh_devdump (
-	 int	nargs,			/* number of arguments		*/
-	 char	*args[]			/* list of arguments		*/
+	 int	nargs,			/* Number of arguments		*/
+	 char	*args[]			/* List of arguments		*/
  	)
 {
-	struct	dentry	*devptr;	/* pointer to device entry	*/
-	int32	i;			/* walks through device table	*/
+	struct	dentry	*devptr;	/* Pointer to device entry	*/
+	int32	i;			/* Walks through device table	*/
 
 	/* No arguments are expected */
 

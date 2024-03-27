@@ -10,8 +10,8 @@
  */
 shellcmd xsh_tee(int nargs, char *args[])
 {
-	int32	nextch;			/* character read from file	*/
-	did32	descr;			/* descriptor for a file	*/
+	int32	nextch;			/* Character read from file	*/
+	did32	descr;			/* Descriptor for a file	*/
 
 
 	/* For argument '--help', emit help about the 'tee' command	*/

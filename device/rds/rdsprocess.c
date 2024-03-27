@@ -1,14 +1,13 @@
 /* rdsprocess.c - rdsprocess */
 
-/*DEBUG*/ int	go = 1;
-
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
  * rdsprocess  -  High-priority background process that repeatedly
- *		  extracts an item from the request queue, sends the
- *		  request to the remote disk server, and handles the
- *		  response, including caching responses blocks
+ *		   moves items from the serial queue to the request queue
+ *		   extracts the next item on the request queue
+ *		   sends the request to the remote disk server, and
+ *		   caches new blocks
  *------------------------------------------------------------------------
  */
 
@@ -25,96 +24,85 @@ void	rdsprocess (
 	char	*idfrom;		/* Ptr into ID string for copu	*/
 	struct	rdqnode	*rptr;		/* Ptr to a node in the request	*/
 					/*    queue			*/
-	struct	rdqnode	*tptr;		/* Temp pointer to a node in	*/
-					/*    the request queue		*/
-	uint32	blk;			/* Block number in current req.	*/
+	struct	rdsent	*sptr;		/* Ptr to item in serial queue	*/
+	bool8	wfound;			/* Was a write found in the q?	*/
+
 
 	while (TRUE) {			/* Do forever */
 
-	    /* Wait until a request arrives and node */
+	    /* Move entries from the serial queue to the request queue	*/
+	    /*  as long as request queue nodes are available		*/
 
-	    wait(rdptr->rd_comsem);
-	    rptr = rdptr->rd_qhead;
-	    if (rptr == (struct rdqnode *)NULL) {
-		/* A request was satisfied early */
-		continue;
-	    }
-	    blk = rptr->rd_blknum;
+	    while (rdptr->rdscount > 0) {
+		sptr = &rdptr->rd_sq[rdptr->rdshead];
 
-	    /* Use operation in request to determine action */
+		/* If read can be satisfied from cache, satisfy it */
 
-	   switch (rptr->rd_op) {
-
-	   case RD_OP_SYNC:
-		resume(rptr->rd_pid);
-		rptr = rdqunlink(rdptr, rptr);
-		break;
-
-	   case RD_OP_READ:
-
-		/* Build a read request message for the server */
-
-		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
-		msg.rd_status = htons(0);
-		msg.rd_seq = 0;		/* rdscomm fills in the value	*/
-		idto = msg.rd_id;
-		memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero	*/
-		idfrom = rdptr->rd_id;
-		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
-			;
-		msg.rd_blk = htonl(blk);
-		}
-
-		/* Send the message and receive a response */
-
-		retval = rdscomm((struct rd_msg_hdr *)&msg,
-					sizeof(struct rd_msg_rreq),
-				 (struct rd_msg_hdr *)&resp,
-					sizeof(struct rd_msg_rres),
-				  rdptr );
-
-		/* Check response */
-
-		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
-				(ntohs(resp.rd_status) != 0) ) {
-			panic("remite disk error contacting server");
-		}
-
-		/* Copy data from the reply into the buffer */
-
-		memcpy(rptr->rd_callbuf, resp.rd_data, RD_BLKSIZ);
-
-		/* Resume the waiting process (will not run until the	*/
-		/*     communication process blocks			*/
-
-		resume(rptr->rd_pid);
-
-		tptr = rdqunlink(rdptr, rptr);
-
-		/* Walk the request queue and satisfy subsequent read	*/
-		/*    requests for the same block			*/
-
-		rptr = rdptr->rd_qhead;
-		while (rptr != (struct rdqnode *)NULL) {
-		    if (rptr->rd_blknum != blk) {
-			rptr = rptr->rd_next;
+		if ( (sptr->rd_op == RD_OP_READ) && 
+		     (rdcget(rdptr, sptr->rd_blknum, sptr->rd_callbuf)
+								== OK)) {
+			rdptr->rdscount--;
+			rdptr->rdshead++;
+			if (rdptr->rdshead >= RD_SSIZE) {
+				rdptr->rdshead = 0;
+			}
+			resume(sptr->rd_pid);
 			continue;
-		    }
-		    /* block number matches */
-		    if (rptr->rd_op == RD_OP_WRITE) {
-			/* Stop on a write for the block */
-			break;
-		    }
-		    if ( rptr->rd_op == RD_OP_READ ) {
-			/* Satisfy a subsequent read for the block */
-			memcpy(rptr->rd_callbuf,resp.rd_data,RD_BLKSIZ);
-			resume(rptr->rd_pid);
-			rptr = rdqunlink(rdptr, rptr);
-		    } else {
-			rptr = rptr->rd_next;
-		    }
 		}
-		break;
+
+		/* If no request queue nodes available, stop moving	*/
+		/*  items from the serial queue to the request queue	*/
+
+		if ((rptr = rdptr->rd_qfree) == (struct rdqnode *)NULL) {
+			break;
+		}
+
+		/* Decrement count of nodes in the serial queue */
+
+		rdptr->rdscount--;
+
+		/* Remove the next request queue node from the free list*/
+
+		rdptr->rd_qfree = rptr->rd_next;
+
+		/* Fill in the blknum and pid from the serial node	*/
+
+		rptr->rd_blknum = sptr->rd_blknum;
+		rptr->rd_pid = sptr->rd_pid;
+
+		/* Use the operation to determine remaining actions */
+
+		if ( (rptr->rd_op = sptr->rd_op) == RD_OP_WRITE) {
+		    /* Copy data from the caller's buffer */
+		    memcpy(rptr->rd_wbuf, sptr->rd_callbuf, RD_BLKSIZ);
+		    /* Add the block to the cache */
+		    rdcadd(rdptr, rptr->rd_blknum, rptr->rd_wbuf); 
+		    /* Resume the process */
+		    resume(rptr->rd_pid);
+		}
+		/* Add the request node to the request queue */
+		rdqadd(rdptr, rptr);
+	    }
+
+	    /* At this point, eligible items have been moved from the	*/
+	    /*  serial queue to the request queue -- either suspend the	*/
+	    /*  communication process, if the request queue is empty,	*/
+	    /*  or handle the next request.				*/
+
+	    if ( (rptr=rdptr->rd_qhead) == (struct rdqnode *)NULL ) {
+			suspend(getpid());
+			continue;
+	    }
+
+	    /* Handle a request -- use operation to determine action	*/
+
+	    switch (rptr->rd_op) {
+
+	    case RD_OP_SYNC:
+		/* Resume the process and free the request queue node	*/
+		resume(rptr->rd_pid);
+		rptr = rdqfree(rdptr, rptr);
+		continue;
 
 	    case RD_OP_WRITE:
 
@@ -129,31 +117,12 @@ void	rdsprocess (
 		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
 			;
 		}
-		msg.rd_blk = htonl(blk);
+		msg.rd_blk = htonl(rptr->rd_blknum);
 		memcpy(msg.rd_data, rptr->rd_callbuf, RD_BLKSIZ);
 
-		/* Check request queue for subsequent writes of blk */
+		/* Free the node that was on the request queue */
 
-		tptr = rptr->rd_next;
-		while (tptr != (struct rdqnode *)NULL) {
-			if ( (tptr->rd_blknum == blk) &&
-			     (tptr->rd_op == RD_OP_WRITE) ) {
-				break;
-			}
-				
-		}
-		if (tptr == (struct rdqnode *)NULL) {
-			/* No subsequent writes, so add to cache */
-			rdcinsert(rdptr, blk, msg.rd_data);
-		}
-
-		/* Resume the process (comm. pocess continues to run) */
-
-		resume(rptr->rd_pid);
-
-		/* Unlink the node from the request queue */
-
-		rptr = rdqunlink(rdptr, rptr);
+		rptr = rdqfree(rdptr, rptr);
 
 		/* Send the message and receive a response */
 
@@ -167,12 +136,71 @@ void	rdsprocess (
 
 		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
 				(ntohs(resp.rd_status) != 0) ) {
-			panic("remote disk access failed");
+			kprintf("remote disk write failed\n");
 		}
-		break;
+		continue;
+
+	    case RD_OP_READ:
+
+		/* Build a read request message for the server */
+
+		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
+		msg.rd_status = htons(0);
+		msg.rd_seq = 0;		/*  rdscomm fills in the value	*/
+		idto = msg.rd_id;
+		memset(idto, NULLCH, RD_IDLEN);/* Initialize ID to zero	*/
+		idfrom = rdptr->rd_id;
+		while ( (*idto++ = *idfrom++) != NULLCH ) { /* Copy ID	*/
+			;
+		}
+		msg.rd_blk = htonl(rptr->rd_blknum);
+
+		/* Send the message and receive a response */
+
+		retval = rdscomm((struct rd_msg_hdr *)&msg,
+					sizeof(struct rd_msg_rreq),
+				 (struct rd_msg_hdr *)&resp,
+					sizeof(struct rd_msg_rres),
+				  rdptr );
+
+		/* Check the response */
+
+		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
+				(ntohs(resp.rd_status) != 0) ) {
+			panic("remite disk error contacting server");
+		}
+
+		/* Walk through the request queue and satisfy all read 	*/
+		/*   requests for the block, including the first one	*/
+		wfound = FALSE;
+		rptr = rdptr->rd_qhead;
+		while (rptr != (struct rdqnode *)NULL) {
+		    if (rptr->rd_blknum != rptr->rd_blknum) {
+			rptr = rptr->rd_next;
+			continue;
+		    }
+		    /* Block number matches; handle read or write */
+		    if (rptr->rd_op == RD_OP_WRITE) {
+			wfound = TRUE;
+			break;
+		    }
+		    if ( rptr->rd_op == RD_OP_READ ) {
+			/* Satisfy the read for the block */
+			memcpy(rptr->rd_callbuf, resp.rd_data,RD_BLKSIZ);
+			resume(rptr->rd_pid);
+			rptr = rdqfree(rdptr, rptr);
+		    }
+		}
+
+		/* Cache the block if no sucessive writes have appeared */
+
+		if (! wfound) {
+			rdcadd(rdptr, htonl(resp.rd_blk), resp.rd_data);
+		}
+		continue;
 
 	   default:
-		break;/* SHould never happen */
-	   }
+		continue; /* Should never happen */
+	    }
 	}
 }

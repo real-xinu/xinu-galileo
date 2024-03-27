@@ -14,11 +14,10 @@
 #endif
 
 struct	bpentry	{		/* Description of a single buffer pool	*/
-	struct	bpentry *bpnext;/* pointer to next free buffer		*/
-	sid32	bpsem;		/* semaphore that counts buffers	*/
+	struct	bpentry *bpnext;/* Pointer to next free buffer		*/
+	sid32	bpsem;		/* Semaphore that counts buffers	*/
 				/*    currently available in the pool	*/
-	uint32	bpsize;		/* size of buffers in this pool		*/
 	};
 
 extern	struct	bpentry buftab[];/* Buffer pool table			*/
-extern	bpid32	nbpools;	/* current number of allocated pools	*/
+extern	bpid32	nbpools;	/* Current number of allocated pools	*/

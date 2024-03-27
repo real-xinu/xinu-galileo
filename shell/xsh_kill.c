@@ -10,10 +10,10 @@
  */
 shellcmd xsh_kill(int nargs, char *args[]) {
 
-	int32	retval;			/* return value			*/
+	int32	retval;			/* Return value			*/
 	pid32	pid;			/* ID of process to kill	*/
-	char	ch;			/* next character of argument	*/
-	char	*chptr;			/* walks along argument string	*/
+	char	ch;			/* Next character of argument	*/
+	char	*chptr;			/* Walks along argument string	*/
 
 	/* Output info for '--help' argument */
 
@@ -36,7 +36,7 @@ shellcmd xsh_kill(int nargs, char *args[]) {
 		return SYSERR;
 	}
 
-	/* compute process ID from argument string */
+	/* Compute process ID from argument string */
 
 	chptr = args[1];
 	ch = *chptr++;

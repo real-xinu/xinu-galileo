@@ -60,7 +60,7 @@ struct	network	{			/* Network information		*/
 	uint32	bootserver;		/* Boot server address		*/
 	uint32	dnsserver;		/* DNS server address		*/
 	uint32	ntpserver;		/* NTP (time) server address	*/
-	bool8	ipvalid;		/* nonzero => above are valid	*/
+	bool8	ipvalid;		/* Nonzero => above are valid	*/
 	byte	ethucast[ETH_ADDR_LEN];	/* Ethernet multicast address	*/
 	byte	ethbcast[ETH_ADDR_LEN];	/* Ethernet broadcast address	*/
 	char	bootfile[NETBOOTFILE];	/* Name of boot file		*/

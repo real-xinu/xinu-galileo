@@ -10,10 +10,10 @@
  */
 shellcmd xsh_cat(int nargs, char *args[])
 {
-	int32	i;			/* index into proctabl		*/
-	int32	nextch;			/* character read from file	*/
-	did32	descr;			/* descriptor for a file	*/
-	char	*argptr;		/* pointer to next arg string	*/
+	int32	i;			/* Index into proctabl		*/
+	int32	nextch;			/* Character read from file	*/
+	did32	descr;			/* Descriptor for a file	*/
+	char	*argptr;		/* Pointer to next arg string	*/
 
 
 	/* For argument '--help', emit help about the 'cat' command	*/

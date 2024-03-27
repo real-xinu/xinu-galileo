@@ -11,14 +11,14 @@
  */
 shellcmd xsh_udpeserver(int nargs, char *args[])
 {
-	int32	retval;			/* return value from sys calls	*/
-	uint32	localip;		/* local IP address		*/
-	uint32	remip;			/* remote sender's IP address	*/
-	uint16	remport;		/* remote sender's UDP port	*/
-	char	buff[1500];		/* buffer for incoming reply	*/
-	int32	msglen;			/* length of outgoing message	*/
-	int32	slot;			/* slot in UDP table 		*/
-	uint16	echoserverport= 7;	/* port number for UDP echo	*/
+	int32	retval;			/* Return value from sys calls	*/
+	uint32	localip;		/* Local IP address		*/
+	uint32	remip;			/* Remote sender's IP address	*/
+	uint16	remport;		/* Remote sender's UDP port	*/
+	char	buff[1500];		/* Buffer for incoming reply	*/
+	int32	msglen;			/* Length of outgoing message	*/
+	int32	slot;			/* Slot in UDP table 		*/
+	uint16	echoserverport= 7;	/* Port number for UDP echo	*/
 
 	/* For argument '--help', emit a help message	*/
 
@@ -48,7 +48,7 @@ shellcmd xsh_udpeserver(int nargs, char *args[])
 		return 1;
 	}
 
-	/* register local UDP port */
+	/* Register local UDP port */
 
 	slot = udp_register(0, 0, echoserverport);
 	if (slot == SYSERR) {

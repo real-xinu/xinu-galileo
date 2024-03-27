@@ -28,8 +28,6 @@ devcall	rdsinit (
 
 	rdptr->rd_id[0] = NULLCH;
 
-	rdptr->rd_comruns = FALSE;
-
 	/* Specify that the server UDP port is not yet registered */
 
 	rdptr->rd_registered = FALSE;

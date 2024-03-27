@@ -10,9 +10,9 @@
  */
 shellcmd xsh_date(int nargs, char *args[]) {
 
-	int32	retval;			/* return value			*/
-	uint32	now;			/* current local time		*/
-	char	datestr[64];		/* printable date in ascii	*/
+	int32	retval;			/* Return value			*/
+	uint32	now;			/* Current local time		*/
+	char	datestr[64];		/* Printable date in ascii	*/
 
 	/* Output info for '--help' argument */
 

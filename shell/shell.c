@@ -85,8 +85,8 @@ process	shell (
 					/*   one line from a tty device	*/
 	int32	len;			/* Length of line read		*/
 	char	tokbuf[SHELL_BUFLEN +	/* Buffer to hold a set of	*/
-			SHELL_MAXTOK];  /* Contiguous null-terminated	*/
-					/* Strings of tokens		*/
+			SHELL_MAXTOK];  /*   contiguous null-terminated	*/
+					/*   strings of tokens		*/
 	int32	tok[SHELL_MAXTOK];	/* Index of each token in	*/
 					/*   array tokbuf		*/
 	int32	toktyp[SHELL_MAXTOK];	/* Type of each token in tokbuf	*/
@@ -112,7 +112,7 @@ process	shell (
 					/*   for the last segment)	*/
 	    pid32	spid;		/* Process ID for this segment	*/
 	};
-	struct	segent	segtab[SHELL_MAXTOK];/* one entry per segment	*/
+	struct	segent	segtab[SHELL_MAXTOK];/* One entry per segment	*/
 	struct	segent	*segptr;	/* Pointer to a segtab entry	*/
 	int32	seg;			/* Index into segtab		*/
 	int32	cindex;			/* Index of command returned	*/
@@ -123,9 +123,9 @@ process	shell (
 	bool8	err;			/* Did an error occur?		*/
 	int32	msg;			/* Message from receive() for	*/
 					/*   child termination		*/
-	int32	tmparg;			/* Address of this var is used	*/
-					/*   when first creating child	*/
-					/*   process, but is replaced	*/
+	int32	tmparg;			/* Temporary address used when	*/ 
+					/*   creating a child process;	*/
+					/*   later replaced by addargs	*/
 
 	/* Print shell banner and startup message */
 
@@ -165,7 +165,7 @@ process	shell (
 			continue;
 		}
 
-		buf[len] = SH_NEWLINE;	/* terminate line */
+		buf[len] = SH_NEWLINE;	/* Terminate line */
 
 		/* Parse input line and divide into tokens */
 
@@ -202,8 +202,8 @@ process	shell (
 		}
 
 		/* Use the pipe tokens to divide the pipeline into	*/
-		/* segments by placing the index of pipe tokens in	*/
-		/* successive locations of array segtab.		*/
+		/*  segments by placing the index of pipe tokens in	*/
+		/*  successive locations of array segtab.		*/
 
 		nsegs = 0;
 		segptr = &segtab[nsegs];
@@ -396,7 +396,7 @@ process	shell (
 			continue;
 		    }
 
-		    /* If adding arguments fails,report the error	*/
+		    /* If adding arguments fails,report the error */
 
 		    if (addargs(segptr->spid,ntokens,&tok[segptr->sstart],
 				tokbuf, &tmparg)== SYSERR) {
@@ -432,7 +432,7 @@ process	shell (
 		/*   pipeline to finish	or allow the pipeline to run	*/
 		/*   in background					*/
 
-		pid32	tmppid = segtab[nsegs-1].spid; /* last seg. pid	*/
+		pid32	tmppid = segtab[nsegs-1].spid; /* Last seg. pid	*/
 									
 		if (! backgnd) {
 			msg = receive();

@@ -24,15 +24,16 @@
 					/*   that each device is unique	*/
 #endif
 
-#define	RD_QNODES	NPROC		/* Number of request nodes	*/
-#define	RD_CNODES	32		/* Number of cache buffers	*/
+#define	RD_SSIZE	NPROC		/* Number of serial queue nodes	*/
+#define	RD_QNODES	30		/* Number of request queue nodes*/
+#define	RD_CNODES	32		/* Number of cache bodes	*/
 
 
 /* Constants for remote disk device control block */
 
 #define	RD_IDLEN	64		/* Size of a remote disk ID	*/
 #define	RD_STACK	16384		/* Stack size for comm. process	*/
-#define	RD_PRIO		200		/* Priorty of comm. process	*/
+#define	RD_PRIO		600		/* Priorty of comm. process	*/
 					/*  (Must be higher than any	*/
 					/*   process that reads/writes	*/
 
@@ -48,16 +49,26 @@
 #define	RD_OP_WRITE	2		/* Write operation on req. list	*/
 #define	RD_OP_SYNC	3		/* Sync operation on req. list	*/
 
+/* Definition of a serial queue node */
+
+struct	rdsent {			/* Entry in the serial queue	*/
+	int32	rd_op;			/* Operation - read/write/sync	*/
+	uint32	rd_blknum;		/* Disk block number to use	*/
+	char	*rd_callbuf;		/* Address of caller's buffer	*/
+	pid32	rd_pid;			/* Process that initiated the	*/
+};					/*   request			*/
+
 /* Definition of a request queue node */
 
 struct	rdqnode {			/* Node in the request queue	*/
 	struct	rdqnode	*rd_next;	/* Pointer to next node		*/
 	struct	rdqnode	*rd_prev;	/* Pointer to previous node	*/
 	int32	rd_op;			/* Operation - read/write/sync	*/
-	uint32	rd_blknum;		/* Disk block number requested	*/
+	uint32	rd_blknum;		/* Disk block number to use	*/
 	char	*rd_callbuf;		/* Address of caller's buffer	*/
-	pid32	rd_pid;			/* Process that initiated the	*/
-};					/*   request			*/
+	pid32	rd_pid;			/* Process making the request	*/
+	char	rd_wbuf[RD_BLKSIZ];	/* Data for a write operation	*/
+};
 
 /* Definition of a node in the cache */
 
@@ -80,9 +91,11 @@ struct	rdscblk	{			/* Remote disk control block	*/
 	struct	rdqnode	*rd_qhead;	/* Head of request queue	*/
 	struct	rdqnode	*rd_qtail;	/* Tail of request queue	*/
 	struct	rdqnode	*rd_qfree;	/* Free list of request nodes	*/
+	struct	rdsent	rd_sq[RD_SSIZE];/* Serial queue circular buffer	*/
+	int32	rdshead;		/* Head of the serial queue	*/
+	int32	rdstail;		/* Tail of the serial queue	*/
+	int32	rdscount;		/* Count serial queue items	*/
 	pid32	rd_comproc;		/* Process ID of comm. process	*/
-	bool8	rd_comruns;		/* Has comm. process started?	*/
-	sid32	rd_comsem;		/* Semaphore ID for com process	*/
 	uint32	rd_ser_ip;		/* Server IP address		*/
 	uint16	rd_ser_port;		/* Server UDP port		*/
 	uint16	rd_loc_port;		/* Local (client) UPD port	*/

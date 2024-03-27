@@ -2,7 +2,7 @@
 
 #include <xinu.h>
 
-#define  DFILL  '+'		/* character used to fill a disk block	*/
+#define  DFILL  '+'		/* Character used to fill an empty block*/
 
 /*------------------------------------------------------------------------
  * lfdballoc  -  Allocate a new data block from free list on disk

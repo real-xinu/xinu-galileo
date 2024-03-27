@@ -215,7 +215,7 @@ local	void	erase1(
 			}
 		} else {  /* A normal character that is printable	*/
 			eputc(TY_BACKSP, typtr, csrptr);
-			if (typtr->tyieback) {	/* erase the character	*/
+			if (typtr->tyieback) {	/* Erase the character	*/
 				eputc(TY_BLANK, typtr, csrptr);
 				eputc(TY_BACKSP, typtr, csrptr);
 			}

@@ -60,18 +60,18 @@ char* get_uuid(uint16* uuid_len)
 int32 build_dhcp_discover_pxe(struct dhcpmsg* dmsg)
 {
 	uint32  i,j;
-	uint32	xid;			/* xid used for the exchange	*/
+	uint32	xid;			/* Xid used for the exchange	*/
 		
-	memcpy(&xid, NetData.ethucast, 4); /* use 4 bytes from MAC as XID */
+	memcpy(&xid, NetData.ethucast, 4);/* Use 4 bytes from MAC as XID */
 	memset(dmsg, 0x00, sizeof(struct dhcpmsg));
 	
 	dmsg->dc_bop = 0x01;	     	/* Outgoing request		*/
-	dmsg->dc_htype = 0x01;		/* hardware type is Ethernet	*/
-	dmsg->dc_hlen = 0x06;		/* hardware address length	*/
+	dmsg->dc_htype = 0x01;		/* Hardware type is Ethernet	*/
+	dmsg->dc_hlen = 0x06;		/* Hardware address length	*/
 	dmsg->dc_hops = 0x00;		/* Hop count			*/
-	dmsg->dc_xid = htonl(xid);	/* xid (unique ID)		*/
-	dmsg->dc_secs = 0x0000;		/* seconds			*/
-	dmsg->dc_flags = 0x0000;		/* flags			*/
+	dmsg->dc_xid = htonl(xid);	/* Xid (unique ID)		*/
+	dmsg->dc_secs = 0x0000;		/* Seconds			*/
+	dmsg->dc_flags = 0x0000;	/* Flags			*/
 	dmsg->dc_cip = 0x00000000;	/* Client IP address		*/
 	dmsg->dc_yip = 0x00000000;	/* Your IP address		*/
 	dmsg->dc_sip = 0x00000000;	/* Server IP address		*/
@@ -91,47 +91,47 @@ int32 build_dhcp_discover_pxe(struct dhcpmsg* dmsg)
 	}
 	
 	dmsg->dc_opt[j++] = 0xff & 97;  /* Client UUID/GUID Type */
-	dmsg->dc_opt[j++] = 0xff & (uuid_len + 1);  /* option length         */
+	dmsg->dc_opt[j++] = 0xff & (uuid_len + 1);  /* Option length	*/
 	dmsg->dc_opt[j++] = 0xff &  0;  /* UUID                  */
 	for(i = 0; i < uuid_len; i++) {
 		dmsg->dc_opt[j++] = 0xff & uuid[i];
 	}
 	dmsg->dc_opt[j++] = 0xff & 94;  /* Client network type   */
-	dmsg->dc_opt[j++] = 0xff &  3;  /* option length         */
+	dmsg->dc_opt[j++] = 0xff &  3;  /* Option length         */
 	dmsg->dc_opt[j++] = 0xff &  1;  /* Type = UNDI           */
 	dmsg->dc_opt[j++] = 0xff &  1;  /* UNDI Major ver        */
 	dmsg->dc_opt[j++] = 0xff &  2;  /* UNDI Minor ver        */
 	
 	dmsg->dc_opt[j++] = 0xff & 93;  /* Client architecture   */
-	dmsg->dc_opt[j++] = 0xff &  2;  /* option length         */
+	dmsg->dc_opt[j++] = 0xff &  2;  /* Option length         */
 	dmsg->dc_opt[j++] = 0xff &  0;  /* Arch - byte 1         */
 	dmsg->dc_opt[j++] = 0xff &  0;  /* Arch - byte 2         */
 
 	dmsg->dc_opt[j++] = 0xff & 53;	/* DHCP message type option	*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* option length		*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* DHCP Discover message		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* DHCP Discover message	*/
 	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
 
 	dmsg->dc_opt[j++] = 0xff & 55;	/* DHCP parameter request list	*/
-	dmsg->dc_opt[j++] = 0xff &  4;	/* option length		*/
-	dmsg->dc_opt[j++] = 0xff &  1;	/* request subnet mask 		*/
-	dmsg->dc_opt[j++] = 0xff &  3;	/* request default router addr->	*/
-	dmsg->dc_opt[j++] = 0xff & 43; /* Vendor options */
-	dmsg->dc_opt[j++] = 0xff & 60; /* Vendor class identifier */
-	dmsg->dc_opt[j++] = 0xff & 66; /* request TFTP Server */
-	dmsg->dc_opt[j++] = 0xff & 67; /* request Boot file */
+	dmsg->dc_opt[j++] = 0xff &  4;	/* Option length		*/
+	dmsg->dc_opt[j++] = 0xff &  1;	/* Request subnet mask 		*/
+	dmsg->dc_opt[j++] = 0xff &  3;	/* Request default router addr->*/
+	dmsg->dc_opt[j++] = 0xff & 43;	/* Vendor options */
+	dmsg->dc_opt[j++] = 0xff & 60;	/* Vendor class identifier */
+	dmsg->dc_opt[j++] = 0xff & 66;	/* Request TFTP Server */
+	dmsg->dc_opt[j++] = 0xff & 67;	/* Request Boot file */
 	
-	dmsg->dc_opt[j++] = 0xff & 60; /* DHCP PXE Support     */
-	dmsg->dc_opt[j++] = 0xff & 32; /* option length        */
+	dmsg->dc_opt[j++] = 0xff & 60;	/* DHCP PXE Support     */
+	dmsg->dc_opt[j++] = 0xff & 32;	/* Option length        */
 	
 	char* pxe_client_tmp = PXE_CLIENT_STRING;
 	for(i = 0; i < PXE_CLIENT_STRING_LEN; i++) {
 		dmsg->dc_opt[j++] = 0xff & pxe_client_tmp[i];
 	}
 	
-	dmsg->dc_opt[j++] = 0xff &  0;	/* options padding		*/
-	dmsg->dc_opt[j++] = 0xff &  0;	/* options padding		*/
-	dmsg->dc_opt[j++] = 0xff &  0;	/* options padding		*/
+	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
+	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
+	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
 
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);
 }

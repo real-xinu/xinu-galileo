@@ -69,7 +69,7 @@ status	tftp_send1 (
 			return TIMEOUT;
 		}
 
-		if (n < 4) {	/* too small to be a valid packet */
+		if (n < 4) {	/* Too small to be a valid packet */
 			continue;
 		}
 

@@ -7,10 +7,10 @@
  *------------------------------------------------------------------------
  */
 devcall	ethcontrol (
-	struct 	dentry *devptr, 	/* entry in device switch table */
-	int32	func,			/* control function		*/
-	int32	arg1,			/* argument 1, if needed	*/
-	int32	arg2			/* argument 2, if needed	*/
+	struct 	dentry *devptr, 	/* Entry in device switch table */
+	int32	func,			/* Control function		*/
+	int32	arg1,			/* Argument 1, if needed	*/
+	int32	arg2			/* Argument 2, if needed	*/
 	)
 {
 	struct	ethcblk *ethptr;	/* Ethertab entry pointer	*/

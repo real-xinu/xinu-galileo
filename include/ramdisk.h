@@ -2,8 +2,8 @@
 
 /* Ram disk block size */
 
-#define	RM_BLKSIZ	512		/* block size			*/
-#define	RM_BLKS		200		/* number of blocks		*/
+#define	RM_BLKSIZ	512		/* Block size			*/
+#define	RM_BLKS		200		/* Number of blocks		*/
 
 struct	ramdisk	{
 	char	disk[RM_BLKSIZ * RM_BLKS];

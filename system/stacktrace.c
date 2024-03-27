@@ -19,7 +19,7 @@ syscall stacktrace(int pid)
 		asm("movl %%ebp, %0\n" :"=r"(fp));
 	} else {
 		sp = (unsigned long *)proc->prstkptr;
-		fp = sp + 2; 		/* where ctxsw leaves it */
+		fp = sp + 2; 		/* Where ctxsw leaves it */
 	}
 	kprintf("sp %X fp %X proc->prstkbase %X\n", sp, fp, proc->prstkbase);
 #ifdef STKDETAIL

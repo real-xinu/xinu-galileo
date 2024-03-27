@@ -385,77 +385,77 @@ _extint:
 	popal
 	iret
 
-	.globl  _Xint32			/* available for ext. interrupt	*/
+	.globl  _Xint32			/* Available for ext. interrupt	*/
 _Xint32:
 	movl	$32,_saveint
 	jmp	_extint
 
-	.globl  _Xint33			/* available for ext. interrupt	*/
+	.globl  _Xint33			/* Available for ext. interrupt	*/
 _Xint33:
 	movl	$33,_saveint
 	jmp	_extint
 	
-	.globl  _Xint34			/* available for ext. interrupt	*/
+	.globl  _Xint34			/* Available for ext. interrupt	*/
 _Xint34:
 	movl	$34,_saveint
 	jmp	_extint
 
-	.globl  _Xint35			/* available for ext. interrupt	*/
+	.globl  _Xint35			/* Available for ext. interrupt	*/
 _Xint35:
 	movl	$35,_saveint
 	jmp	_extint
 
-	.globl  _Xint36			/* available for ext. interrupt	*/
+	.globl  _Xint36			/* Available for ext. interrupt	*/
 _Xint36:
 	movl	$36,_saveint
 	jmp	_extint
 
-	.globl  _Xint37			/* available for ext. interrupt	*/
+	.globl  _Xint37			/* Available for ext. interrupt	*/
 _Xint37:
 	movl	$37,_saveint
 	jmp	_extint
 
-	.globl  _Xint38			/* available for ext. interrupt	*/
+	.globl  _Xint38			/* Available for ext. interrupt	*/
 _Xint38:
 	movl	$38,_saveint
 	jmp	_extint
 
-	.globl  _Xint39			/* available for ext. interrupt	*/
+	.globl  _Xint39			/* Available for ext. interrupt	*/
 _Xint39:
 	movl	$39,_saveint
 	jmp	_extint
 
-	.globl  _Xint40			/* available for ext. interrupt	*/
+	.globl  _Xint40			/* Available for ext. interrupt	*/
 _Xint40:
 	movl	$40,_saveint
 	jmp	_extint
 
-	.globl  _Xint41			/* available for ext. interrupt	*/
+	.globl  _Xint41			/* Available for ext. interrupt	*/
 _Xint41:
 	movl	$41,_saveint
 	jmp	_extint
 
-	.globl  _Xint42			/* available for ext. interrupt	*/
+	.globl  _Xint42			/* Available for ext. interrupt	*/
 _Xint42:
 	movl	$42,_saveint
 	jmp	_extint
 
-	.globl  _Xint43			/* available for ext. interrupt	*/
+	.globl  _Xint43			/* Available for ext. interrupt	*/
 _Xint43:
 	movl	$43,_saveint
 	jmp	_extint
 
-	.globl  _Xint44			/* available for ext. interrupt	*/
+	.globl  _Xint44			/* Available for ext. interrupt	*/
 _Xint44:
 	movl	$44,_saveint
 	jmp	_extint
 
-	.globl  _Xint45			/* available for ext. interrupt	*/
+	.globl  _Xint45			/* Available for ext. interrupt	*/
 _Xint45:
 	movl	$45,_saveint
 	jmp	_extint
 
-	.globl  _Xint46			/* available for ext. interrupt	*/
+	.globl  _Xint46			/* Available for ext. interrupt	*/
 _Xint46:
 	movl	$46,_saveint
 	jmp	_extint
@@ -500,19 +500,19 @@ defevec:
 	.long	_Xint29			/* (reserved)			*/
 	.long	_Xint30			/* (reserved)			*/
 	.long	_Xint31			/* (reserved)			*/
-	.long	_Xint32			/* available for ext. interrupt	*/
-	.long	_Xint33			/* available for ext. interrupt	*/
-	.long	_Xint34			/* available for ext. interrupt	*/
-	.long	_Xint35			/* available for ext. interrupt	*/
-	.long	_Xint36			/* available for ext. interrupt	*/
-	.long	_Xint37			/* available for ext. interrupt	*/
-	.long	_Xint38			/* available for ext. interrupt	*/
+	.long	_Xint32			/* Available for ext. interrupt	*/
+	.long	_Xint33			/* Available for ext. interrupt	*/
+	.long	_Xint34			/* Available for ext. interrupt	*/
+	.long	_Xint35			/* Available for ext. interrupt	*/
+	.long	_Xint36			/* Available for ext. interrupt	*/
+	.long	_Xint37			/* Available for ext. interrupt	*/
+	.long	_Xint38			/* Available for ext. interrupt	*/
 	.long	spurious_irq7
-	.long	_Xint40			/* available for ext. interrupt	*/
-	.long	_Xint41			/* available for ext. interrupt	*/
-	.long	_Xint42			/* available for ext. interrupt	*/
-	.long	_Xint43			/* available for ext. interrupt	*/
-	.long	_Xint44			/* available for ext. interrupt	*/
-	.long	_Xint45			/* available for ext. interrupt	*/
-	.long	_Xint46			/* available for ext. interrupt	*/
+	.long	_Xint40			/* Available for ext. interrupt	*/
+	.long	_Xint41			/* Available for ext. interrupt	*/
+	.long	_Xint42			/* Available for ext. interrupt	*/
+	.long	_Xint43			/* Available for ext. interrupt	*/
+	.long	_Xint44			/* Available for ext. interrupt	*/
+	.long	_Xint45			/* Available for ext. interrupt	*/
+	.long	_Xint46			/* Available for ext. interrupt	*/
 	.long	spurious_irq15

@@ -10,12 +10,12 @@
  */
 shellcmd xsh_udpdump(int nargs, char *args[])
 {
-	int32	i;			/* index into udptab		*/
-	char	*udpstate[] = {		/* names for entry states	*/
+	int32	i;			/* Index into udptab		*/
+	char	*udpstate[] = {		/* Names for entry states	*/
 		"free ", "used ", "recv "};
-	struct	udpentry *uptr;		/* ptr to entry in udptab	*/
-	uint32	remip;			/* variables to hold the info	*/
-	int32	r1,r2,r3,r4;		/* from an entry for printing	*/
+	struct	udpentry *uptr;		/* Ptr to entry in udptab	*/
+	uint32	remip;			/* Variables to hold the info	*/
+	int32	r1,r2,r3,r4;		/* From an entry for printing	*/
 	int32	remprt, locprt;
 	int32	state;
 	pid32	pid;
@@ -53,7 +53,7 @@ shellcmd xsh_udpdump(int nargs, char *args[])
 	/* Output information for each valid entry in udptab */
 	for (i = 0; i < UDP_SLOTS; i++) {
 	    uptr = &udptab[i];
-	    if (uptr->udstate == UDP_FREE) {  /* skip unused slots	*/
+	    if (uptr->udstate == UDP_FREE) {  /* Skip unused slots	*/
 		printf("%3d   ---- slot is free ---\n", i);
 		continue;
 	    }

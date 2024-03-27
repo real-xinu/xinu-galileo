@@ -13,17 +13,17 @@ extern	int	atoi(char *);
  */
 shellcmd xsh_udpecho(int nargs, char *args[])
 {
-	int	i;			/* index into buffer		*/
-	int	retval;			/* return value			*/
-	char	msg[] = "Xinu testing UDP echo"; /* message to send	*/
-	char	inbuf[1500];		/* buffer for incoming reply	*/
+	int	i;			/* Index into buffer		*/
+	int	retval;			/* Return value			*/
+	char	msg[] = "Xinu testing UDP echo"; /* Message to send	*/
+	char	inbuf[1500];		/* Buffer for incoming reply	*/
 	int32	slot;			/* UDP slot to use		*/
-	int32	msglen;			/* length of outgoing message	*/
-	uint32	remoteip;		/* remote IP address to use	*/
-	uint16	remport= 7;		/* remote port number to use	*/
-	uint16	locport	= 52743;	/* local port to use		*/
-	int32	retries	= 3;		/* number of retries		*/
-	int32	delay	= 500;		/* reception delay in ms	*/
+	int32	msglen;			/* Length of outgoing message	*/
+	uint32	remoteip;		/* Remote IP address to use	*/
+	uint16	remport= 7;		/* Remote port number to use	*/
+	uint16	locport	= 52743;	/* Local port to use		*/
+	int32	retries	= 3;		/* Number of retries		*/
+	int32	delay	= 500;		/* Reception delay in ms	*/
 
 	/* For argument '--help', emit help about the 'udpecho' command	*/
 
@@ -64,7 +64,7 @@ shellcmd xsh_udpecho(int nargs, char *args[])
 
 	fprintf(stderr, "using remote port %d\n", remport);
 
-	/* register local UDP port */
+	/* Register local UDP port */
 
 	slot = udp_register(remoteip, remport, locport);
 	if (slot == SYSERR) {

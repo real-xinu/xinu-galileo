@@ -61,7 +61,7 @@ status	dnslookup (
 	/* Check for 'localhost' */
 
 	if ( strncmp(dname, "localhost", 9) == 0 ) {
-		/* make localhost into 127.0.0.1 */
+		/* Make localhost into 127.0.0.1 */
 		*addr = 0x7f000001;
 		return OK;
 	}

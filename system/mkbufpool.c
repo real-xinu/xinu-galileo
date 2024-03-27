@@ -27,7 +27,10 @@ bpid32	mkbufpool(
 
 	bufsiz = ( (bufsiz + 3) & (~3) );
 
-	buf = (char *)getmem( numbufs * (bufsiz+sizeof(bpid32)) );
+	/* Increase buffer size to include a pool ID */
+
+	bufsiz += sizeof(bpid32);
+	buf = (char *)getmem( numbufs * bufsiz );
 	if ((int32)buf == SYSERR) {
 		restore(mask);
 		return (bpid32)SYSERR;
@@ -35,14 +38,12 @@ bpid32	mkbufpool(
 	poolid = nbpools++;
 	bpptr = &buftab[poolid];
 	bpptr->bpnext = (struct bpentry *)buf;
-	bpptr->bpsize = bufsiz;
 	if ( (bpptr->bpsem = semcreate(numbufs)) == SYSERR) {
-		freemem(buf, numbufs * (bufsiz+sizeof(bpid32)) );
+		freemem(buf, numbufs * bufsiz );
 		nbpools--;
 		restore(mask);
 		return (bpid32)SYSERR;
 	}
-	bufsiz+=sizeof(bpid32);
 	for (numbufs-- ; numbufs>0 ; numbufs-- ) {
 		bpptr = (struct bpentry *)buf;
 		buf += bufsiz;

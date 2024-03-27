@@ -41,7 +41,7 @@ struct	tftp_msg {
 	 /* Items in a RRQ or WRQ message */
 
 	 struct	{
-	  char	tf_filemode[TFTP_MAXNAM+10]; /* file name and mode	*/
+	  char	tf_filemode[TFTP_MAXNAM+10]; /* File name and mode	*/
 	 };
 
 	 /* Items in a Data packet */

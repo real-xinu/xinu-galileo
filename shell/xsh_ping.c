@@ -11,12 +11,12 @@
 shellcmd xsh_ping(int nargs, char *args[])
 {
 	uint32	ipaddr;			/* IP address in binary		*/
-	int32	retval;			/* return value			*/
+	int32	retval;			/* Return value			*/
 	int32	slot;			/* Slot in ICMP to use		*/
-	static	int32	seq = 0;	/* sequence number		*/
-	char	buf[56];		/* buffer of chars		*/
-	int32	i;			/* index into buffer		*/
-	int32	nextval;		/* next value to use		*/
+	static	int32	seq = 0;	/* Sequence number		*/
+	char	buf[56];		/* Buffer of chars		*/
+	int32	i;			/* Index into buffer		*/
+	int32	nextval;		/* Next value to use		*/
 
 	/* For argument '--help', emit help about the 'ping' command	*/
 

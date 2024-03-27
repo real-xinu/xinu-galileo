@@ -1,60 +1,12 @@
-/* rdsqfcns.c - rdqunlink, rdcunlink, rdcinsert, rdqdump, rdcdump */
+/* rdsqfcns.c - rdqadd, rdqfree, rdcget, rdcadd, rdcdump, rdqdump */
 
 #include <xinu.h>
 
-
 /*------------------------------------------------------------------------
- * rdqunlink  -  unlink a node from the request queue, place the node on
- *		the free list,  and return the address of the next node
- *		on the request queue (or NULL, if unlinking the tail)
+ * rdqadd  -  Add a request node to the tail of the request queue
  *------------------------------------------------------------------------
  */
-struct rdqnode * rdqunlink (struct rdscblk *rdptr, struct rdqnode *rptr) {
-
-	struct rdqnode *nptr;		/* Pointer to next node		*/
-	struct rdqnode *pptr;		/* Pointer to previous node	*/
-
-	nptr = rptr->rd_next;		/* Point to next node or NULL	*/
-
-	/* Handle unlinking the head of the request queue */
-
-	if (rptr == rdptr->rd_qhead) {
-		/* See if queue contains multiple nodes */
-		if (rptr == rdptr->rd_qtail) {
-			/* This is the only node on the queue */
-			rdptr->rd_qhead = rdptr->rd_qtail =
-				(struct rdqnode *)NULL;
-		} else {
-			/* The queue contains other nodes */
-			rdptr->rd_qhead = nptr;
-		}
-
-	/* Handle unlinking the tail of the request queue */
-
-	} else if (rptr == rdptr->rd_qtail) {
-		pptr = rptr->rd_prev;
-		rdptr->rd_qtail = pptr;
-		pptr->rd_next = (struct rdqnode *)NULL;
-
-	/* Handle unlinking a node in the middle of the queue */
-
-	} else {		
-		pptr = rptr->rd_prev;
-		pptr->rd_next = nptr;
-		nptr->rd_prev = pptr;
-	}
-	/* Add the unlinked node to free list */
-	rptr->rd_next = rdptr->rd_qfree;
-	rdptr->rd_qfree = rptr;
-	return nptr;
-}
-
-
-/*------------------------------------------------------------------------
- * rdqinsert  -  insert a request node at the tail of the request queue
- *------------------------------------------------------------------------
- */
-void rdqinsert (
+void rdqadd (
 	struct rdscblk *rdptr,		/* Control block pointer	*/
 	struct rdqnode *rptr		/* Ptr to the request node	*/
 ) {
@@ -74,76 +26,126 @@ void rdqinsert (
 
 
 /*------------------------------------------------------------------------
- * rdcunlink  -  unlink a node from the cache and place the node on the
- *		free list.
+ * rdqfree  -	Unlink a node from the request queue, place the node on
+ *		the free list, and return the address of the next node
+ *		on the request queue (or NULL, if unlinking the tail)
  *------------------------------------------------------------------------
  */
-void	rdcunlink (
-	struct rdscblk *rdptr,		/* Remode disk control block	*/
-	struct rdcnode *cptr		/* Node to unlink		*/
+struct rdqnode * rdqfree(
+	struct rdscblk *rdptr,		/* Control block pointer	*/
+	struct rdqnode *rptr		/* Ptr to the request node	*/
 ) {
-	struct rdcnode *nptr;		/* Pointer to next node		*/
-	struct rdcnode *pptr;		/* Pointer to previous node	*/
+	struct rdqnode *nptr;		/* Pointer to next node		*/
+	struct rdqnode *pptr;		/* Pointer to previous node	*/
 
-	nptr = cptr->rd_next;		/* Point to next node or NULL	*/
+	nptr = rptr->rd_next;		/* Point to next node or NULL	*/
+	pptr = rptr->rd_prev;		/* Point to prev. node or NULL	*/
 
-	/* Handle unlinking the head of the cache */
+	/* Handle unlinking the head of the request queue */
 
-	if (cptr == rdptr->rd_chead) {
+	if (rptr == rdptr->rd_qhead) {
 		/* See if queue contains multiple nodes */
-		if (cptr == rdptr->rd_ctail) {
-			/* This is the only node in the queue */
-			rdptr->rd_chead = rdptr->rd_ctail =
-				(struct rdcnode *)NULL;
+		if (rptr == rdptr->rd_qtail) {
+			/* This is the only node on the queue */
+			rdptr->rd_qhead = rdptr->rd_qtail =
+				(struct rdqnode *)NULL;
 		} else {
-			/* The cache contains other nodes */
-			rdptr->rd_chead = nptr;
-			nptr->rd_prev = (struct rdcnode *)NULL;
+			/* The queue contains other nodes */
+			rdptr->rd_qhead = nptr;
 		}
 
-	/* Handle unlinking the tail of the cache */
+	/* Handle unlinking the tail of the request queue */
 
-	} else if (cptr == rdptr->rd_ctail) {
-		pptr = cptr->rd_prev;
-		rdptr->rd_ctail = pptr;
-		pptr->rd_next = (struct rdcnode *)NULL;
+	} else if (rptr == rdptr->rd_qtail) {
+		rdptr->rd_qtail = pptr;
+		pptr->rd_next = (struct rdqnode *)NULL;
 
 	/* Handle unlinking a node in the middle of the queue */
 
 	} else {		
-		pptr = cptr->rd_prev;
+		pptr = rptr->rd_prev;
 		pptr->rd_next = nptr;
 		nptr->rd_prev = pptr;
 	}
 	/* Add the unlinked node to free list */
-	cptr->rd_next = rdptr->rd_cfree;
-	rdptr->rd_cfree = cptr;
-	return;
+	rptr->rd_next = rdptr->rd_qfree;
+	rdptr->rd_qfree = rptr;
+	return nptr;
 }
 
+
 /*------------------------------------------------------------------------
- * rdcinsert  -  insert a node in the cache for a specified block and
- *		 contents of the block
+ * rdsget   -	Search the cache for a block and, if found, copy the
+ *			data into the caller's buffer
  *------------------------------------------------------------------------
  */
-void rdcinsert (struct rdscblk *rdptr, uint32 blk, char *data) {
+int32	rdcget (
+	    struct rdscblk *rdptr,	/* Remote disk control block	*/
+	    uint32 blknum,		/* Block number to use		*/
+	    char *buf			/* Buffer to receive the data	*/
+) {
+	struct rdcnode *cptr;		/* Pointer that walks the cache	*/
 
-	struct	rdcnode	*cptr;		/* Pointer to a cache node	*/
-	struct	rdcnode	*tptr;		/* Additional cache node pointer*/
+	if (RD_CNODES == 0) {
+		/* No cache is being used */
+		return SYSERR;
+	}
+
+	for (cptr = rdptr->rd_chead; cptr != (struct rdcnode*)NULL;
+					cptr = cptr->rd_next) {
+		if (cptr->rd_blknum != blknum) {
+			continue;
+		}
+		/* Found the block in the cache -- copy the data */
+		memcpy(buf, cptr->rd_data, RD_BLKSIZ);
+		return OK;
+	}
+	return SYSERR;
+}
+
+
+/*------------------------------------------------------------------------
+ * rdcadd  -	Add a cache entry for a specified block and data,
+ *		 replacing an existing entry, allocting a free noode, or
+ *		 stealing the oldest node the cache
+ *------------------------------------------------------------------------
+ */
+void rdcadd (
+	  struct rdscblk *rdptr,	/* Remote disk control block	*/
+	  uint32 blk,			/* Block number to use		*/
+	  char *buf			/* Data for the block		*/
+) {
+	struct rdcnode *cptr;		/* Pointer that walks the cache	*/
+	struct rdcnode *tptr;		/* Temp. pointer to cache node	*/
+					/*    used when unlinking	*/
 
 	if (RD_CNODES == 0) {
 		/* No cache is being used */
 		return;
 	}
 
-	/* Allocate a node from the free list, if available */
+	/* Replace previous entry for the block, if one exists */
+
+	for (cptr = rdptr->rd_chead; cptr != (struct rdcnode*)NULL;
+					cptr = cptr->rd_next) {
+		if (cptr->rd_blknum != blk) {
+			continue;
+		}
+		/* Found the block in the cache -- replace the  data	*/
+		/*   witht he new data					*/
+		memcpy(cptr->rd_data, buf, RD_BLKSIZ);
+		return;
+	}
+	
+	/* Allocate a free cache node, if any are available, or steal	*/
+	/*	the oldest node in the cache				*/
 
 	cptr = rdptr->rd_cfree;
 	if (cptr != (struct rdcnode *)NULL) {
 		/* Unlink from the free list */
 		rdptr->rd_cfree = cptr->rd_next;
 	} else {
-		/* Use the tail of the cache list */
+		/* Steal the tail of the cache list */
 		cptr = rdptr->rd_ctail;
 		if (rdptr->rd_chead == rdptr->rd_ctail) {
 			/* Exactly one node in the cache, so unlink it */
@@ -153,14 +155,12 @@ void rdcinsert (struct rdscblk *rdptr, uint32 blk, char *data) {
 			/* More than one node in the cache */
 			tptr = cptr->rd_prev;
 			tptr->rd_next = (struct rdcnode *)NULL;
-			rdptr->rd_ctail = tptr;
+			rdptr->rd_ctail = tptr;			
 		}
 	}
-
-	/* Fill in block number and data */
-
+	/* Fill in the block to be cached */
 	cptr->rd_blknum = blk;
-	memcpy(cptr->rd_data, data, RD_BLKSIZ);
+	memcpy(cptr->rd_data, buf, RD_BLKSIZ);
 
 	/* Add the node to head of the cache */
 
@@ -182,7 +182,6 @@ void rdcinsert (struct rdscblk *rdptr, uint32 blk, char *data) {
  * rdqdump  -  Dump the remote disk request queue
  *------------------------------------------------------------------------
  */
-
 void rdqdump (
 	  did32 disk		/* ID of disk to use */
 	)
@@ -190,9 +189,9 @@ void rdqdump (
 	struct	dentry	*devptr;	/* Entry in Device Switch Table	*/
 	struct	rdscblk	*rdptr;		/* Pointer to the control block	*/
 	struct	rdqnode *rptr;		/* Ptr to item in request queue	*/
-	int32	n;			/* rquest number		*/
+	int32	n;			/* Request number		*/
 	int32	i;			/* Byte index in data		*/
-	byte	ch;			 /* One byte of data		*/
+	byte	ch;			/* One byte of data		*/
 
 	devptr = (struct dentry *) &devtab[disk];
 	rdptr = &rdstab[devptr->dvminor];
@@ -243,9 +242,7 @@ void rdqdump (
 /*------------------------------------------------------------------------
  * rdcdump  -  Dump the remote disk cache
  *------------------------------------------------------------------------
-
  */
-
 void rdcdump (
 	  did32 disk		/* ID of disk to use */
 	)

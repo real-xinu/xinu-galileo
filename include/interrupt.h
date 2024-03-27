@@ -4,30 +4,30 @@
 
 #define	MAX_EXT_IRQS	16	/* Total IRQs devoted to external	*/
 				/* Actually, there are only 14 (32-38	*/
-				/* and 40-46) because we send 39 to	*/
-				/* spurious_irq7 and send 47 to	*/
-				/* spurious_irq15.  However we declare	*/
-				/* the action array so ti covers the	*/
-				/* entire set.				*/
+				/*  and 40-46) because we send 39 to	*/
+				/*  spurious_irq7 and send 47 to	*/
+				/*  spurious_irq15.  However we declare	*/
+				/*  the action array so ti covers the	*/
+				/*  entire set.				*/
 
 /* The following specifies the maximum number of devices that curently	*/
 /*	share a given IRQ.						*/
 
 #define	MAX_IRQ_SHARING	1	/* 1 means only one device is assigned	*/
-				/* to a given IRQ (i.e., there is no	*/
-				/* sharing).  If this value is changed,	*/
-				/* INT_ENTRY_SIZE must also be changed	*/
-				/* in include file interrupt.s		*/
+				/*  to a given IRQ (i.e., there is no	*/
+				/*  sharing).  If this value is changed,*/
+				/*  INT_ENTRY_SIZE must also be changed	*/
+				/*  in include file interrupt.s		*/
 
 #define INT_ENTRY_SIZE	16	/* This definition must be a constant	*/
-				/* because it is used in assembly	*/
-				/* language.  It *must* be equal to	*/
-				/* sizeof(struct int_entry), which is	*/
+				/*  because it is used in assembly	*/
+				/*  language.  It *must* be equal to	*/
+				/*  sizeof(struct int_entry), which is	*/
 				/*     8*(MAX_IRQ_SHARING + 1)		*/
 
 #define	INT_NEXT_HAND	8	/* This definition must be a constant	*/
-				/* because it is used in assembly	*/
-				/* language.  It *must* be equal to	*/
+				/*  because it is used in assembly	*/
+				/*  language.  It *must* be equal to	*/
 				/*     sizeof(struct int_info)		*/
 
 #ifndef	ASM
@@ -57,7 +57,7 @@ extern	struct	int_entry int_actions[MAX_EXT_IRQS];
 
 /* Definition of the global interrupt mask */
 
-extern	uint16	girmask;	/* mask of interrupts being serviced	*/
-				/* a bit of 1 corresponds to an		*/
-				/* interrupt that is allowed.		*/
+extern	uint16	girmask;	/* Mask of interrupts being serviced	*/
+				/*  a bit of 1 corresponds to an	*/
+				/*  interrupt that is allowed.		*/
 #endif

@@ -81,9 +81,9 @@ did32	namrepl(
 		}
 
 		/* Found a match - check that replacement string plus	*/
-		/* bytes remaining at the end of the original name will	*/
-		/* fit into new name buffer.  Ignore null on replacement*/
-		/* string, but keep null on remainder of name.		*/
+		/*  bytes remaining at the end of the original name will*/
+		/*  fit into new buffer.  Ignore null on replacement	*/
+		/*  string, but keep null on remainder of name.		*/
 
 		olen = namlen(name ,NM_MAXLEN);
 		rlen = namlen(namptr->nreplace,NM_MAXLEN) - 1;

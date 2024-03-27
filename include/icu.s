@@ -12,4 +12,4 @@
 	.set	IMR1,ICU1 + 1	/* Interrupt Mask Register for #1	*/
 	.set	IMR2,ICU2 + 1	/* Interrupt Mask Register for #2	*/
 
-	.set	EOI,0x20	/* non-specific end of interrupt	*/
+	.set	EOI,0x20	/* Non-specific end of interrupt	*/

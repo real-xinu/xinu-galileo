@@ -217,7 +217,7 @@ int32	ethinit (
 		0xff&ethptr->devAddress[5]);
 
 	/* Add the MAC address read from SPI flash into the	*/
-	/* macaddr registers for address filtering		*/
+	/*  macaddr registers for address filtering		*/
 	csrptr->macaddr0l = (uint32)(*((uint32 *)ethptr->devAddress));
 	csrptr->macaddr0h = ((uint32)
 		(*((uint16 *)(ethptr->devAddress + 4))) | 0x80000000);
