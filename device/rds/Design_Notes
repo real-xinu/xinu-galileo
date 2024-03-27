@@ -1,0 +1,143 @@
+------------------------------------------------------------------------------------------
+
+			General ideas
+
+
+Cache:
+
+	If a block is in the cache, it is the latest version of the block.
+	However, a cached copy can be removed at any time if space in the
+	cache is needed for other blocks.
+
+	When searching the cache, start at the head.  When inserting a block
+	or when a search finds a block, place the block at the head (assuming
+	temporal locality of reference).  When stealing a cache node, take it
+	from the tail.
+
+A new copy of block B can enter the cache two ways:
+
+	When a write operation for block B  enters the request queue for a block,
+	block B is cached.  Note: there may be earlier read or write requests for
+	B in the request queue; they remain unchanged.
+
+	When a read completes for block B and no subsequent write requests for B
+	are in the request queue.  Data from the read is cached.
+
+Actions:
+
+	When a write enters the request queue, add the block in the cache
+		(update an existing block or add a new block)
+
+	When a read enters the request queue
+
+		if the block is in the cache, satisfy the read request immediately
+		if the request queue contains a write for the block, satisfy the
+			request immediately (the cached copy has been stolen)
+		Otherwise, enqueue the request
+
+	When a read completes, check the request queue for a subsequent write to
+		the same block.  If no write is found, add the block in the cache
+		(update an existing block or add a new block).
+
+------------------------------------------------------------------------------------------
+
+			More specifics
+
+request queue:	A doubly-linked queue of requests to be handled, each containing
+			Block number
+			Operation (Read/Write/Sync)
+			Process ID (only needed for read & sync)
+			A pointer to caller's buffer (for read) or a block of data (for write)
+
+cache:		A doubly-linked list of cached blocks with most recent at the head
+
+serial queue:	A circular buffer of processes about to make requests, ordered by arrival
+		time, where each entry contains
+			Block number
+			Operation (Read/Write/Sync)
+			Process ID
+			Pointer to caller's buffer
+		The queue contains NPROC entries, which means a process can always add an
+		entry without blocking to wait for a slot.
+
+Operations:	Read, Write, or Sync operations: (each runs with interrupts disabled
+			and uses the same algorithm)
+		Enqueue self on the serial queue
+		us rdsars to resume cproc and suspend the calling process atomically
+		return;
+
+Communication Process with PID cproc (runs with interrupts disabled)
+
+		while (TRUE)  {
+			while  (serialq is nonempty) {
+
+				if next item in serialq is read and block is in the cache {
+					satisfy the request, remove it from serialq, and resume
+					the process.
+				}
+				if no requestq nodes are available {
+					break out of the inner loop;
+
+				/* Move next request to the request queue */
+
+				Allocate request queue node from free list
+				copy pid and operation into request queue node
+				if a write {
+					copy data into the requestq node
+					Insert block into cache (either update or add a new node)
+					resume the process
+					add the node to the requestq
+				} else if a sync {
+					add the node to the requestq
+				} else if a read {
+					add the node to the requestq
+				}
+			}
+
+			/* All items that can be moved to the request queue have been moved	*/
+			/* If the request queue is empty, suspend the communication process;	*/
+			/* otherwise handle the next request.					*/
+
+			if requestq is empty {
+				suspend(getpid())
+				continue
+			}
+
+			/* Handle the next request, using the operation to select an action	*/
+
+			switch (operation) {
+			 Sync:
+				resume the process
+				free the request node
+				continue;
+			 Write:
+				Send 'write' message and receive response
+				free the request node
+				continue;
+
+			 Read:
+				Send 'read' message and receive response
+				Scan requestq for a request with the same block
+					if a read is found {
+						copy data into the caller's buffer
+						resume the process
+						free the request node
+					}
+					if a write is found {
+						remember that subsequent write occurred
+						break out of the scan loop
+					}
+				if no subsequent write occurred, add the block to the cache
+				free the request node
+				continue;
+			}
+		}
+
+------------------------------------------------------------------------------------------
+
+Other functions
+
+rdcget:  search the cache for block X
+rdcadd:  add a block to the cache, replacing a previous entry
+rdqadd:  add a node to the request queue
+rdqfree: unlink a request queue node and place it on the free list
