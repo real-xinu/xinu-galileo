@@ -167,7 +167,7 @@ void	rdsprocess (
 
 		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
 				(ntohs(resp.rd_status) != 0) ) {
-			panic("remite disk error contacting server");
+			panic("remote disk error contacting server");
 		}
 
 		/* Walk through the request queue and satisfy all read 	*/

@@ -8,7 +8,7 @@
  *------------------------------------------------------------------------
  */
 syscall	rdsars(
-	  pid32		pid		/* ID of theprocess to resume	*/
+	  pid32		pid		/* ID of the process to resume	*/
 	)
 {
 	intmask	mask;			/* Saved interrupt mask		*/

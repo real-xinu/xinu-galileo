@@ -24,7 +24,6 @@ void rdqadd (
 	return;
 }
 
-
 /*------------------------------------------------------------------------
  * rdqfree  -	Unlink a node from the request queue, place the node on
  *		the free list, and return the address of the next node
@@ -73,7 +72,6 @@ struct rdqnode * rdqfree(
 	return nptr;
 }
 
-
 /*------------------------------------------------------------------------
  * rdsget   -	Search the cache for a block and, if found, copy the
  *			data into the caller's buffer
@@ -102,7 +100,6 @@ int32	rdcget (
 	}
 	return SYSERR;
 }
-
 
 /*------------------------------------------------------------------------
  * rdcadd  -	Add a cache entry for a specified block and data,
@@ -177,7 +174,6 @@ void rdcadd (
 	return;
 }
 
-
 /*------------------------------------------------------------------------
  * rdqdump  -  Dump the remote disk request queue
  *------------------------------------------------------------------------
@@ -236,8 +232,6 @@ void rdqdump (
 		rptr = rptr->rd_next;
 	}
 }
-
-
 
 /*------------------------------------------------------------------------
  * rdcdump  -  Dump the remote disk cache

@@ -9,12 +9,12 @@
 devcall	rdswrite (
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buff,			/* Buffer that holds a disk blk	*/
-	  int32	blk			/* Block number to write	*/
+	  int32	blk			/* Block num. of block to write	*/
 	)
 {
 	struct	rdscblk	*rdptr;		/* Pointer to the control block	*/
 					/*   for the disk device	*/
-	struct	rdsent  *sptr;		/* Pointer tp serial queue entry*/
+	struct	rdsent  *sptr;		/* Pointer to serial queue entry*/
 
 	/* If the device not currently open, report an error */
 
@@ -23,13 +23,13 @@ devcall	rdswrite (
 		return SYSERR;
 	}
 
-	/* Fill in the next serial queue entry */
+	/* Obtain the next serial queue entry and fill it in */
 
 	sptr = &rdptr->rd_sq[rdptr->rdstail++];
-	if (rdptr->rdstail >= RD_SSIZE) {
+	if (rdptr->rdstail >= RD_SSIZE) {  /* wrap around, if necessary	*/
 		rdptr->rdstail = 0;
 	}
-	rdptr->rdscount++;
+	rdptr->rdscount++;		/* Increment the count of items	*/
 	sptr->rd_op = RD_OP_WRITE;
 	sptr->rd_blknum = blk;
 	sptr->rd_callbuf = buff;

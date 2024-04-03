@@ -9,6 +9,7 @@
 #define DHCP_ROUTER                     3
 #define DHCP_DNS_SERVER                 6
 #define DHCP_DOMAIN_NAME                15
+#define DHCP_NTP_SERVER_IP              42
 #define DHCP_VENDER_OPTIONS             43
 #define DHCP_REQUESTED_IP               50
 #define DHCP_IP_ADDR_LEASE_TIME         51

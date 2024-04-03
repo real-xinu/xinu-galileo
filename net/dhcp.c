@@ -83,9 +83,10 @@ int32 	dhcp_bld_disc(struct dhcpmsg* dmsg)
 	dmsg->dc_opt[j++] = 0xff &  0;	/* Options padding		*/
 
 	dmsg->dc_opt[j++] = 0xff & 55;	/* DHCP parameter request list	*/
-	dmsg->dc_opt[j++] = 0xff &  2;	/* Option length		*/
+	dmsg->dc_opt[j++] = 0xff &  3;	/* Option length		*/
 	dmsg->dc_opt[j++] = 0xff &  1;	/* Request subnet mask 		*/
 	dmsg->dc_opt[j++] = 0xff &  3;	/* Request default router addr->*/
+	dmsg->dc_opt[j++] = 0xff & 55;	/* Request NTP server address	*/
 	dmsg->dc_opt[j++] = 0xff;	/* End of options		*/
 
 	return (uint32)((char *)&dmsg->dc_opt[j] - (char *)dmsg + 1);

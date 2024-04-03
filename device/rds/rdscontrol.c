@@ -42,14 +42,13 @@ devcall	rdscontrol (
 						(struct rdqnode *)NULL)) {
 			return OK;
 		}
-
-		/* Fill in the next serial queue entry */
+		/* Obtain the next serial queue entry and fill it in */
 
 		sptr = &rdptr->rd_sq[rdptr->rdstail++];
 		if (rdptr->rdstail >= RD_SSIZE) {
-			rdptr->rdstail = 0;
+			rdptr->rdstail = 0; /* Wrap around, if needed	*/
 		}
-		rdptr->rdscount++;
+		rdptr->rdscount++;	/* Increment the count of items	*/
 		sptr->rd_op = RD_OP_SYNC;
 		sptr->rd_blknum = 0;	/* Not used */
 		sptr->rd_pid = getpid();
