@@ -53,7 +53,7 @@ SFLAGS  = ${INCLUDE}
 # Loader flags
 LDFLAGS = -dn -m elf_i386 -Map xinu.map -T $(LDSCRIPT)
 
-all:	xinu
+all:	${MAKEXBIN} xinu
 
 #--------------------------------------------------------------------------------
 # Handle generation of a new version string when initialize is recompiled
@@ -98,6 +98,9 @@ export
 # Specific additional rules and exceptions
 #--------------------------------------------------------------------------------
 
+$(MAKEXBIN): 
+	@make -C $(TOPDIR)/compile/bin buildxbin
+
 xinu:	Makefile rebuild $(BLDDIRS) $(DEFSFILE) $(DEPSFILE) $(CONFH) $(CONFC) $(LD_LIST)
 	@echo;echo 'Loading object files to produce GRUB bootable xinu'
 	@$(LD) $(LDFLAGS) $(LD_LIST) -o $(XINU)
@@ -139,6 +142,7 @@ clean:
 	@echo removing xinu ...
 	@rm -f $(XINU)
 	@rm -f $(XINUXBIN)
+	make -C $(TOPDIR)/compile/bin clean
 
 #--------------------------------------------------------------------------------
 # Locations of source directories and exceptions (.c and .[sS] files to exclude)
