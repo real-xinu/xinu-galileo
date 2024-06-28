@@ -1,5 +1,4 @@
 /* rdsprocess.c - rdsprocess */
-
 #include <xinu.h>
 
 /*------------------------------------------------------------------------
@@ -70,6 +69,9 @@ void	rdsprocess (
 		rptr->rd_blknum = sptr->rd_blknum;
 		rptr->rd_pid = sptr->rd_pid;
 
+		/* Pass buffer pointer from serial to request queue node*/
+		rptr->rd_callbuf = sptr->rd_callbuf;
+
 		/* Use the operation to determine remaining actions */
 
 		if ( (rptr->rd_op = sptr->rd_op) == RD_OP_WRITE) {
@@ -82,6 +84,13 @@ void	rdsprocess (
 		}
 		/* Add the request node to the request queue */
 		rdqadd(rdptr, rptr);
+
+		/* Increment the serial queue */
+		rdptr->rdshead++;
+		if (rdptr->rdshead >= RD_SSIZE) {
+			rdptr->rdshead = 0;
+		}
+
 	    }
 
 	    /* At this point, eligible items have been moved from the	*/
@@ -95,7 +104,6 @@ void	rdsprocess (
 	    }
 
 	    /* Handle a request -- use operation to determine action	*/
-
 	    switch (rptr->rd_op) {
 
 	    case RD_OP_SYNC:
@@ -105,7 +113,6 @@ void	rdsprocess (
 		continue;
 
 	    case RD_OP_WRITE:
-
 		/* Build a write request message for the server */
 
 		msg.rd_type = htons(RD_MSG_WREQ);	/* Write request*/
@@ -125,7 +132,6 @@ void	rdsprocess (
 		rptr = rdqfree(rdptr, rptr);
 
 		/* Send the message and receive a response */
-
 		retval = rdscomm((struct rd_msg_hdr *)&msg,
 					sizeof(struct rd_msg_wreq),
 				 (struct rd_msg_hdr *)&resp,
@@ -141,9 +147,7 @@ void	rdsprocess (
 		continue;
 
 	    case RD_OP_READ:
-
 		/* Build a read request message for the server */
-
 		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
 		msg.rd_status = htons(0);
 		msg.rd_seq = 0;		/*  rdscomm fills in the value	*/
@@ -186,7 +190,7 @@ void	rdsprocess (
 		    }
 		    if ( rptr->rd_op == RD_OP_READ ) {
 			/* Satisfy the read for the block */
-			memcpy(rptr->rd_callbuf, resp.rd_data,RD_BLKSIZ);
+			memcpy(rptr->rd_callbuf, resp.rd_data, RD_BLKSIZ);
 			resume(rptr->rd_pid);
 			rptr = rdqfree(rdptr, rptr);
 		    }

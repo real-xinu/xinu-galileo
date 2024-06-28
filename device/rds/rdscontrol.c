@@ -54,7 +54,7 @@ devcall	rdscontrol (
 		sptr->rd_pid = getpid();
 
 		/* Atomically resume the communication process and	*/
-		/*  suspend thef current process to wait until we	*/
+		/*  suspend the current process to wait until we	*/
 		/*  recah the head of the request queue			*/
 
 		rdsars(rdptr->rd_comproc);
@@ -63,6 +63,20 @@ devcall	rdscontrol (
 	    /* Delete the remote disk (entirely remove it) */
 
 	    case RDS_CTL_DEL:
+
+		/* Change the state of the device to RD_DELETING to	*/
+		/*     prevent further use				*/
+		rdptr->rd_state = RD_DELETING;
+
+		/* Call rds_sync to flush the request and serial queues */
+		rdscontrol(devptr, RDS_CTL_SYNC, NULL, NULL);
+
+		/* Kill rdsprocess */
+		kill(rdptr->rd_comproc);
+
+		/* Return the cache nodes in use to the free list */
+		rdptr->rd_ctail->rd_next = rdptr->rd_cfree;
+		rdptr->rd_cfree = rdptr->rd_chead;
 
 		/* Handcraft a message for the server that requests	*/
 		/*	deleting the disk with the specified ID		*/
@@ -89,8 +103,54 @@ devcall	rdscontrol (
 
 		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
 		     (ntohs(resp.rd_status) != 0) ) {
+			kprintf("Remote disk server error for delete.\n");
 			return SYSERR;
 		}
+
+		rdptr->rd_state = RD_CLOSED;
+
+		return OK;
+
+		/* Close a remote disk */
+
+	    case RDS_CTL_CLOSE:
+
+		/* Change the state of the device to RD_CLOSING to	*/
+		/*    prevent further use				*/
+		rdptr->rd_state = RD_CLOSED;
+
+		/* Call rds_sync to flush the request and serial queues */
+		rdscontrol(devptr, RDS_CTL_SYNC, NULL, NULL);
+
+		/* Handcraft a message for the server that requests	*/
+		/*	closing the disk with the specified ID		*/
+
+		msg.rd_type = htons(RD_MSG_CREQ);/* Request closing	*/
+		msg.rd_status = htons(0);
+		msg.rd_seq = 0;	/* Rdscomm will insert sequence # later	*/
+		to = msg.rd_id;
+		memset(to, NULLCH, RD_IDLEN);	/* Initialize to zeroes	*/
+		from = rdptr->rd_id;
+		while ( (*to++ = *from++) != NULLCH ) {	/* Copy ID	*/
+			;
+		}
+
+		/* Send message and receive response */
+
+		retval = rdscomm((struct rd_msg_hdr *)&msg,
+					sizeof(struct rd_msg_creq),
+			 (struct rd_msg_hdr *)&resp,
+					sizeof(struct rd_msg_cres),
+					rdptr);
+
+		/* Check the response */
+
+		if ( (retval == SYSERR) || (retval == TIMEOUT) ||
+		     (ntohs(resp.rd_status) != 0) ) {
+			kprintf("Bad response from the remote disk server on the close request.\n");
+			return SYSERR;
+		}
+
 		return OK;
 
 	    default:
