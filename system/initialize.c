@@ -103,7 +103,7 @@ void	nulluser()
 /*------------------------------------------------------------------------
  *
  * startup  -  Finish startup takss that cannot be run from the Null
- *		  process and then create and resumethe main process
+ *		  process and then create and resume the main process
  *
  *------------------------------------------------------------------------
  */

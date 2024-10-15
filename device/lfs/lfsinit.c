@@ -5,7 +5,7 @@
 struct	lfdata	Lf_data;
 
 /*------------------------------------------------------------------------
- * lfsinit  -  Initialize the local file system master device
+ * lfsinit  -  Initialize the local file system primary device
  *------------------------------------------------------------------------
  */
 devcall	lfsinit (

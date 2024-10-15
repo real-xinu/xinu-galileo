@@ -72,7 +72,7 @@ rfl:
 		-w rflwrite	-s rflseek	-n ioerr
 		-intr ionull
 
-/* type of a local file system master device */
+/* type of a local file system primary device */
 lfs:
 	on ram
 		-i lfsinit	-o lfsopen	-c ioerr
@@ -151,7 +151,7 @@ pip:
    RFILE8 is rfl on rfs
    RFILE9 is rfl on rfs
 
-   /* Define the local file system master device (one per system) */
+   /* Define the local file system primary device (one per system) */
 
    LFILESYS is lfs on ram
 

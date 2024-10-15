@@ -5,7 +5,7 @@
 struct	rfdata	Rf_data;
 
 /*------------------------------------------------------------------------
- *  rfsinit  -  Initialize the remote file system master device
+ *  rfsinit  -  Initialize the remote file system primary device
  *------------------------------------------------------------------------
  */
 devcall	rfsinit(
