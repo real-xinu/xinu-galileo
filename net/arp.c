@@ -12,7 +12,7 @@ void	arp_init(void)
 {
 	int32	i;			/* ARP cache index		*/
 
-	for (i=1; i<ARP_SIZ; i++) {	/* Initialize cache to empty	*/
+	for (i=0; i<ARP_SIZ; i++) {	/* Initialize cache to empty	*/
 		arpcache[i].arstate = AR_FREE;
 	}
 }

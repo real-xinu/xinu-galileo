@@ -9,7 +9,7 @@
 devcall	ttyread(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buff,			/* Buffer of characters		*/
-	  int32	count 			/* Count of character to read	*/
+	  int32	count 			/* Count of characters to read	*/
 	)
 {
 	struct	ttycblk	*typtr;		/* Pointer to tty control block	*/

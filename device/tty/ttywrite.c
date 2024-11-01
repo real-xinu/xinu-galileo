@@ -9,7 +9,7 @@
 devcall	ttywrite(
 	  struct dentry	*devptr,	/* Entry in device switch table	*/
 	  char	*buff,			/* Buffer of characters		*/
-	  int32	count 			/* Count of character to write	*/
+	  int32	count 			/* Count of characters to write	*/
 	)
 {
 	/* Handle negative and zero counts */
