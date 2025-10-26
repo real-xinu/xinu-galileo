@@ -28,7 +28,7 @@
 
 #define SHELL_PROMPT	"xsh $ "	/* Command prompt		*/
 #define SHELL_STRTMSG	"Welcome to Xinu!\n"/* Welcome message		*/
-#define SHELL_EXITMSG	"Shell closed\n"/* Shell exit message		*/
+#define SHELL_EXITMSG	"\nShell closed\n"/* Shell exit message		*/
 #define SHELL_SYNERRMSG	"Syntax error\n"/* Syntax error message		*/
 #define SHELL_CREATEMSG	"Cannot create process\n"/* command error	*/
 #define SHELL_INERRMSG	"Cannot open file %s for input\n" /* Input err	*/
