@@ -33,6 +33,7 @@ syscall	notmarked(memmark loc)
 		restore(mask);
 		return FALSE;
 	}
+	restore(mask);
 	return TRUE;
 }
 
