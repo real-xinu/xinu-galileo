@@ -31,10 +31,10 @@ syscall	notmarked(memmark loc)
 
 	if (loc[0]<0 || loc[0]>=nmarks || marks[loc[0]] != loc) {
 		restore(mask);
-		return FALSE;
+		return TRUE;
 	}
 	restore(mask);
-	return TRUE;
+	return FALSE;
 }
 
 
