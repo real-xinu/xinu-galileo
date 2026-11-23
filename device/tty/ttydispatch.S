@@ -19,3 +19,4 @@ ttydispatch:
 		popfl			/* Restore the flags register	*/
 		popal			/* Restore general-purpose regs.*/
 		iret			/* Return from interrupt	*/
+.section .note.GNU-stack,"",@progbits

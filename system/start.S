@@ -348,3 +348,5 @@ cpuid:
 	cpuid
 	popl	%ebx
 	ret			# return value in %eax
+
+.section .note.GNU-stack,"",@progbits

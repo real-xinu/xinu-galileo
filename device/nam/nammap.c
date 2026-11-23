@@ -2,9 +2,6 @@
 
 #include <xinu.h>
 
-status	namcpy(char *, char *, int32);
-did32	namrepl(char *, char[]);
-
 /*------------------------------------------------------------------------
  *  nammap  -  Using namespace, map name to new name and new device
  *------------------------------------------------------------------------

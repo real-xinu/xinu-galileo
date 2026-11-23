@@ -1,13 +1,12 @@
 /* config.y - yacc input file for the Xinu config program */
 
-/************************************************************************/
-/*									*/
-/*	This file contains the yacc grammar and	semantic functions	*/
-/*    that read a Xinu Configuration file and generate output files	*/
-/*    conf.h and conf.c that are then compiled along with the rest of	*/
-/*    Xinu.								*/
-/*									*/
-/************************************************************************/
+/********************************************************************************/
+/*										*/
+/*	This file contains the yacc grammar and	semantic functions that read	*/
+/*    a Xinu Configuration file and generate output files conf.h and conf.c	*/
+/*    which are then compiled along with the rest of  Xinu.			*/
+/*										*/
+/********************************************************************************/
 
 %token	DEFBRK IFBRK COLON OCTAL INTEGER IDENT CSR IRQ INTR INIT OPEN
 	CLOSE READ WRITE SEEK CONTROL IS ON GETC PUTC
@@ -26,7 +25,7 @@ extern	int	yylex(void);
 
 /********************************************************************************/
 /*										*/
-/*			Start of Definitions					*/
+/*				Start of Definitions				*/
 /*										*/
 /********************************************************************************/
 
@@ -102,6 +101,7 @@ char *devstab[] = {
 };
 
 char	saveattrid[MAXNAME];		/* Holds the IDENT from an attribute	*/
+char	devtypename[MAXNAME];
 
 /********************************************************************************/
 /*										*/
@@ -110,7 +110,6 @@ char	saveattrid[MAXNAME];		/* Holds the IDENT from an attribute	*/
 /********************************************************************************/
 
 void	addattr(int, int);
-int	addton(char *);
 int	config_atoi(char *, int);
 void	devisid(char *);
 void	devonid(char *);
@@ -118,6 +117,7 @@ void	getattrid(char *);
 void	newdev(char *);
 int	newtype(char *);
 void	yyerror(char *);
+void savename(char *);
 
 
 %}
@@ -145,7 +145,7 @@ devtypes:	/* nothing */ { doing = "device definitions"; }
 devtype:	tname COLON dev_tlist
 ;
 
-tname:		IDENT { $$ = newtype(yytext); }
+tname:		IDENT { savename(yytext); }
 ;
 
 dev_tlist:	theader attr_list
@@ -155,7 +155,7 @@ dev_tlist:	theader attr_list
 theader:	ON tonid { $$ = $2; }
 ;
 
-tonid:		IDENT { $$ = addton(yytext); }
+tonid:		IDENT { newtype(yytext); }
 ;
 
 attr_list:	/* nothing */
@@ -233,6 +233,7 @@ int main(int argc, char **argv) {
 	int   verbose = 0;
 	char *p;
 	int  c;
+	char use[]="use: config [-v] [input_file] [conf.c] [conf.h]";
 
 	if ( argc > 1 && (strncmp("-v", argv[1], 2) == 0) ) {
 		argc--;
@@ -241,7 +242,7 @@ int main(int argc, char **argv) {
 	}
 
 	if ( argc > 4 ) {
-		fprintf(stderr, "use: config [-v] [input_file] [conf.c] [conf.h]\n");
+		fprintf(stderr,"%s\n", use);
 		exit(1);
 	}
 
@@ -249,13 +250,13 @@ int main(int argc, char **argv) {
 
 	if (argc >= 2) {
 		if (freopen(argv[1], "r", stdin) == NULL) {
-			fprintf(stderr, "Can't open %s\n", argv[1]);
+			fprintf(stderr, "Cannot open %s\n", argv[1]);
 			exit(1);
 		}
 	}
 	else {	/* try to open Configuration file */
 		if (freopen(INFILE, "r", stdin) == NULL) {
-			fprintf(stderr, "Can't open %s\n", INFILE);
+			fprintf(stderr, "Cannot open %s\n", INFILE);
 			exit(1);
 		}
 	}
@@ -277,26 +278,26 @@ int main(int argc, char **argv) {
 
 	if (argc >= 3) {
 		if ( (confc = fopen(argv[2],"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", argv[2]);
+			fprintf(stderr, "Cannot write on %s\n", argv[2]);
 			exit(1);
 		}
 	}
 	else { 	/* try to open conf.c file */
 		if ( (confc = fopen(CONFC,"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", CONFC);
+			fprintf(stderr, "Cannot write on %s\n", CONFC);
 			exit(1);
 		}
 	}
 
 	if (argc >= 4) {
 		if ( (confh = fopen(argv[3],"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", argv[3]);
+			fprintf(stderr, "Cannot write on %s\n", argv[3]);
 			exit(1);
 		}
 	}
 	else { 	/* try to open conf.h file */
 		if ( (confh = fopen(CONFH,"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", CONFH);
+			fprintf(stderr, "Cannot write on %s\n", CONFH);
 			exit(1);
 		}
 	}
@@ -461,28 +462,6 @@ void	addattr(int tok, int val) {
 	}
 }
 
-
-/************************************************************************/
-/*									*/
-/* addton -- add an "on XXX" to the current type			*/
-/*									*/
-/************************************************************************/
-
-int	addton(char *tonid) {
-	int	currtype;		/* The current type		*/
-
-	if (strlen(tonid) >= MAXNAME) {
-		fprintf(stderr,"string %s is too long on line %d\n",
-				tonid, linectr);
-		exit(1);
-	}
-	currtype = ntypes - 1;
-	strcpy(dtypes[currtype].ison, tonid);
-
-	return currtype;
-}
-
-
 /************************************************************************/
 /*									*/
 /* config_atoi - convert an ascii string of text to an integer,		*/
@@ -592,7 +571,7 @@ void	devonid(char *onname) {
 	for (i=0; i<ntypes; i++) {
 		tptr = &dtypes[i];
 		if ( (strcmp(dptr->tname,tptr->tname) == 0 ) &&
-		     (strcmp(dptr->ison, tptr->ison)  == 0 )  ){
+			 (strcmp(dptr->ison, tptr->ison)  == 0 ) ){
 
 			/* The specified type matches the ith entry, so	*/
 			/*  set all attributes equal to the ones in the	*/
@@ -673,16 +652,35 @@ void	newdev(char *name) {
 }
 
 
+
 /************************************************************************/
 /*									*/
-/* newtype -- allocate an entry in the type array and fill in the name	*/
+/* savename -- save the name of a new device type for use when making dentrys	*/
 /*									*/
 /************************************************************************/
 
-int	newtype(char *name) {
+void savename(char *name) {
+	if (strlen(name) >= MAXNAME) {
+		fprintf(stderr,"Type name %s is too long on line %d\n",
+				name, linectr);
+		exit(1);
+	}
+	strcpy(devtypename, name);
+}
 
+
+/************************************************************************/
+/*									*/
+/* newtype -- allocate an entry in the type array and fill in the name ison fields	*/
+/*									*/
+/************************************************************************/
+
+int	newtype(char *tonid) {
+
+	char *name = devtypename;
 	struct	dev_ent	*dptr;		/* Ptr. to an entry in dtypes	*/
 	int	i;			/* Index into the type table	*/
+	int last = -1;  /* The last entry in the type table with the same type name */
 
 	if (ntypes >= NTYPES) {
 		fprintf(stderr,"Too many types on line %d", linectr);
@@ -694,13 +692,22 @@ int	newtype(char *name) {
 		exit(1);
 	}
 
-	/* Verify that the type name is unique */
+	if (strlen(tonid) >= MAXNAME) {
+		fprintf(stderr,"string %s is too long on line %d\n",
+				tonid, linectr);
+		exit(1);
+	}
+
+	/* Verify that the (type name, is on) pair is unique */
 
 	for (i=0; i<ntypes; i++) {
 		if (strcmp(name, dtypes[i].tname) == 0) {
-			fprintf(stderr, "Duplicate type name %s on line %d\n",
-				name, linectr);
+			last = i;
+			if (strcmp(tonid, dtypes[i].ison) == 0) {
+			fprintf(stderr, "Duplicate type name on line %d: %s on %s\n",
+				linectr, name, tonid);
 			exit(1);
+			}
 		}
 	}
 
@@ -710,6 +717,7 @@ int	newtype(char *name) {
 
 	bzero((void *)dptr, sizeof(struct dev_ent));
 	strcpy(dptr->tname,	 name);
+	strcpy(dptr->ison, tonid);
 	strncpy(dptr->intr,	"ioerr", 5);
 	strncpy(dptr->init,	"ioerr", 5);
 	strncpy(dptr->open,	"ioerr", 5);
@@ -721,6 +729,20 @@ int	newtype(char *name) {
 	strncpy(dptr->getc,	"ioerr", 5);
 	strncpy(dptr->putc,	"ioerr", 5);
 
+	if (last != -1) {
+		struct	dev_ent	*lptr = &dtypes[last];
+
+		strcpy(dptr->intr,	lptr->intr);
+		strcpy(dptr->init,	lptr->init);
+		strcpy(dptr->open,	lptr->open);
+		strcpy(dptr->close,	lptr->close);
+		strcpy(dptr->read,	lptr->read);
+		strcpy(dptr->write,	lptr->write);
+		strcpy(dptr->control,	lptr->control);
+		strcpy(dptr->seek,	lptr->seek);
+		strcpy(dptr->getc,	lptr->getc);
+		strcpy(dptr->putc,	lptr->putc);
+	}
 	return ntypes++;
 }
 

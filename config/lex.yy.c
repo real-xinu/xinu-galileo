@@ -770,133 +770,134 @@ case 3:
 YY_RULE_SETUP
 #line 13 "config.l"
 { if (! skipping)
-                if (++brkcount >= 2)
+            {   if (++brkcount >= 2)
                 { return 0; /* EOF */ }
                 else
-                { return DEFBRK; }            }
+                { return DEFBRK; }
+            }                                 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "config.l"
+#line 19 "config.l"
 { if (! skipping) return COLON;     }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "config.l"
+#line 20 "config.l"
 { if (! skipping) return INTEGER;   }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "config.l"
+#line 21 "config.l"
 { if (! skipping) return INTEGER;   }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "config.l"
+#line 22 "config.l"
 { if (! skipping) return INTEGER;   }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "config.l"
+#line 23 "config.l"
 { if (! skipping) return IS;        }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "config.l"
+#line 24 "config.l"
 { if (! skipping) return ON;        }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "config.l"
+#line 25 "config.l"
 ;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "config.l"
+#line 26 "config.l"
 { if (! skipping) return INTR;      }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "config.l"
+#line 27 "config.l"
 { if (! skipping) return CSR;       }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "config.l"
+#line 28 "config.l"
 { if (! skipping) return IRQ;       }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "config.l"
+#line 29 "config.l"
 { if (! skipping) return INIT;      }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "config.l"
+#line 30 "config.l"
 { if (! skipping) return OPEN;      }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "config.l"
+#line 31 "config.l"
 { if (! skipping) return CLOSE;     }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "config.l"
+#line 32 "config.l"
 { if (! skipping) return READ;      }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "config.l"
+#line 33 "config.l"
 { if (! skipping) return GETC;      }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "config.l"
+#line 34 "config.l"
 { if (! skipping) return PUTC;      }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "config.l"
+#line 35 "config.l"
 { if (! skipping) return WRITE;     }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "config.l"
+#line 36 "config.l"
 { if (! skipping) return SEEK;      }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 36 "config.l"
+#line 37 "config.l"
 { if (! skipping) return CONTROL;   }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 37 "config.l"
+#line 38 "config.l"
 ;
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 38 "config.l"
+#line 39 "config.l"
 { linectr++;                        }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 39 "config.l"
+#line 40 "config.l"
 { if (! skipping) return IDENT;     }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 40 "config.l"
+#line 41 "config.l"
 { if (! skipping) return yytext[0]; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 41 "config.l"
+#line 42 "config.l"
 ECHO;
 	YY_BREAK
-#line 900 "lex.yy.c"
+#line 901 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1901,4 +1902,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "config.l"
+#line 42 "config.l"

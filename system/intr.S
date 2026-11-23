@@ -516,3 +516,4 @@ defevec:
 	.long	_Xint45			/* Available for ext. interrupt	*/
 	.long	_Xint46			/* Available for ext. interrupt	*/
 	.long	spurious_irq15
+.section .note.GNU-stack,"",@progbits

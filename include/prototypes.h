@@ -4,7 +4,7 @@ extern	status	addargs(pid32, int32, int32[], char *, void *);
 
 /* in file arp.c */
 extern	void	arp_init(void);
-extern	status	arp_resolve(uint32, byte[]);
+extern	status	arp_resolve(uint32, byte[ETH_ADDR_LEN]);
 extern	void	arp_in(struct arppacket *);
 extern	int32	arp_alloc(void);
 extern	void	arp_ntoh(struct arppacket *);
@@ -306,8 +306,8 @@ extern	int32	namlen(char *, int32);
 extern	status	naminit(void);
 
 /* in file nammap.c */
-extern	devcall	nammap(char *, char[], did32);
-extern	did32	namrepl(char *, char[]);
+extern	devcall	nammap(char *, char[NM_MAXLEN], did32);
+extern	did32	namrepl(char *, char[NM_MAXLEN]);
 extern	status	namcpy(char *, char *, int32);
 
 /* in file namopen.c */

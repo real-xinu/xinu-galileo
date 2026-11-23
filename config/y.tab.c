@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 14 "config.y"
+#line 13 "config.y"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -83,7 +83,7 @@ extern	int	yylex(void);
 
 /********************************************************************************/
 /*										*/
-/*			Start of Definitions					*/
+/*				Start of Definitions				*/
 /*										*/
 /********************************************************************************/
 
@@ -159,6 +159,7 @@ char *devstab[] = {
 };
 
 char	saveattrid[MAXNAME];		/* Holds the IDENT from an attribute	*/
+char	devtypename[MAXNAME];
 
 /********************************************************************************/
 /*										*/
@@ -167,7 +168,6 @@ char	saveattrid[MAXNAME];		/* Holds the IDENT from an attribute	*/
 /********************************************************************************/
 
 void	addattr(int, int);
-int	addton(char *);
 int	config_atoi(char *, int);
 void	devisid(char *);
 void	devonid(char *);
@@ -175,10 +175,11 @@ void	getattrid(char *);
 void	newdev(char *);
 int	newtype(char *);
 void	yyerror(char *);
+void savename(char *);
 
 
 
-#line 182 "y.tab.c"
+#line 183 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -1313,137 +1314,137 @@ yyreduce:
   case 3: /* devtypes: %empty  */
 #line 141 "config.y"
                               { doing = "device definitions"; }
-#line 1317 "y.tab.c"
+#line 1318 "y.tab.c"
     break;
 
   case 6: /* tname: IDENT  */
 #line 148 "config.y"
-                      { yyval = newtype(yytext); }
-#line 1323 "y.tab.c"
+                      { savename(yytext); }
+#line 1324 "y.tab.c"
     break;
 
   case 9: /* theader: ON tonid  */
 #line 155 "config.y"
                          { yyval = yyvsp[0]; }
-#line 1329 "y.tab.c"
+#line 1330 "y.tab.c"
     break;
 
   case 10: /* tonid: IDENT  */
 #line 158 "config.y"
-                      { yyval = addton(yytext); }
-#line 1335 "y.tab.c"
+                      { newtype(yytext); }
+#line 1336 "y.tab.c"
     break;
 
   case 13: /* attr: CSR number  */
 #line 165 "config.y"
                                         { addattr(CSR,    yyvsp[0]);	}
-#line 1341 "y.tab.c"
+#line 1342 "y.tab.c"
     break;
 
   case 14: /* attr: IRQ number  */
 #line 166 "config.y"
                                         { addattr(IRQ,    yyvsp[0]);	}
-#line 1347 "y.tab.c"
+#line 1348 "y.tab.c"
     break;
 
   case 15: /* attr: INTR id  */
 #line 167 "config.y"
                                         { addattr(INTR,    0);	}
-#line 1353 "y.tab.c"
+#line 1354 "y.tab.c"
     break;
 
   case 16: /* attr: OPEN id  */
 #line 168 "config.y"
                                         { addattr(OPEN,    0);	}
-#line 1359 "y.tab.c"
+#line 1360 "y.tab.c"
     break;
 
   case 17: /* attr: CLOSE id  */
 #line 169 "config.y"
                                         { addattr(CLOSE,   0);	}
-#line 1365 "y.tab.c"
+#line 1366 "y.tab.c"
     break;
 
   case 18: /* attr: INIT id  */
 #line 170 "config.y"
                                         { addattr(INIT,    0);	}
-#line 1371 "y.tab.c"
+#line 1372 "y.tab.c"
     break;
 
   case 19: /* attr: GETC id  */
 #line 171 "config.y"
                                         { addattr(GETC,    0);	}
-#line 1377 "y.tab.c"
+#line 1378 "y.tab.c"
     break;
 
   case 20: /* attr: PUTC id  */
 #line 172 "config.y"
                                         { addattr(PUTC,    0);	}
-#line 1383 "y.tab.c"
+#line 1384 "y.tab.c"
     break;
 
   case 21: /* attr: READ id  */
 #line 173 "config.y"
                                         { addattr(READ,    0);	}
-#line 1389 "y.tab.c"
+#line 1390 "y.tab.c"
     break;
 
   case 22: /* attr: WRITE id  */
 #line 174 "config.y"
                                         { addattr(WRITE,   0);	}
-#line 1395 "y.tab.c"
+#line 1396 "y.tab.c"
     break;
 
   case 23: /* attr: SEEK id  */
 #line 175 "config.y"
                                         { addattr(SEEK,    0);	}
-#line 1401 "y.tab.c"
+#line 1402 "y.tab.c"
     break;
 
   case 24: /* attr: CONTROL id  */
 #line 176 "config.y"
                                         { addattr(CONTROL, 0);	}
-#line 1407 "y.tab.c"
+#line 1408 "y.tab.c"
     break;
 
   case 25: /* id: IDENT  */
 #line 179 "config.y"
                       { yyval = 0; getattrid(yytext); }
-#line 1413 "y.tab.c"
+#line 1414 "y.tab.c"
     break;
 
   case 26: /* number: INTEGER  */
 #line 182 "config.y"
                         { yyval = config_atoi(yytext, yyleng); }
-#line 1419 "y.tab.c"
+#line 1420 "y.tab.c"
     break;
 
   case 27: /* devices: %empty  */
 #line 192 "config.y"
                               { doing = "interface types"; }
-#line 1425 "y.tab.c"
+#line 1426 "y.tab.c"
     break;
 
   case 31: /* dname: IDENT  */
 #line 202 "config.y"
                       { newdev(yytext); }
-#line 1431 "y.tab.c"
+#line 1432 "y.tab.c"
     break;
 
   case 33: /* devisid: IDENT  */
 #line 208 "config.y"
                       { devisid(yytext); }
-#line 1437 "y.tab.c"
+#line 1438 "y.tab.c"
     break;
 
   case 35: /* devonid: IDENT  */
 #line 214 "config.y"
                       { devonid(yytext); }
-#line 1443 "y.tab.c"
+#line 1444 "y.tab.c"
     break;
 
 
-#line 1447 "y.tab.c"
+#line 1448 "y.tab.c"
 
       default: break;
     }
@@ -1656,6 +1657,7 @@ int main(int argc, char **argv) {
 	int   verbose = 0;
 	char *p;
 	int  c;
+	char use[]="use: config [-v] [input_file] [conf.c] [conf.h]";
 
 	if ( argc > 1 && (strncmp("-v", argv[1], 2) == 0) ) {
 		argc--;
@@ -1664,7 +1666,7 @@ int main(int argc, char **argv) {
 	}
 
 	if ( argc > 4 ) {
-		fprintf(stderr, "use: config [-v] [input_file] [conf.c] [conf.h]\n");
+		fprintf(stderr,"%s\n", use);
 		exit(1);
 	}
 
@@ -1672,13 +1674,13 @@ int main(int argc, char **argv) {
 
 	if (argc >= 2) {
 		if (freopen(argv[1], "r", stdin) == NULL) {
-			fprintf(stderr, "Can't open %s\n", argv[1]);
+			fprintf(stderr, "Cannot open %s\n", argv[1]);
 			exit(1);
 		}
 	}
 	else {	/* try to open Configuration file */
 		if (freopen(INFILE, "r", stdin) == NULL) {
-			fprintf(stderr, "Can't open %s\n", INFILE);
+			fprintf(stderr, "Cannot open %s\n", INFILE);
 			exit(1);
 		}
 	}
@@ -1700,26 +1702,26 @@ int main(int argc, char **argv) {
 
 	if (argc >= 3) {
 		if ( (confc = fopen(argv[2],"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", argv[2]);
+			fprintf(stderr, "Cannot write on %s\n", argv[2]);
 			exit(1);
 		}
 	}
 	else { 	/* try to open conf.c file */
 		if ( (confc = fopen(CONFC,"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", CONFC);
+			fprintf(stderr, "Cannot write on %s\n", CONFC);
 			exit(1);
 		}
 	}
 
 	if (argc >= 4) {
 		if ( (confh = fopen(argv[3],"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", argv[3]);
+			fprintf(stderr, "Cannot write on %s\n", argv[3]);
 			exit(1);
 		}
 	}
 	else { 	/* try to open conf.h file */
 		if ( (confh = fopen(CONFH,"w") ) == NULL) {
-			fprintf(stderr, "Can't write on %s\n", CONFH);
+			fprintf(stderr, "Cannot write on %s\n", CONFH);
 			exit(1);
 		}
 	}
@@ -1884,28 +1886,6 @@ void	addattr(int tok, int val) {
 	}
 }
 
-
-/************************************************************************/
-/*									*/
-/* addton -- add an "on XXX" to the current type			*/
-/*									*/
-/************************************************************************/
-
-int	addton(char *tonid) {
-	int	currtype;		/* The current type		*/
-
-	if (strlen(tonid) >= MAXNAME) {
-		fprintf(stderr,"string %s is too long on line %d\n",
-				tonid, linectr);
-		exit(1);
-	}
-	currtype = ntypes - 1;
-	strcpy(dtypes[currtype].ison, tonid);
-
-	return currtype;
-}
-
-
 /************************************************************************/
 /*									*/
 /* config_atoi - convert an ascii string of text to an integer,		*/
@@ -2015,7 +1995,7 @@ void	devonid(char *onname) {
 	for (i=0; i<ntypes; i++) {
 		tptr = &dtypes[i];
 		if ( (strcmp(dptr->tname,tptr->tname) == 0 ) &&
-		     (strcmp(dptr->ison, tptr->ison)  == 0 )  ){
+			 (strcmp(dptr->ison, tptr->ison)  == 0 ) ){
 
 			/* The specified type matches the ith entry, so	*/
 			/*  set all attributes equal to the ones in the	*/
@@ -2096,16 +2076,35 @@ void	newdev(char *name) {
 }
 
 
+
 /************************************************************************/
 /*									*/
-/* newtype -- allocate an entry in the type array and fill in the name	*/
+/* savename -- save the name of a new device type for use when making dentrys	*/
 /*									*/
 /************************************************************************/
 
-int	newtype(char *name) {
+void savename(char *name) {
+	if (strlen(name) >= MAXNAME) {
+		fprintf(stderr,"Type name %s is too long on line %d\n",
+				name, linectr);
+		exit(1);
+	}
+	strcpy(devtypename, name);
+}
 
+
+/************************************************************************/
+/*									*/
+/* newtype -- allocate an entry in the type array and fill in the name ison fields	*/
+/*									*/
+/************************************************************************/
+
+int	newtype(char *tonid) {
+
+	char *name = devtypename;
 	struct	dev_ent	*dptr;		/* Ptr. to an entry in dtypes	*/
 	int	i;			/* Index into the type table	*/
+	int last = -1;  /* The last entry in the type table with the same type name */
 
 	if (ntypes >= NTYPES) {
 		fprintf(stderr,"Too many types on line %d", linectr);
@@ -2117,13 +2116,22 @@ int	newtype(char *name) {
 		exit(1);
 	}
 
-	/* Verify that the type name is unique */
+	if (strlen(tonid) >= MAXNAME) {
+		fprintf(stderr,"string %s is too long on line %d\n",
+				tonid, linectr);
+		exit(1);
+	}
+
+	/* Verify that the (type name, is on) pair is unique */
 
 	for (i=0; i<ntypes; i++) {
 		if (strcmp(name, dtypes[i].tname) == 0) {
-			fprintf(stderr, "Duplicate type name %s on line %d\n",
-				name, linectr);
+			last = i;
+			if (strcmp(tonid, dtypes[i].ison) == 0) {
+			fprintf(stderr, "Duplicate type name on line %d: %s on %s\n",
+				linectr, name, tonid);
 			exit(1);
+			}
 		}
 	}
 
@@ -2133,6 +2141,7 @@ int	newtype(char *name) {
 
 	bzero((void *)dptr, sizeof(struct dev_ent));
 	strcpy(dptr->tname,	 name);
+	strcpy(dptr->ison, tonid);
 	strncpy(dptr->intr,	"ioerr", 5);
 	strncpy(dptr->init,	"ioerr", 5);
 	strncpy(dptr->open,	"ioerr", 5);
@@ -2144,6 +2153,20 @@ int	newtype(char *name) {
 	strncpy(dptr->getc,	"ioerr", 5);
 	strncpy(dptr->putc,	"ioerr", 5);
 
+	if (last != -1) {
+		struct	dev_ent	*lptr = &dtypes[last];
+
+		strcpy(dptr->intr,	lptr->intr);
+		strcpy(dptr->init,	lptr->init);
+		strcpy(dptr->open,	lptr->open);
+		strcpy(dptr->close,	lptr->close);
+		strcpy(dptr->read,	lptr->read);
+		strcpy(dptr->write,	lptr->write);
+		strcpy(dptr->control,	lptr->control);
+		strcpy(dptr->seek,	lptr->seek);
+		strcpy(dptr->getc,	lptr->getc);
+		strcpy(dptr->putc,	lptr->putc);
+	}
 	return ntypes++;
 }
 

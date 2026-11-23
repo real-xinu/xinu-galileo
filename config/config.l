@@ -11,10 +11,11 @@ ID [a-z_A-Z][a-z_A-Z0-9]*
 "/*"      { skipping = 1;                     }
 "*/"      { skipping = 0;                     }
 "%%"      { if (! skipping)
-                if (++brkcount >= 2)
+            {   if (++brkcount >= 2)
                 { return 0; /* EOF */ }
                 else
-                { return DEFBRK; }            }
+                { return DEFBRK; }
+            }                                 }
 ":"       { if (! skipping) return COLON;     }
 {OCT}     { if (! skipping) return INTEGER;   }
 {DEC}     { if (! skipping) return INTEGER;   }

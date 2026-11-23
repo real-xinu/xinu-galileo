@@ -18,3 +18,5 @@ clkdisp:
 		sti			# Restore interrupt status
 		popal			# Restore registers
 		iret			# Return from interrupt
+
+.section .note.GNU-stack,"",@progbits

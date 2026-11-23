@@ -18,3 +18,6 @@ ethdispatch:
 		popfl
 		popal
 		iret
+
+.section .note.GNU-stack,"",@progbits
+

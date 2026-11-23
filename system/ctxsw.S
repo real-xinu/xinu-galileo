@@ -34,3 +34,5 @@ ctxsw:
 		popfl			/* Restore interrupt mask	*/
 		add	$4,%esp		/* Skip saved value of ebp	*/
 		ret			/* Return to new process	*/
+
+.section .note.GNU-stack,"",@progbits

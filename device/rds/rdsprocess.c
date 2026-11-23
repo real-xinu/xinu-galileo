@@ -145,7 +145,6 @@ void	rdsprocess (
 			kprintf("remote disk write failed\n");
 		}
 		continue;
-
 	    case RD_OP_READ:
 		/* Build a read request message for the server */
 		msg.rd_type = htons(RD_MSG_RREQ);	/* Read request	*/
@@ -176,15 +175,17 @@ void	rdsprocess (
 
 		/* Walk through the request queue and satisfy all read 	*/
 		/*   requests for the block, including the first one	*/
-		wfound = FALSE;
+		uint32	blknum = rptr->rd_blknum;
 		rptr = rdptr->rd_qhead;
+		wfound = FALSE;
 		while (rptr != (struct rdqnode *)NULL) {
-		    if (rptr->rd_blknum != rptr->rd_blknum) {
+		    if (rptr->rd_blknum != blknum) {
 			rptr = rptr->rd_next;
 			continue;
 		    }
-		    /* Block number matches; handle read or write */
+		    /* Block number matches, so handle read or write */
 		    if (rptr->rd_op == RD_OP_WRITE) {
+			/* Stop sesrching the queue */
 			wfound = TRUE;
 			break;
 		    }
