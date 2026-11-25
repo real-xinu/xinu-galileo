@@ -6,7 +6,7 @@ process	main(void)
 {
 	pid32	shpid;		/* Shell process ID */
 
-	printf("\n\n");
+	kprintf("\n\n");
 
 	/* Create a local file system on the RAM disk */
 
